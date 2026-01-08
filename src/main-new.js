@@ -23,6 +23,8 @@ import { tournamentMode } from './game/TournamentMode.js';
 import { AchievementManager } from './game/AchievementManager.js';
 import { DifficultyManager } from './game/DifficultyManager.js';
 import { getMissionById } from './data/storyMissions.js';
+import { router } from './utils/Router.js';
+import { getRouteConfig, RouteGuards, RoutePaths } from './config/routes.js';
 
 // Make bootstrap available globally if needed
 window.bootstrap = bootstrap;
@@ -49,34 +51,79 @@ const appState = {
  * Initialize the application
  */
 function initApp() {
-  console.log('🎮 Object Fighter v3.0.0 - Initializing...');
+  console.log('🎮 Legends of the Arena v4.0.0 - Initializing...');
+
+  // Initialize router
+  initializeRouter();
 
   // Initialize save system
   const saveData = SaveManager.load();
   console.log(`💾 Save data loaded. Player Level: ${saveData.profile.level}`);
-
-  // Check if character has been created
-  if (!saveData.profile.characterCreated) {
-    console.log('🆕 New player detected - showing character creation');
-    showCharacterCreation();
-    // Initialize toggles after character creation
-    initDarkModeToggle();
-    initSoundToggle();
-    return;
-  }
 
   // Load fighters data
   getFighters().then((fighters) => {
     appState.fighters = fighters;
     console.log(`✅ Loaded ${fighters.length} fighters`);
 
-    // Show title screen
-    showTitleScreen();
+    // Navigate to initial route
+    const initialPath = saveData.profile.characterCreated ? RoutePaths.HOME : RoutePaths.CHARACTER_CREATION;
+    router.navigate(initialPath, {}, true); // true = replace (don't add to history)
   });
 
   // Initialize dark mode and sound toggles
   initDarkModeToggle();
   initSoundToggle();
+}
+
+/**
+ * Initialize router with all routes and guards
+ */
+function initializeRouter() {
+  // Initialize router
+  router.init();
+
+  // Register route guards
+  Object.entries(RouteGuards).forEach(([name, guard]) => {
+    router.registerGuard(name, guard);
+  });
+
+  // Create route handlers object
+  const handlers = {
+    showTitleScreen,
+    showCharacterCreation,
+    showProfileScreen,
+    showAchievementsScreen,
+    showSettingsScreen,
+    showWikiScreen,
+    showOpponentSelection,
+    showCombat: () => {
+      // Combat is handled separately as it needs more context
+      console.log('Combat route accessed - needs battle setup first');
+    },
+    showTournamentBracketScreen,
+    showCampaignMapScreen,
+    showMissionBriefing: (data) => {
+      if (data.missionId) {
+        showMissionBriefing(data.missionId);
+      }
+    },
+    showMarketplaceScreen,
+    showEquipmentScreen: () => {
+      // Equipment screen to be implemented
+      console.log('Equipment screen - to be implemented');
+    },
+  };
+
+  // Register all routes
+  const routes = getRouteConfig(handlers);
+  routes.forEach((route) => {
+    router.register(route.path, route.handler, {
+      title: route.title,
+      guard: route.guard,
+    });
+  });
+
+  console.log('🧭 Router initialized with', routes.length, 'routes');
 }
 
 /**
@@ -94,7 +141,7 @@ function showCharacterCreation() {
     // Reload app after character creation
     getFighters().then((fighters) => {
       appState.fighters = fighters;
-      showTitleScreen();
+      router.navigate(RoutePaths.HOME);
     });
   });
 
@@ -114,31 +161,31 @@ function showTitleScreen() {
     soundManager.init();
     appState.gameMode = e.detail.mode;
     appState.currentScreen = 'gallery';
-    showOpponentSelection();
+    router.navigate(RoutePaths.OPPONENT_SELECTION);
   });
 
   titleScreen.addEventListener('tournament-selected', () => {
     soundManager.init();
     soundManager.play('event');
-    showTournamentBracketScreen();
+    router.navigate(RoutePaths.TOURNAMENT_BRACKET);
   });
 
   titleScreen.addEventListener('wiki-selected', () => {
     soundManager.init();
     soundManager.play('event');
-    showWikiScreen();
+    router.navigate(RoutePaths.WIKI);
   });
 
   titleScreen.addEventListener('story-selected', () => {
     soundManager.init();
     soundManager.play('event');
-    showCampaignMapScreen();
+    router.navigate(RoutePaths.STORY_MODE);
   });
 
   titleScreen.addEventListener('marketplace-selected', () => {
     soundManager.init();
     soundManager.play('event');
-    showMarketplaceScreen();
+    router.navigate(RoutePaths.MARKETPLACE);
   });
 
   root.appendChild(titleScreen);
@@ -160,7 +207,7 @@ function showProfileScreen() {
   const profileScreen = document.createElement('profile-screen');
   profileScreen.addEventListener('back-to-menu', () => {
     appState.reset();
-    showTitleScreen();
+    router.navigate(RoutePaths.HOME);
   });
 
   root.appendChild(profileScreen);
@@ -201,7 +248,7 @@ function addProfileButton() {
 
   profileBtn.addEventListener('click', () => {
     soundManager.play('event');
-    showProfileScreen();
+    router.navigate(RoutePaths.PROFILE);
   });
 
   profileBtn.addEventListener('mouseenter', () => {
@@ -236,7 +283,7 @@ function showTournamentBracketScreen() {
 
   bracket.addEventListener('back-to-menu', () => {
     appState.reset();
-    showTitleScreen();
+    router.navigate(RoutePaths.HOME);
   });
 
   root.appendChild(bracket);
@@ -253,7 +300,7 @@ function showWikiScreen() {
   const wiki = document.createElement('wiki-screen');
 
   wiki.addEventListener('back', () => {
-    showTitleScreen();
+    router.navigate(RoutePaths.HOME);
   });
 
   root.appendChild(wiki);
@@ -270,12 +317,12 @@ function showCampaignMapScreen() {
   const campaignMap = document.createElement('campaign-map');
 
   campaignMap.addEventListener('close', () => {
-    showTitleScreen();
+    router.navigate(RoutePaths.HOME);
   });
 
   campaignMap.addEventListener('mission-selected', (e) => {
     const { missionId } = e.detail;
-    showMissionBriefing(missionId);
+    router.navigate(RoutePaths.STORY_MISSION, { missionId });
   });
 
   root.appendChild(campaignMap);
@@ -293,7 +340,7 @@ function showMissionBriefing(missionId) {
   briefing.mission = missionId;
 
   briefing.addEventListener('cancel', () => {
-    showCampaignMapScreen();
+    router.navigate(RoutePaths.STORY_MODE);
   });
 
   briefing.addEventListener('start-mission', (e) => {
@@ -476,7 +523,7 @@ function showMissionResults(missionResult) {
       const returnBtn = document.querySelector('#return-to-map-btn-failed');
       if (returnBtn) {
         returnBtn.addEventListener('click', () => {
-          showCampaignMapScreen();
+          router.navigate(RoutePaths.STORY_MODE);
         });
         returnBtn.addEventListener('mouseover', () => {
           returnBtn.style.transform = 'translateY(-3px)';
@@ -555,11 +602,11 @@ function showMissionResults(missionResult) {
 
   // Add event listener to the button
   setTimeout(() => {
-    const returnBtn = document.querySelector('#return-to-map-btn');
-    if (returnBtn) {
-      returnBtn.addEventListener('click', () => {
-        showCampaignMapScreen();
-      });
+      const returnBtn = document.querySelector('#return-to-map-btn');
+      if (returnBtn) {
+        returnBtn.addEventListener('click', () => {
+          router.navigate(RoutePaths.STORY_MODE);
+        });
       returnBtn.addEventListener('mouseover', () => {
         returnBtn.style.transform = 'translateY(-3px)';
         returnBtn.style.boxShadow = '0 10px 30px rgba(106, 66, 194, 0.5)';
@@ -582,7 +629,7 @@ function showMarketplaceScreen() {
   const marketplace = document.createElement('marketplace-screen');
 
   marketplace.addEventListener('close', () => {
-    showTitleScreen();
+    router.navigate(RoutePaths.HOME);
   });
 
   root.appendChild(marketplace);
@@ -599,7 +646,7 @@ function showAchievementsScreen() {
   const achievementsScreen = document.createElement('achievements-screen');
   achievementsScreen.addEventListener('back-to-menu', () => {
     appState.reset();
-    showTitleScreen();
+    router.navigate(RoutePaths.HOME);
   });
 
   root.appendChild(achievementsScreen);
@@ -640,7 +687,7 @@ function addAchievementsButton() {
 
   achievementsBtn.addEventListener('click', () => {
     soundManager.play('event');
-    showAchievementsScreen();
+    router.navigate(RoutePaths.ACHIEVEMENTS);
   });
 
   achievementsBtn.addEventListener('mouseenter', () => {
@@ -668,7 +715,7 @@ function showSettingsScreen() {
   const settingsScreen = document.createElement('settings-screen');
   settingsScreen.addEventListener('back-to-menu', () => {
     appState.reset();
-    showTitleScreen();
+    router.navigate(RoutePaths.HOME);
   });
 
   root.appendChild(settingsScreen);
@@ -710,7 +757,7 @@ function addSettingsButton() {
 
   settingsBtn.addEventListener('click', () => {
     soundManager.play('event');
-    showSettingsScreen();
+    router.navigate(RoutePaths.SETTINGS);
   });
 
   settingsBtn.addEventListener('mouseenter', () => {
@@ -840,7 +887,7 @@ function showOpponentSelection() {
 
   gallery.addEventListener('back-to-menu', () => {
     appState.reset();
-    showTitleScreen();
+    router.navigate(RoutePaths.HOME);
   });
 
   root.appendChild(gallery);
@@ -1064,14 +1111,14 @@ function showTournamentVictoryScreen() {
   victoryScreen.addEventListener('play-again', () => {
     victoryScreen.remove();
     appState.reset();
-    showTournamentBracketScreen();
+    router.navigate(RoutePaths.TOURNAMENT_BRACKET);
   });
 
   victoryScreen.addEventListener('main-menu', () => {
     victoryScreen.remove();
     Game.stopGame();
     appState.reset();
-    showTitleScreen();
+    router.navigate(RoutePaths.HOME);
   });
 
   victoryScreen.addEventListener('close', () => {
