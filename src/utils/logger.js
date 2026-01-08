@@ -1,15 +1,23 @@
-let logElement = document.querySelector('#log');
+let logElement = null;
 
 export class Logger {
   static setLogHolder(el) {
     logElement = typeof el === 'string' ? document.querySelector(el) : el;
+    console.log('Logger initialized:', logElement ? 'Found log element' : 'Log element not found');
   }
 
   static log(message) {
+    // Try to find log element if not set
+    if (!logElement) {
+      logElement = document.querySelector('#log');
+    }
+    
     if (logElement) {
       logElement.insertAdjacentHTML('beforeend', message);
       // Auto-scroll to bottom
       logElement.scrollTop = logElement.scrollHeight;
+    } else {
+      console.warn('Log element not found, message:', message);
     }
   }
 

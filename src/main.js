@@ -10,6 +10,7 @@ import Game from './game/game.js';
 import { Logger } from './utils/logger.js';
 import { Team } from './entities/team.js';
 import { soundManager } from './utils/soundManager.js';
+import { hudManager } from './utils/hudManager.js';
 
 // Make bootstrap available globally if needed
 window.bootstrap = bootstrap;
@@ -65,39 +66,48 @@ function chooseGame() {
 
 function appendHolders(isTeamMatch) {
   const container = document.querySelector('.container');
+  
   container.innerHTML = `
-    <div id="choose-fighter" class="text-center">
-      <h3><span>Choose fighters</span><button class="btn btn-primary reset-game">Reset Game</button></h3>
-    </div>      
-  `;
-
-  if (isTeamMatch) {
-    container.innerHTML += `
-      <div id="selected-fighters" class="text-center">
-        <div class="row">
-          <div class="col-6">
-            <h4>Team One</h4>
-            <div class="team-one allowedDrop border border-2 p-3" style="min-height: 200px;">
-            </div>
-          </div>
-          <div class="col-6">
-            <h4>Team Two</h4>
-            <div class="team-two allowedDrop border border-2 p-3" style="min-height: 200px;">
-            </div>
+    <div class="game-content">
+      <div class="fighter-selection-view">
+        <div class="selection-header">
+          <h2>Choose Your Fighters</h2>
+          <button class="btn btn-danger reset-game">Reset</button>
+        </div>
+        
+        <div id="choose-fighter" class="fighter-grid">
+        </div>
+        
+        <div class="selection-footer">
+          <div id="selected-fighters" class="selected-fighters-display">
+            ${isTeamMatch ? `
+              <div class="row">
+                <div class="col-6">
+                  <h5>Team One</h5>
+                  <div class="team-one team-drop-zone"></div>
+                </div>
+                <div class="col-6">
+                  <h5>Team Two</h5>
+                  <div class="team-two team-drop-zone"></div>
+                </div>
+              </div>
+            ` : `
+              <h5>Selected Fighters</h5>
+              <div class="selected-fighters-container"></div>
+            `}
           </div>
         </div>
       </div>
-    `;
-  } else {
-    container.innerHTML += `
-      <div id="selected-fighters" class="text-center">
-        <h3>Selected fighters</h3>
+      
+      <div class="combat-view" style="display: none;">
+        <button class="btn btn-danger reset-game-combat" style="position: absolute; top: 15px; right: 15px; z-index: 10000;">
+          Reset Game
+        </button>
+        <div class="combat-log-wrapper">
+          <div id="log"></div>
+        </div>
       </div>
-    `;
-  }
-
-  container.innerHTML += `
-    <div id="log"></div>
+    </div>
   `;
 }
 
@@ -115,6 +125,9 @@ function attachStartButton(isMatchGame) {
   startBtn.addEventListener(
     'click',
     function () {
+      // Initialize sound system on first interaction
+      soundManager.init();
+      
       Logger.setLogHolder('#log');
 
       if (isMatchGame) {
@@ -149,19 +162,37 @@ function attachResetButton() {
   const resetBtn = document.querySelector('.reset-game');
   if (!resetBtn) return;
 
-  resetBtn.addEventListener('click', function () {
-    const container = document.querySelector('.container');
-    container.innerHTML = '';
+  resetBtn.addEventListener('click', handleReset);
+}
 
-    // Reset application state
-    appState.reset();
+/**
+ * Attach reset button in combat view
+ */
+function attachCombatResetButton() {
+  const resetBtn = document.querySelector('.reset-game-combat');
+  if (!resetBtn) return;
 
-    // Stop any running game
-    Game.stopGame();
+  resetBtn.addEventListener('click', handleReset);
+}
 
-    // Return to game mode selection
-    chooseGame();
-  });
+/**
+ * Handle game reset
+ */
+function handleReset() {
+  const container = document.querySelector('.container');
+  container.innerHTML = '';
+
+  // Reset application state
+  appState.reset();
+
+  // Stop any running game
+  Game.stopGame();
+  
+  // Remove HUD
+  hudManager.remove();
+
+  // Return to game mode selection
+  chooseGame();
 }
 
 /**
@@ -319,6 +350,8 @@ function createSoundToggle() {
     const enabled = soundManager.toggle();
     toggle.querySelector('.toggle-icon').textContent = enabled ? '🔊' : '🔇';
     if (enabled) {
+      // Test sound to confirm it works
+      soundManager.init();
       soundManager.play('heal');
     }
   });

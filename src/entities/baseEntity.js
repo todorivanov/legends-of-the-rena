@@ -1,6 +1,7 @@
 import { Helpers } from '../utils/helpers.js';
 import { Logger } from '../utils/logger.js';
 import { soundManager } from '../utils/soundManager.js';
+import { assignSkillsToFighter } from '../game/SkillSystem.js';
 
 /**
  * BaseEntity - Base class for all combat entities
@@ -10,10 +11,21 @@ export class BaseEntity {
     this.id = baseEntity.id;
     this.name = baseEntity.name;
     this.health = baseEntity.health;
+    this.maxHealth = baseEntity.health;
     this.image = baseEntity.image;
     this.strength = baseEntity.strength;
+    this.baseStrength = baseEntity.strength; // Store original strength
     this.description = baseEntity.description;
     this.class = baseEntity.class || 'BALANCED';
+    this.mana = 100; // Starting mana
+    this.maxMana = 100;
+    this.isDefending = false;
+    this.statusEffects = []; // Array of active status effects
+    this.skills = []; // Class-specific skills
+    this.combo = 0; // Combo counter
+    
+    // Assign skills based on class
+    assignSkillsToFighter(this);
   }
 
   /**
@@ -39,14 +51,19 @@ export class BaseEntity {
       const msg = `<div class="attack-div missed-attack text-center">💨 <strong>${this.name}</strong> swung but missed completely! <span class="text-muted">(0 damage)</span></div>`;
       Logger.log(msg);
       soundManager.play('miss');
-      return 0;
+      return { damage: 0, isCritical: false };
     } else {
-      const dmg = Math.ceil(this.strength * 0.4 + Helpers.getRandomNumber(0, 40));
-      const msg = `<div class="attack-div normal-attack text-center">⚔️ <strong>${this.name}</strong> landed a solid hit! <span class="badge bg-warning">${dmg} damage</span></div>`;
+      const isCritical = Math.random() < 0.15; // 15% crit chance
+      const baseDmg = Math.ceil(this.strength * 0.4 + Helpers.getRandomNumber(0, 40));
+      const dmg = isCritical ? Math.ceil(baseDmg * 1.5) : baseDmg;
+      
+      const critBadge = isCritical ? '<span class="badge bg-danger">CRITICAL!</span> ' : '';
+      const attackClass = isCritical ? 'critical-hit' : 'normal-attack';
+      const msg = `<div class="attack-div ${attackClass} text-center">⚔️ <strong>${this.name}</strong> landed a ${isCritical ? 'devastating' : 'solid'} hit! ${critBadge}<span class="badge bg-warning">${dmg} damage</span></div>`;
       Logger.log(msg);
       soundManager.play('hit');
-      this.showFloatingDamage(dmg, 'normal');
-      return dmg;
+      this.showFloatingDamage(dmg, isCritical ? 'critical' : 'normal');
+      return { damage: dmg, isCritical };
     }
   }
 
@@ -69,6 +86,102 @@ export class BaseEntity {
       this.showFloatingDamage(dmg, 'critical');
       return dmg;
     }
+  }
+
+  /**
+   * Perform a defend action (reduce next damage taken)
+   */
+  defend() {
+    this.isDefending = true;
+    const msg = `<div class="attack-div text-center" style="background: #d1ecf1; border-left-color: #17a2b8;">🛡️ <strong>${this.name}</strong> takes a defensive stance!</div>`;
+    Logger.log(msg);
+    soundManager.play('heal');
+  }
+
+  /**
+   * Use special skill (class-specific)
+   */
+  useSkill() {
+    if (this.mana < 30) {
+      const msg = `<div class="attack-div missed-attack text-center">${this.name} doesn't have enough mana!</div>`;
+      Logger.log(msg);
+      return 0;
+    }
+
+    this.mana -= 30;
+    const dmg = Math.ceil(this.strength * 1.2 + Helpers.getRandomNumber(30, 100));
+    const msg = `<div class="attack-div special-attack text-center">💫 <strong>${this.name}</strong> unleashed their special skill! <span class="badge bg-danger">${dmg} damage</span></div>`;
+    Logger.log(msg);
+    soundManager.play('special');
+    this.showFloatingDamage(dmg, 'critical');
+    return dmg;
+  }
+
+  /**
+   * Use healing item
+   */
+  useItem() {
+    const healAmount = 50;
+    this.health = Math.min(this.maxHealth, this.health + healAmount);
+    const msg = `<div class="consumable text-center">🧪 <strong>${this.name}</strong> used a healing potion! <span class="badge bg-success">+${healAmount} HP</span></div>`;
+    Logger.log(msg);
+    soundManager.play('heal');
+    this.showFloatingDamage(healAmount, 'heal');
+  }
+
+  /**
+   * Regenerate mana each turn
+   */
+  regenerateMana() {
+    this.mana = Math.min(this.maxMana, this.mana + 10);
+  }
+
+  /**
+   * Process status effects at start of turn
+   */
+  processStatusEffects() {
+    const activeEffects = [];
+    
+    for (const effect of this.statusEffects) {
+      effect.apply(this);
+      
+      if (effect.tick()) {
+        activeEffects.push(effect);
+      } else {
+        // Effect expired, remove it
+        effect.remove(this);
+        const msg = `<div class="attack-div text-center" style="background: #fff3cd;">${effect.icon} ${this.name}'s ${effect.name} wore off.</div>`;
+        Logger.log(msg);
+      }
+    }
+    
+    this.statusEffects = activeEffects;
+  }
+
+  /**
+   * Tick cooldowns on all skills
+   */
+  tickSkillCooldowns() {
+    for (const skill of this.skills) {
+      skill.tick();
+    }
+  }
+
+  /**
+   * Take damage with defense modifier
+   */
+  takeDamage(damage) {
+    let actualDamage = damage;
+    
+    if (this.isDefending) {
+      actualDamage = Math.ceil(damage * 0.5);
+      const msg = `<div class="attack-div text-center" style="background: #d1ecf1;">🛡️ <strong>${this.name}</strong> blocked 50% of the damage!</div>`;
+      Logger.log(msg);
+      this.isDefending = false; // Defend only lasts one turn
+    }
+    
+    this.health -= actualDamage;
+    return actualDamage;
   }
 
   /**

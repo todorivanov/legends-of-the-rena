@@ -106,14 +106,18 @@ npm run preview
 
 ## 🔄 Recent Updates
 
+### v2.3.0 - UX Improvements (Jan 8, 2026) 🎯
+- 🖥️ **Fullscreen arena** - Immersive viewport experience
+- 📊 **Live fighter stats HUD** - Real-time health bars at top
+- 🔊 **Fixed sound system** - Proper Web Audio API initialization
+- 🎨 **Color-coded health** - Green/yellow/red bars with pulse
+
 ### v2.2.0 - Phase 4 Complete (Jan 8, 2026) 🎨
 - 🎬 **20+ CSS animations** (slide, shake, pulse, zoom effects)
 - 🌙 **Dark mode** with smooth transitions and persistence
 - 🔊 **6 sound effects** (Web Audio API, zero latency)
 - 💥 **Floating damage numbers** (color-coded by type)
 - ✨ **Enhanced fighter cards** (3D transforms, shimmer effects)
-- 🔘 **Animated buttons** with ripple effects
-- 📜 **Improved combat log** with hover states
 
 ### v2.1.0 - Phase 2 Complete (Jan 8, 2026)
 - ✅ **10 fighters** with working avatars (was 5 with broken images)
@@ -168,6 +172,6 @@ Todor Ivanov
 
 ---
 
-**Version**: 2.2.0  
-**Status**: Visually Stunning, Ready for Gameplay  
+**Version**: 2.3.0  
+**Status**: Polished & Ready - Try it at http://localhost:3000  
 **Next Phase**: Phase 3 - Gameplay Enhancements (Player Control, Skills, Status Effects)

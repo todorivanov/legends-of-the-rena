@@ -6,6 +6,45 @@ export class SoundManager {
   constructor() {
     this.enabled = localStorage.getItem('soundEnabled') !== 'false';
     this.volume = parseFloat(localStorage.getItem('soundVolume') || '0.3');
+    this.audioContext = null;
+    this.initialized = false;
+  }
+
+  /**
+   * Initialize Audio Context (requires user interaction)
+   */
+  init() {
+    if (this.initialized) return;
+    
+    try {
+      this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      this.initialized = true;
+      console.log('🔊 Sound system initialized');
+      
+      // Play a silent sound to "unlock" audio on mobile
+      this.playTestSound();
+    } catch (e) {
+      console.warn('Sound not supported:', e);
+      this.enabled = false;
+    }
+  }
+
+  /**
+   * Play test sound (silent) to unlock audio
+   */
+  playTestSound() {
+    if (!this.audioContext) return;
+    
+    const oscillator = this.audioContext.createOscillator();
+    const gainNode = this.audioContext.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(this.audioContext.destination);
+    
+    gainNode.gain.value = 0.001; // Nearly silent
+    oscillator.frequency.value = 440;
+    oscillator.start();
+    oscillator.stop(this.audioContext.currentTime + 0.01);
   }
 
   /**
@@ -14,8 +53,15 @@ export class SoundManager {
    */
   play(type) {
     if (!this.enabled) return;
+    
+    // Initialize on first play if needed
+    if (!this.initialized) {
+      this.init();
+    }
+    
+    if (!this.audioContext) return;
 
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const audioContext = this.audioContext;
     const oscillator = audioContext.createOscillator();
     const gainNode = audioContext.createGain();
 
@@ -23,6 +69,9 @@ export class SoundManager {
     gainNode.connect(audioContext.destination);
 
     gainNode.gain.value = this.volume;
+
+    // Start the oscillator first
+    oscillator.start();
 
     switch (type) {
       case 'hit':
@@ -87,8 +136,6 @@ export class SoundManager {
         gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
         oscillator.stop(audioContext.currentTime + 0.1);
     }
-
-    oscillator.start();
   }
 
   /**
@@ -97,6 +144,12 @@ export class SoundManager {
   toggle() {
     this.enabled = !this.enabled;
     localStorage.setItem('soundEnabled', this.enabled);
+    
+    // Initialize on enable
+    if (this.enabled && !this.initialized) {
+      this.init();
+    }
+    
     return this.enabled;
   }
 
