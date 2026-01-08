@@ -7,7 +7,6 @@ import { EventManager } from './EventManager.js';
 import { CombatEngine } from './CombatEngine.js';
 import { hudManager } from '../utils/hudManager.js';
 import { TurnManager } from './TurnManager.js';
-import { actionUI } from './ActionUI.js';
 
 const ROUND_INTERVAL = 1500;
 const AI_TURN_DELAY = 1200;
@@ -65,10 +64,13 @@ export default class Game {
         firstFighter.tickSkillCooldowns();
         hudManager.update();
 
-        // Player's turn - wait for input
-        actionUI.show(firstFighter, (actionData) => {
-          this.executeAction(firstFighter, secondFighter, actionData, turnManager, processTurn);
+        // Player's turn - wait for input using Web Component
+        const actionSelection = document.createElement('action-selection');
+        actionSelection.fighter = firstFighter;
+        actionSelection.addEventListener('action-selected', (e) => {
+          this.executeAction(firstFighter, secondFighter, e.detail, turnManager, processTurn);
         });
+        document.body.appendChild(actionSelection);
       } else {
         // Process status effects at turn start
         secondFighter.processStatusEffects();
@@ -143,7 +145,8 @@ export default class Game {
     if (result) {
       Referee.declareWinner(result.winner);
       hudManager.showWinner(result.winner);
-      actionUI.remove();
+      // Remove any existing action-selection components
+      document.querySelectorAll('action-selection').forEach(el => el.remove());
       return;
     }
 
@@ -187,37 +190,27 @@ export default class Game {
   }
 
   /**
-   * Show turn indicator overlay
+   * Show turn indicator overlay using Web Component
    */
   static showTurnIndicator(fighterName) {
-    const existing = document.querySelector('.turn-indicator');
-    if (existing) existing.remove();
+    // Remove existing indicators
+    document.querySelectorAll('turn-indicator').forEach(el => el.remove());
 
-    const indicator = document.createElement('div');
-    indicator.className = 'turn-indicator';
-    indicator.textContent = `${fighterName}'s Turn!`;
+    const indicator = document.createElement('turn-indicator');
+    indicator.setAttribute('fighter-name', fighterName);
     document.body.appendChild(indicator);
-
-    setTimeout(() => {
-      indicator.remove();
-    }, 1000);
   }
 
   /**
-   * Show combo counter
+   * Show combo counter using Web Component
    */
   static showComboIndicator(comboCount) {
-    const existing = document.querySelector('.combo-indicator');
-    if (existing) existing.remove();
+    // Remove existing indicators
+    document.querySelectorAll('combo-indicator').forEach(el => el.remove());
 
-    const indicator = document.createElement('div');
-    indicator.className = 'combo-indicator';
-    indicator.textContent = `COMBO x${comboCount}!`;
+    const indicator = document.createElement('combo-indicator');
+    indicator.setAttribute('combo-count', comboCount);
     document.body.appendChild(indicator);
-
-    setTimeout(() => {
-      indicator.remove();
-    }, 1500);
   }
 
   /**
@@ -297,7 +290,11 @@ export default class Game {
     }
     Referee.clearRoundNumber();
     hudManager.remove();
-    actionUI.remove();
+    
+    // Remove any Web Components
+    document.querySelectorAll('action-selection').forEach(el => el.remove());
+    document.querySelectorAll('turn-indicator').forEach(el => el.remove());
+    document.querySelectorAll('combo-indicator').forEach(el => el.remove());
     
     // Reset views
     const selectionView = document.querySelector('.fighter-selection-view');

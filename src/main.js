@@ -5,6 +5,9 @@ import * as bootstrap from 'bootstrap';
 // Import custom styles
 import './index.css';
 
+// Import Web Components
+import './components/index.js';
+
 // Import game modules
 import Game from './game/game.js';
 import { Logger } from './utils/logger.js';
@@ -134,13 +137,13 @@ function attachStartButton(isMatchGame) {
         const teamOne = new Team('Team One', []);
         const teamTwo = new Team('Team Two', []);
 
-        document.querySelectorAll('.team-one .details-holder').forEach((el) => {
-          const fighterId = parseInt(el.dataset.id);
+        document.querySelectorAll('.team-one fighter-card').forEach((card) => {
+          const fighterId = parseInt(card.getAttribute('fighter-id'));
           teamOne.fighters.push(appState.fighters.find((f) => f.id === fighterId));
         });
 
-        document.querySelectorAll('.team-two .details-holder').forEach((el) => {
-          const fighterId = parseInt(el.dataset.id);
+        document.querySelectorAll('.team-two fighter-card').forEach((card) => {
+          const fighterId = parseInt(card.getAttribute('fighter-id'));
           teamTwo.fighters.push(appState.fighters.find((f) => f.id === fighterId));
         });
 
@@ -195,59 +198,14 @@ function handleReset() {
   chooseGame();
 }
 
-/**
- * Attach click handlers for fighter selection (single fight mode)
- * Uses event delegation for better performance and no memory leaks
- */
-function attachClickEvent() {
-  const chooseFighter = document.querySelector('#choose-fighter');
-  if (!chooseFighter) return;
-
-  chooseFighter.addEventListener('click', function (event) {
-    const holder = event.target.closest('.details-holder');
-    if (!holder) return;
-
-    const id = parseInt(holder.dataset.id);
-
-    if (!appState.firstFighter) {
-      appState.firstFighter = appState.fighters.find((f) => f.id === id);
-      Logger.logFighter(appState.firstFighter, '#selected-fighters');
-      appState.chosenFighters++;
-    } else if (!appState.secondFighter) {
-      appState.secondFighter = appState.fighters.find((f) => f.id === id);
-      Logger.logFighter(appState.secondFighter, '#selected-fighters');
-      appState.chosenFighters++;
-    }
-
-    if (appState.chosenFighters === 2) {
-      appState.chosenFighters = 0;
-      attachStartButton(false);
-    }
-  });
-}
+// Removed - now handled by handleFighterSelection function
 
 /**
  * Attach drag and drop handlers for team selection
- * Uses event delegation on container for better performance
+ * Works with Web Components
  */
 function attachDragAndDropHandlers() {
-  let draggedElement = null;
-
-  // Make all fighter cards draggable
-  document.querySelectorAll('.details-holder').forEach((holder) => {
-    holder.draggable = true;
-  });
-
-  // Use event delegation on the container
   const container = document.querySelector('.container');
-
-  // Handle dragstart
-  container.addEventListener('dragstart', function (event) {
-    if (event.target.classList.contains('details-holder')) {
-      draggedElement = event.target;
-      event.dataTransfer.effectAllowed = 'move';
-    }
-  });
 
   // Handle dragover
   container.addEventListener('dragover', function (event) {
@@ -261,10 +219,21 @@ function attachDragAndDropHandlers() {
   // Handle drop
   container.addEventListener('drop', function (event) {
     const dropZone = event.target.closest('.team-one, .team-two');
-    if (dropZone && draggedElement) {
+    if (dropZone && draggedFighter) {
       event.preventDefault();
-      dropZone.appendChild(draggedElement);
-      draggedElement = null;
+      
+      // Create a new fighter card for the team zone
+      const card = document.createElement('fighter-card');
+      card.fighter = draggedFighter;
+      card.setAttribute('fighter-id', draggedFighter.id);
+      card.setAttribute('fighter-name', draggedFighter.name);
+      card.setAttribute('fighter-image', draggedFighter.image);
+      card.setAttribute('fighter-health', draggedFighter.health);
+      card.setAttribute('fighter-strength', draggedFighter.strength);
+      card.setAttribute('fighter-class', draggedFighter.class);
+      
+      dropZone.appendChild(card);
+      draggedFighter = null;
 
       // Check if both teams have fighters and show start button
       const teamOneHas = document.querySelector('.team-one').children.length > 0;
@@ -289,12 +258,66 @@ function initGame(isMatchFight) {
   Game.logFighters().then((apiFighters) => {
     appState.fighters = apiFighters;
 
+    // Render fighter cards using Web Components
+    const chooseFighter = document.querySelector('#choose-fighter');
+    if (chooseFighter) {
+      apiFighters.forEach(fighter => {
+        const card = document.createElement('fighter-card');
+        card.fighter = fighter;
+        card.setAttribute('fighter-id', fighter.id);
+        card.setAttribute('fighter-name', fighter.name);
+        card.setAttribute('fighter-image', fighter.image);
+        card.setAttribute('fighter-health', fighter.health);
+        card.setAttribute('fighter-strength', fighter.strength);
+        card.setAttribute('fighter-class', fighter.class);
+        card.setAttribute('fighter-description', fighter.description);
+        
+        if (isMatchFight) {
+          card.setAttribute('draggable', 'true');
+          card.addEventListener('fighter-dragstart', (e) => {
+            handleFighterDragStart(e.detail);
+          });
+        } else {
+          card.setAttribute('selectable', 'true');
+          card.addEventListener('fighter-selected', (e) => {
+            handleFighterSelection(e.detail);
+          });
+        }
+        
+        chooseFighter.appendChild(card);
+      });
+    }
+
     if (isMatchFight) {
       attachDragAndDropHandlers();
-    } else {
-      attachClickEvent();
     }
   });
+}
+
+/**
+ * Handle fighter selection (single fight mode)
+ */
+function handleFighterSelection(detail) {
+  if (!appState.firstFighter) {
+    appState.firstFighter = detail.fighter;
+    appState.chosenFighters++;
+  } else if (!appState.secondFighter) {
+    appState.secondFighter = detail.fighter;
+    appState.chosenFighters++;
+  }
+
+  if (appState.chosenFighters === 2) {
+    appState.chosenFighters = 0;
+    attachStartButton(false);
+  }
+}
+
+/**
+ * Handle fighter drag start (team mode)
+ */
+let draggedFighter = null;
+function handleFighterDragStart(detail) {
+  draggedFighter = detail.fighter;
 }
 
 /**
