@@ -6,6 +6,7 @@ import { BaseComponent } from './BaseComponent.js';
  * 
  * Events:
  * - mode-selected: { mode: 'single' | 'team' }
+ * - tournament-selected: User wants to start tournament
  */
 export class TitleScreen extends BaseComponent {
   styles() {
@@ -242,6 +243,10 @@ export class TitleScreen extends BaseComponent {
               <span class="btn-icon">👥</span>
               Team Battle
             </button>
+            <button class="menu-btn" id="tournament-btn">
+              <span class="btn-icon">🏆</span>
+              Tournament
+            </button>
           </div>
         </div>
 
@@ -251,7 +256,7 @@ export class TitleScreen extends BaseComponent {
   }
 
   attachEventListeners() {
-    const buttons = this.shadowRoot.querySelectorAll('.menu-btn');
+    const buttons = this.shadowRoot.querySelectorAll('.menu-btn[data-mode]');
     
     buttons.forEach(btn => {
       btn.addEventListener('click', () => {
@@ -259,6 +264,14 @@ export class TitleScreen extends BaseComponent {
         this.emit('mode-selected', { mode });
       });
     });
+
+    // Tournament button
+    const tournamentBtn = this.shadowRoot.querySelector('#tournament-btn');
+    if (tournamentBtn) {
+      tournamentBtn.addEventListener('click', () => {
+        this.emit('tournament-selected');
+      });
+    }
 
     // Create floating particles
     this.createParticles();

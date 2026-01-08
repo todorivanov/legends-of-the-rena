@@ -116,12 +116,17 @@ function showTitleScreen() {
     showOpponentSelection();
   });
 
+  titleScreen.addEventListener('tournament-selected', () => {
+    soundManager.init();
+    soundManager.play('event');
+    showTournamentBracketScreen();
+  });
+
   root.appendChild(titleScreen);
   appState.currentScreen = 'title';
   
-  // Add Profile, Tournament, Achievements, and Settings buttons to title screen
+  // Add Profile, Achievements, and Settings buttons to title screen
   addProfileButton();
-  addTournamentButton();
   addAchievementsButton();
   addSettingsButton();
 }
@@ -159,7 +164,7 @@ function addProfileButton() {
   profileBtn.style.cssText = `
     position: fixed;
     top: 20px;
-    right: 140px;
+    right: 550px;
     width: auto;
     padding: 12px 24px;
     border-radius: 8px;
@@ -289,58 +294,6 @@ function showTournamentBracketScreen() {
 }
 
 /**
- * Add tournament button overlay
- */
-function addTournamentButton() {
-  // Remove existing tournament button if any
-  const existingBtn = document.getElementById('tournament-overlay-btn');
-  if (existingBtn) {
-    existingBtn.remove();
-  }
-
-  const tournamentBtn = document.createElement('button');
-  tournamentBtn.id = 'tournament-overlay-btn';
-  tournamentBtn.innerHTML = '🏆 Tournament';
-  tournamentBtn.style.cssText = `
-    position: fixed;
-    top: 20px;
-    right: 280px;
-    width: auto;
-    padding: 12px 24px;
-    border-radius: 8px;
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    background: rgba(26, 13, 46, 0.8);
-    color: white;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    z-index: 10000;
-    backdrop-filter: blur(10px);
-    transition: all 0.3s ease;
-    font-family: 'Press Start 2P', cursive;
-  `;
-
-  tournamentBtn.addEventListener('click', () => {
-    soundManager.play('event');
-    showTournamentBracketScreen();
-  });
-
-  tournamentBtn.addEventListener('mouseenter', () => {
-    tournamentBtn.style.background = 'rgba(255, 215, 0, 0.3)';
-    tournamentBtn.style.borderColor = 'gold';
-    tournamentBtn.style.transform = 'translateY(-2px)';
-  });
-
-  tournamentBtn.addEventListener('mouseleave', () => {
-    tournamentBtn.style.background = 'rgba(26, 13, 46, 0.8)';
-    tournamentBtn.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-    tournamentBtn.style.transform = 'translateY(0)';
-  });
-
-  document.body.appendChild(tournamentBtn);
-}
-
-/**
  * Show achievements screen
  */
 function showAchievementsScreen() {
@@ -373,7 +326,7 @@ function addAchievementsButton() {
   achievementsBtn.style.cssText = `
     position: fixed;
     top: 20px;
-    right: 480px;
+    right: 310px;
     width: auto;
     padding: 12px 24px;
     border-radius: 8px;
@@ -427,7 +380,7 @@ function showSettingsScreen() {
 }
 
 /**
- * Add settings button overlay
+ * Add settings button overlay (gear icon next to theme toggle)
  */
 function addSettingsButton() {
   // Remove existing settings button if any
@@ -438,24 +391,25 @@ function addSettingsButton() {
 
   const settingsBtn = document.createElement('button');
   settingsBtn.id = 'settings-overlay-btn';
-  settingsBtn.innerHTML = '⚙️ Settings';
+  settingsBtn.innerHTML = '⚙️';
   settingsBtn.style.cssText = `
     position: fixed;
     top: 20px;
-    right: 690px;
-    width: auto;
-    padding: 12px 24px;
-    border-radius: 8px;
+    right: 140px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
     border: 2px solid rgba(255, 255, 255, 0.2);
     background: rgba(26, 13, 46, 0.8);
     color: white;
-    font-size: 16px;
-    font-weight: 600;
+    font-size: 24px;
     cursor: pointer;
     z-index: 10000;
     backdrop-filter: blur(10px);
     transition: all 0.3s ease;
-    font-family: 'Press Start 2P', cursive;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   `;
 
   settingsBtn.addEventListener('click', () => {
@@ -466,13 +420,13 @@ function addSettingsButton() {
   settingsBtn.addEventListener('mouseenter', () => {
     settingsBtn.style.background = 'rgba(255, 167, 38, 0.3)';
     settingsBtn.style.borderColor = '#ffa726';
-    settingsBtn.style.transform = 'translateY(-2px)';
+    settingsBtn.style.transform = 'translateY(-2px) rotate(90deg)';
   });
 
   settingsBtn.addEventListener('mouseleave', () => {
     settingsBtn.style.background = 'rgba(26, 13, 46, 0.8)';
     settingsBtn.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-    settingsBtn.style.transform = 'translateY(0)';
+    settingsBtn.style.transform = 'translateY(0) rotate(0deg)';
   });
 
   document.body.appendChild(settingsBtn);
