@@ -473,7 +473,7 @@ export class WikiScreen extends BaseComponent {
           </tr>
           <tr>
             <td>⚔️ Equipment Shop</td>
-            <td>6-8 rotating items, refreshes every 24 hours</td>
+            <td>6-8 rotating items, refreshes every 24 hours (or force refresh for 100 gold!)</td>
           </tr>
           <tr>
             <td>🧪 Consumables</td>
@@ -533,8 +533,16 @@ export class WikiScreen extends BaseComponent {
           <li><strong>💙 Mana Potion</strong> - 25 gold (restores 30 Mana)</li>
         </ul>
 
+        <h2>🔄 Force Refresh</h2>
+        <div class="info-box" style="border-color: #673ab7;">
+          <strong>Don't want to wait for the 24-hour refresh?</strong><br>
+          Pay <strong>100 gold</strong> to instantly refresh the shop inventory!<br><br>
+          Click the <strong>"🔄 Refresh"</strong> button in the marketplace header.<br>
+          Great for when you're hunting for specific items or legendary gear.
+        </div>
+
         <div class="tip-box">
-          <strong>💡 Pro Tip:</strong> Check the marketplace daily! The shop refreshes every 24 hours with new items. Save gold for legendary items at level 15+!
+          <strong>💡 Pro Tip:</strong> Check the marketplace daily! The shop refreshes every 24 hours automatically, or pay 100 gold to refresh instantly. Save gold for legendary items at level 15+!
         </div>
 
         <p style="text-align: center; margin-top: 30px;">

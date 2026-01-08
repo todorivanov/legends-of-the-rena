@@ -86,6 +86,7 @@ export const GameConfig = {
   // Marketplace System
   marketplace: {
     refreshIntervalHours: 24,
+    refreshCost: 100, // Gold cost to force refresh
     inventorySize: { min: 6, max: 8 },
     legendaryChance: 0.05, // 5% at level 15+
     epicChance: 0.15, // 15% at level 10+

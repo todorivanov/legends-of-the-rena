@@ -318,11 +318,18 @@ export class MarketplaceManager {
       return false;
     }
 
-    // Check if item is equipped
+    // Check if item is equipped AND if it's the only copy
     const equipped = SaveManager.get('equipped');
     const isEquipped = Object.values(equipped).includes(equipmentId);
     
-    if (isEquipped) {
+    // Count how many copies of this item we have
+    const itemCount = inventory.filter(id => id === equipmentId).length;
+    
+    // Only block the sale if:
+    // 1. The item is equipped AND
+    // 2. This is the only copy (no duplicates)
+    // If there are duplicates, we allow selling the non-equipped copy
+    if (isEquipped && itemCount === 1) {
       console.log('❌ Cannot sell equipped items. Unequip first.');
       
       const message = `
@@ -381,7 +388,7 @@ export class MarketplaceManager {
   }
 
   /**
-   * Force refresh shop inventory
+   * Force refresh shop inventory (free, no cost)
    */
   static forceRefresh() {
     const playerLevel = SaveManager.get('profile.level') || 1;
@@ -402,6 +409,63 @@ export class MarketplaceManager {
       </div>
     `;
     Logger.log(message);
+  }
+
+  /**
+   * Force refresh shop inventory for a gold cost
+   * @param {number} cost - Gold cost for refresh
+   * @returns {boolean} - Success status
+   */
+  static forceRefreshWithCost(cost = 100) {
+    // Check if player can afford
+    if (!EconomyManager.canAfford(cost)) {
+      const message = `
+        <div class="cannot-refresh" style="
+          background: linear-gradient(135deg, rgba(244, 67, 54, 0.2), rgba(211, 47, 47, 0.3));
+          border-left: 4px solid #f44336;
+          padding: 12px;
+          margin: 8px 0;
+          border-radius: 8px;
+          text-align: center;
+        ">
+          <span style="font-size: 24px; margin-right: 8px;">❌</span>
+          <strong style="color: #ef5350;">Cannot Afford Refresh</strong>
+          <span style="color: #ffcdd2; margin-left: 8px;">Need ${cost} gold.</span>
+        </div>
+      `;
+      Logger.log(message);
+      console.log(`❌ Cannot afford shop refresh. Need ${cost} gold.`);
+      return false;
+    }
+
+    // Spend gold
+    if (!EconomyManager.spendGold(cost, 'Shop Refresh')) {
+      return false;
+    }
+
+    // Refresh inventory
+    const playerLevel = SaveManager.get('profile.level') || 1;
+    this.generateRotatingInventory(playerLevel, true);
+
+    const message = `
+      <div class="shop-refresh" style="
+        background: linear-gradient(135deg, rgba(103, 58, 183, 0.2), rgba(81, 45, 168, 0.3));
+        border: 2px solid #673ab7;
+        padding: 15px;
+        margin: 10px 0;
+        border-radius: 10px;
+        text-align: center;
+      ">
+        <div style="font-size: 48px; margin-bottom: 8px;">✨</div>
+        <strong style="color: #b39ddb; font-size: 20px;">Shop Inventory Refreshed!</strong>
+        <div style="color: #d1c4e9; margin-top: 5px;">New items available for purchase</div>
+        <div style="color: #ffc107; margin-top: 8px; font-size: 14px;">-${cost} 💰</div>
+      </div>
+    `;
+    Logger.log(message);
+
+    console.log(`✅ Shop refreshed for ${cost} gold`);
+    return true;
   }
 
   /**

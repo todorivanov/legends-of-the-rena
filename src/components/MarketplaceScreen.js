@@ -5,6 +5,7 @@ import { EquipmentManager } from '../game/EquipmentManager.js';
 import { EconomyManager } from '../game/EconomyManager.js';
 import { SaveManager } from '../utils/saveManager.js';
 import { RARITY_COLORS, RARITY_NAMES } from '../data/equipment.js';
+import { GameConfig } from '../config/gameConfig.js';
 
 /**
  * MarketplaceScreen Web Component
@@ -85,6 +86,42 @@ export class MarketplaceScreen extends BaseComponent {
       .refresh-info {
         font-size: 14px;
         color: #b39ddb;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-top: 8px;
+      }
+
+      .refresh-btn {
+        padding: 8px 16px;
+        font-size: 13px;
+        font-weight: 700;
+        color: white;
+        background: linear-gradient(135deg, #673ab7 0%, #512da8 100%);
+        border: 2px solid #673ab7;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .refresh-btn:hover {
+        background: linear-gradient(135deg, #7e57c2 0%, #673ab7 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(103, 58, 183, 0.5);
+      }
+
+      .refresh-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .refresh-btn:disabled:hover {
+        background: linear-gradient(135deg, #673ab7 0%, #512da8 100%);
+        box-shadow: none;
       }
 
       .header-right {
@@ -414,6 +451,8 @@ export class MarketplaceScreen extends BaseComponent {
   template() {
     const gold = EconomyManager.getGold();
     const refreshTime = MarketplaceManager.getRefreshTimeFormatted();
+    const refreshCost = GameConfig.marketplace.refreshCost;
+    const canAffordRefresh = EconomyManager.canAfford(refreshCost);
 
     return `
       <div class="overlay"></div>
@@ -421,7 +460,17 @@ export class MarketplaceScreen extends BaseComponent {
         <div class="marketplace-header">
           <div class="header-left">
             <h1 class="marketplace-title">🏪 Marketplace</h1>
-            <div class="refresh-info">Shop refreshes in: ${refreshTime}</div>
+            <div class="refresh-info">
+              <span>Shop refreshes in: ${refreshTime}</span>
+              <button 
+                class="refresh-btn" 
+                id="refresh-btn" 
+                ${!canAffordRefresh ? 'disabled' : ''}
+                title="${canAffordRefresh ? 'Force refresh shop inventory' : 'Not enough gold'}"
+              >
+                🔄 Refresh (${refreshCost} 💰)
+              </button>
+            </div>
           </div>
           <div class="header-right">
             <div class="gold-display">${gold} 💰</div>
@@ -466,6 +515,102 @@ export class MarketplaceScreen extends BaseComponent {
     }
   }
 
+  /**
+   * Helper method to generate class requirement badge HTML
+   * @param {Object} equipment - Equipment object
+   * @param {boolean} checkPlayer - Whether to check player's class compatibility
+   * @returns {string} HTML string
+   */
+  getClassRequirementHTML(equipment, checkPlayer = true) {
+    const playerClass = SaveManager.get('profile.character.class') || SaveManager.get('profile.class');
+    const meetsClassReq = !equipment.requirements.class || equipment.requirements.class.includes(playerClass);
+    
+    const classIcons = {
+      'BALANCED': '⚖️',
+      'WARRIOR': '⚔️',
+      'TANK': '🛡️',
+      'GLASS_CANNON': '💥',
+      'BRUISER': '👊',
+      'MAGE': '🔮',
+      'ASSASSIN': '🗡️',
+      'BERSERKER': '🪓',
+      'PALADIN': '⚜️',
+      'NECROMANCER': '💀',
+    };
+    
+    const classNames = {
+      'BALANCED': 'Balanced',
+      'WARRIOR': 'Warrior',
+      'TANK': 'Tank',
+      'GLASS_CANNON': 'Glass Cannon',
+      'BRUISER': 'Bruiser',
+      'MAGE': 'Mage',
+      'ASSASSIN': 'Assassin',
+      'BERSERKER': 'Berserker',
+      'PALADIN': 'Paladin',
+      'NECROMANCER': 'Necromancer',
+    };
+    
+    if (equipment.requirements.class) {
+      const classesText = equipment.requirements.class
+        .map(c => `${classIcons[c] || ''} ${classNames[c] || c}`)
+        .join(', ');
+      
+      let bgColor, borderColor, textColor, icon;
+      
+      if (!checkPlayer) {
+        // Just showing info, not checking compatibility
+        bgColor = 'rgba(106, 66, 194, 0.15)';
+        borderColor = 'rgba(106, 66, 194, 0.4)';
+        textColor = '#b39ddb';
+        icon = '';
+      } else if (meetsClassReq) {
+        // Player can use this
+        bgColor = 'rgba(76, 175, 80, 0.15)';
+        borderColor = 'rgba(76, 175, 80, 0.4)';
+        textColor = '#66bb6a';
+        icon = '✅ ';
+      } else {
+        // Player cannot use this
+        bgColor = 'rgba(244, 67, 54, 0.15)';
+        borderColor = 'rgba(244, 67, 54, 0.4)';
+        textColor = '#ef5350';
+        icon = '❌ ';
+      }
+      
+      return `
+        <div style="
+          text-align: center; 
+          font-size: 11px; 
+          padding: 6px 8px; 
+          background: ${bgColor};
+          border: 1px solid ${borderColor};
+          border-radius: 6px;
+          margin: 8px 0;
+          color: ${textColor};
+        ">
+          ${icon}${classesText}
+        </div>
+      `;
+    } else {
+      // No class restrictions
+      return `
+        <div style="
+          text-align: center; 
+          font-size: 11px; 
+          padding: 6px 8px; 
+          background: rgba(76, 175, 80, 0.15);
+          border: 1px solid rgba(76, 175, 80, 0.4);
+          border-radius: 6px;
+          margin: 8px 0;
+          color: #66bb6a;
+        ">
+          ✅ All Classes
+        </div>
+      `;
+    }
+  }
+
   renderEquipmentTab() {
     const inventory = MarketplaceManager.getCurrentInventory();
     
@@ -489,7 +634,11 @@ export class MarketplaceScreen extends BaseComponent {
     const price = MarketplaceManager.getItemPrice(equipment);
     const canAfford = EconomyManager.canAfford(price);
     const playerLevel = SaveManager.get('profile.level');
-    const meetsRequirements = equipment.requirements.level <= playerLevel;
+    const playerClass = SaveManager.get('profile.character.class') || SaveManager.get('profile.class');
+    
+    const meetsLevelReq = equipment.requirements.level <= playerLevel;
+    const meetsClassReq = !equipment.requirements.class || equipment.requirements.class.includes(playerClass);
+    const canPurchase = canAfford && meetsLevelReq && meetsClassReq;
 
     const stats = Object.entries(equipment.stats)
       .map(([stat, value]) => `+${value} ${stat}`)
@@ -504,14 +653,15 @@ export class MarketplaceScreen extends BaseComponent {
         <div class="item-name">${equipment.name}</div>
         <div class="item-description">${equipment.description}</div>
         <div class="item-stats">${stats}</div>
-        ${!meetsRequirements ? `<div style="color: #f44336; text-align: center; font-size: 12px;">Requires Level ${equipment.requirements.level}</div>` : ''}
+        ${this.getClassRequirementHTML(equipment, true)}
+        ${!meetsLevelReq ? `<div style="color: #f44336; text-align: center; font-size: 12px; margin-top: 4px;">❌ Requires Level ${equipment.requirements.level}</div>` : ''}
         <div class="item-price">${price} 💰</div>
         <div class="item-actions">
           <button 
             class="action-btn buy" 
             data-action="buy" 
             data-id="${equipment.id}"
-            ${!canAfford || !meetsRequirements ? 'disabled' : ''}
+            ${!canPurchase ? 'disabled' : ''}
           >
             Purchase
           </button>
@@ -593,10 +743,19 @@ export class MarketplaceScreen extends BaseComponent {
     const repairCost = durabilityInfo.repairCost;
     const canAfford = EconomyManager.canAfford(repairCost);
 
+    const stats = Object.entries(equipment.stats)
+      .map(([stat, value]) => `+${value} ${stat}`)
+      .join(', ');
+
     return `
       <div class="item-card" data-equipment-id="${equipment.id}">
         <div class="item-icon">${equipment.icon}</div>
+        <div class="item-rarity" style="color: ${RARITY_COLORS[equipment.rarity]}; font-size: 12px; text-transform: uppercase; text-align: center; margin: 4px 0;">
+          ${RARITY_NAMES[equipment.rarity]}
+        </div>
         <div class="item-name">${equipment.name}</div>
+        <div class="item-stats" style="font-size: 12px; color: #b39ddb; margin: 8px 0; text-align: center;">${stats}</div>
+        ${this.getClassRequirementHTML(equipment, false)}
         <div class="item-durability">
           <div class="durability-bar">
             <div class="durability-fill" style="width: ${durabilityInfo.percentage}%; background: ${durabilityInfo.color}"></div>
@@ -633,16 +792,33 @@ export class MarketplaceScreen extends BaseComponent {
       `;
     }
 
+    // Track which equipped items we've already marked
+    // This handles the case where you have multiple copies of the same item
+    const equippedItemsMarked = new Set();
+    
     return `
       <div class="items-grid">
-        ${inventory.map(eq => this.renderSellItem(eq, equipped)).join('')}
+        ${inventory.map(eq => {
+          // Check if this specific item is equipped
+          const isThisItemEquipped = Object.values(equipped).includes(eq.id) && !equippedItemsMarked.has(eq.id);
+          
+          // If this item is equipped, mark it so we don't mark duplicates
+          if (isThisItemEquipped) {
+            equippedItemsMarked.add(eq.id);
+          }
+          
+          return this.renderSellItem(eq, isThisItemEquipped);
+        }).join('')}
       </div>
     `;
   }
 
-  renderSellItem(equipment, equipped) {
+  renderSellItem(equipment, isEquipped) {
     const sellPrice = MarketplaceManager.getSellPrice(equipment);
-    const isEquipped = Object.values(equipped).includes(equipment.id);
+
+    const stats = Object.entries(equipment.stats)
+      .map(([stat, value]) => `+${value} ${stat}`)
+      .join(', ');
 
     return `
       <div class="item-card" data-equipment-id="${equipment.id}">
@@ -651,7 +827,9 @@ export class MarketplaceScreen extends BaseComponent {
           ${RARITY_NAMES[equipment.rarity]}
         </div>
         <div class="item-name">${equipment.name}</div>
-        ${isEquipped ? '<div style="color: #ffc107; text-align: center; font-size: 13px;">⚠️ Currently Equipped</div>' : ''}
+        <div class="item-stats" style="font-size: 12px; color: #b39ddb; margin: 8px 0;">${stats}</div>
+        ${this.getClassRequirementHTML(equipment, true)}
+        ${isEquipped ? '<div style="color: #ffc107; text-align: center; font-size: 13px; margin-top: 4px;">⚠️ Currently Equipped</div>' : ''}
         <div class="item-price">${sellPrice} 💰</div>
         <div class="item-actions">
           <button 
@@ -669,13 +847,42 @@ export class MarketplaceScreen extends BaseComponent {
 
   attachEventListeners() {
     // Close button
-    this.shadowRoot.querySelector('#close-btn').addEventListener('click', () => {
+    this.shadowRoot.querySelector('#close-btn').addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
       this.emit('close');
     });
 
+    // Refresh button
+    const refreshBtn = this.shadowRoot.querySelector('#refresh-btn');
+    if (refreshBtn) {
+      refreshBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const refreshCost = GameConfig.marketplace.refreshCost;
+        
+        // Confirm with user
+        const confirmed = confirm(
+          `Refresh shop inventory for ${refreshCost} gold?\n\n` +
+          `This will generate new items immediately instead of waiting for the automatic refresh.`
+        );
+        
+        if (confirmed) {
+          const success = MarketplaceManager.forceRefreshWithCost(refreshCost);
+          if (success) {
+            // Re-render to show new inventory
+            this.render();
+          }
+        }
+      });
+    }
+
     // Tab buttons
     this.shadowRoot.querySelectorAll('.tab-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
         this.activeTab = btn.dataset.tab;
         this.render();
       });
@@ -683,7 +890,10 @@ export class MarketplaceScreen extends BaseComponent {
 
     // Action buttons
     this.shadowRoot.querySelectorAll('[data-action]').forEach(btn => {
-      btn.addEventListener('click', () => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        
         const action = btn.dataset.action;
         const id = btn.dataset.id;
         const type = btn.dataset.type;

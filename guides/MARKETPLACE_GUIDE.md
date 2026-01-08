@@ -52,6 +52,13 @@ Track your economy in the Profile screen:
 - Items scale with your **player level**
 - Higher level = better items in rotation
 
+**Force Refresh** 🔄:
+- **Cost**: 100 gold
+- **Effect**: Instantly refresh shop inventory
+- Don't want to wait? Pay gold to get new items now!
+- Click the **"🔄 Refresh"** button next to the timer
+- Great for finding that perfect item immediately
+
 **Rarity Chances**:
 - **Common**: 70% chance
 - **Rare**: 20% chance (level 5+)

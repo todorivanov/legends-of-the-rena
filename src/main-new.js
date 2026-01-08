@@ -518,10 +518,45 @@ function showMissionResults(missionResult) {
       </div>
     `);
     
-    // Return to campaign map after delay
+    // Add a button to return to campaign map (instead of auto-redirect)
+    Logger.log(`
+      <div style="margin-top: 20px; text-align: center;">
+        <button id="return-to-map-btn-failed" style="
+          padding: 15px 40px;
+          font-size: 18px;
+          font-weight: 700;
+          background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+          color: white;
+          border: 2px solid #f44336;
+          border-radius: 12px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+        ">
+        🗺️ Return to Campaign Map
+        </button>
+        <div style="margin-top: 10px; font-size: 14px; color: rgba(255, 255, 255, 0.6); font-style: italic;">
+          Review the combat logs to see what went wrong
+        </div>
+      </div>
+    `);
+    
+    // Add event listener to the button
     setTimeout(() => {
-      showCampaignMapScreen();
-    }, 3000);
+      const returnBtn = document.querySelector('#return-to-map-btn-failed');
+      if (returnBtn) {
+        returnBtn.addEventListener('click', () => {
+          showCampaignMapScreen();
+        });
+        returnBtn.addEventListener('mouseover', () => {
+          returnBtn.style.transform = 'translateY(-3px)';
+          returnBtn.style.boxShadow = '0 10px 30px rgba(244, 67, 54, 0.5)';
+        });
+        returnBtn.addEventListener('mouseout', () => {
+          returnBtn.style.transform = 'translateY(0)';
+          returnBtn.style.boxShadow = 'none';
+        });
+      }
+    }, 100);
     return;
   }
 
@@ -561,10 +596,45 @@ function showMissionResults(missionResult) {
     Logger.log(objectivesHTML);
   }
 
-  // Return to campaign map after delay
+  // Add a button to return to campaign map (instead of auto-redirect)
+  Logger.log(`
+    <div style="margin-top: 20px; text-align: center;">
+      <button id="return-to-map-btn" style="
+        padding: 15px 40px;
+        font-size: 18px;
+        font-weight: 700;
+        background: linear-gradient(135deg, #6a42c2 0%, #2d1b69 100%);
+        color: white;
+        border: 2px solid #6a42c2;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      ">
+        🗺️ Return to Campaign Map
+      </button>
+      <div style="margin-top: 10px; font-size: 14px; color: rgba(255, 255, 255, 0.6); font-style: italic;">
+        Take your time to review the combat logs above
+      </div>
+    </div>
+  `);
+
+  // Add event listener to the button
   setTimeout(() => {
-    showCampaignMapScreen();
-  }, 5000);
+    const returnBtn = document.querySelector('#return-to-map-btn');
+    if (returnBtn) {
+      returnBtn.addEventListener('click', () => {
+        showCampaignMapScreen();
+      });
+      returnBtn.addEventListener('mouseover', () => {
+        returnBtn.style.transform = 'translateY(-3px)';
+        returnBtn.style.boxShadow = '0 10px 30px rgba(106, 66, 194, 0.5)';
+      });
+      returnBtn.addEventListener('mouseout', () => {
+        returnBtn.style.transform = 'translateY(0)';
+        returnBtn.style.boxShadow = 'none';
+      });
+    }
+  }, 100);
 }
 
 /**
@@ -1063,6 +1133,12 @@ function showRegularVictoryScreen(winner) {
     showTitleScreen();
   });
 
+  victoryScreen.addEventListener('close', () => {
+    // Just remove the victory screen overlay without navigating away
+    // This allows the user to view combat logs and final stats
+    victoryScreen.remove();
+  });
+
   document.body.appendChild(victoryScreen);
 }
 
@@ -1086,6 +1162,12 @@ function showTournamentVictoryScreen() {
     Game.stopGame();
     appState.reset();
     showTitleScreen();
+  });
+
+  victoryScreen.addEventListener('close', () => {
+    // Just remove the victory screen overlay without navigating away
+    // This allows the user to view combat logs and final stats
+    victoryScreen.remove();
   });
 
   document.body.appendChild(victoryScreen);
