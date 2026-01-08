@@ -335,6 +335,9 @@ export class WikiScreen extends BaseComponent {
           <button class="tab-button ${this._activeTab === 'economy' ? 'active' : ''}" data-tab="economy">
             💰 Economy
           </button>
+          <button class="tab-button ${this._activeTab === 'classes' ? 'active' : ''}" data-tab="classes">
+            🎭 Classes
+          </button>
           <button class="tab-button ${this._activeTab === 'achievements' ? 'active' : ''}" data-tab="achievements">
             🏅 Achievements
           </button>
@@ -353,6 +356,7 @@ export class WikiScreen extends BaseComponent {
           ${this.renderStoryContent()}
           ${this.renderMarketplaceContent()}
           ${this.renderEconomyContent()}
+          ${this.renderClassesContent()}
           ${this.renderAchievementsContent()}
           ${this.renderEquipmentContent()}
           ${this.renderTournamentContent()}
@@ -624,6 +628,164 @@ export class WikiScreen extends BaseComponent {
         <p style="text-align: center; margin-top: 30px;">
           <strong>📚 For advanced economy strategies, see ECONOMY_GUIDE.md</strong>
         </p>
+      </div>
+    `;
+  }
+
+  renderClassesContent() {
+    return `
+      <div class="content-section ${this._activeTab === 'classes' ? 'active' : ''}" id="classes-content">
+        <h1>🎭 Character Classes</h1>
+        
+        <div class="info-box">
+          <strong>10 Unique Classes | Unique Passives | Distinct Playstyles</strong><br>
+          Choose your path to glory! Each class has different stats and passive abilities.
+        </div>
+
+        <h2>🌟 Beginner Classes</h2>
+        
+        <h3>⚖️ Balanced Fighter</h3>
+        <div class="info-box" style="border-color: #4caf50;">
+          <strong>Difficulty: ★ Beginner</strong><br>
+          <strong>HP:</strong> 400 | <strong>STR:</strong> 10 | <strong>Crit:</strong> 15% | <strong>Mana:</strong> +5/turn<br>
+          <strong>Passive - Versatility ✨:</strong> Gain +5% to all stats for each different action type used (attack, skill, defend, item). Use all 4 = +20% bonus!<br>
+          <strong>Best For:</strong> New players learning game mechanics
+        </div>
+
+        <h3>⚔️ Warrior</h3>
+        <div class="info-box" style="border-color: #f44336;">
+          <strong>Difficulty: ★ Beginner</strong><br>
+          <strong>HP:</strong> 360 (-10%) | <strong>STR:</strong> 13 (+30%) | <strong>Crit:</strong> 20% (+33%) | <strong>Crit Dmg:</strong> 175%<br>
+          <strong>Passive - Battle Fury 🔥:</strong> Critical hits reduce skill cooldowns by 1 turn and grant +10% damage on next attack. +5% damage per combo hit.<br>
+          <strong>Best For:</strong> Aggressive damage dealers
+        </div>
+
+        <h3>⚜️ Paladin</h3>
+        <div class="info-box" style="border-color: #ffd700;">
+          <strong>Difficulty: ★ Beginner</strong><br>
+          <strong>HP:</strong> 480 (+20%) | <strong>STR:</strong> 10.5 (+5%) | <strong>DEF:</strong> 115% | <strong>Mana:</strong> +7/turn<br>
+          <strong>Passive - Divine Protection ✝️:</strong> Heal 3% max HP each turn. Defending heals additional 8% max HP. +40% healing from items.<br>
+          <strong>Best For:</strong> Survivability and sustain
+        </div>
+
+        <h3>👊 Bruiser</h3>
+        <div class="info-box" style="border-color: #9c27b0;">
+          <strong>Difficulty: ★ Beginner</strong><br>
+          <strong>HP:</strong> 500 (+25%) | <strong>STR:</strong> 9 (-10%) | <strong>DEF:</strong> 110% | <strong>Healing:</strong> +15%<br>
+          <strong>Passive - Lifesteal 💪:</strong> Heal for 10% of damage dealt. Gain 2% max HP permanently every 3 kills. Grows stronger over time!<br>
+          <strong>Best For:</strong> Tank + heal through combat
+        </div>
+
+        <h2>🛡️ Defensive Class</h2>
+
+        <h3>🛡️ Tank</h3>
+        <div class="info-box" style="border-color: #607d8b;">
+          <strong>Difficulty: ★ Beginner</strong><br>
+          <strong>HP:</strong> 600 (+50%) | <strong>STR:</strong> 6 (-40%) | <strong>DEF:</strong> 150% (+50%)<br>
+          <strong>Passive - Iron Will 🛡️:</strong> Defending grants shield that absorbs 30% of next damage. Heal 5% max HP each turn. +30% defend bonus (80% total reduction!).<br>
+          <strong>Best For:</strong> Outlasting enemies
+        </div>
+
+        <h2>🔥 Offense Classes</h2>
+
+        <h3>💥 Glass Cannon</h3>
+        <div class="info-box" style="border-color: #ff5722;">
+          <strong>Difficulty: ★★★ Advanced</strong><br>
+          <strong>HP:</strong> 300 (-25%) | <strong>STR:</strong> 20 (+100%) | <strong>Crit:</strong> 25% | <strong>Crit Dmg:</strong> 200%<br>
+          <strong>Passive - Glass Cannon 💥:</strong> Deal 15% more damage for every 25% HP missing (up to +60%!). Skills cost 30% less mana. +8% per combo.<br>
+          <strong>WARNING:</strong> Very fragile, 20% less effective defend<br>
+          <strong>Best For:</strong> Expert players who can avoid damage
+        </div>
+
+        <h3>🗡️ Assassin</h3>
+        <div class="info-box" style="border-color: #9e9e9e;">
+          <strong>Difficulty: ★★★ Advanced</strong><br>
+          <strong>HP:</strong> 320 (-20%) | <strong>STR:</strong> 12 (+20%) | <strong>Crit:</strong> 30% (highest!) | <strong>Crit Dmg:</strong> 220%<br>
+          <strong>Passive - First Strike ⚡:</strong> First attack each combat deals DOUBLE damage. 15% chance to attack again immediately. +10% per combo (highest!).<br>
+          <strong>Best For:</strong> Burst damage and high crits
+        </div>
+
+        <h3>🪓 Berserker</h3>
+        <div class="info-box" style="border-color: #d32f2f;">
+          <strong>Difficulty: ★★★ Advanced</strong><br>
+          <strong>HP:</strong> 440 (+10%) | <strong>STR:</strong> 11.5 (+15%) | <strong>DEF:</strong> 80% (-20%)<br>
+          <strong>Passive - Rage 😡:</strong> Gain 3% damage and 1% crit for every 10% HP missing. At 10% HP = +27% damage, +9% crit! Taking damage grants +5 mana.<br>
+          <strong>WARNING:</strong> 25% less effective defend, 20% less healing<br>
+          <strong>Best For:</strong> High risk, high reward playstyle
+        </div>
+
+        <h2>🔮 Magic Classes</h2>
+
+        <h3>🔮 Mage</h3>
+        <div class="info-box" style="border-color: #3f51b5;">
+          <strong>Difficulty: ★★ Intermediate</strong><br>
+          <strong>HP:</strong> 340 (-15%) | <strong>STR:</strong> 8 (-20%) | <strong>Crit Dmg:</strong> 250% (highest!) | <strong>Mana:</strong> +10/turn (highest!)<br>
+          <strong>Passive - Arcane Power ✨:</strong> Skills deal 30% more damage. Using skill grants +20% damage on next basic attack. Skills cost 20% less mana.<br>
+          <strong>Best For:</strong> Skill-focused playstyle
+        </div>
+
+        <h3>💀 Necromancer</h3>
+        <div class="info-box" style="border-color: #4a148c;">
+          <strong>Difficulty: ★★★ Advanced</strong><br>
+          <strong>HP:</strong> 360 (-10%) | <strong>STR:</strong> 8.5 (-15%) | <strong>Mana:</strong> +8/turn | <strong>Crit Dmg:</strong> 170%<br>
+          <strong>Passive - Life Drain 🩸:</strong> Heal for 15% of SKILL damage dealt. Defeating enemies permanently increases max HP by 5%. Skills cost 25% less mana.<br>
+          <strong>Best For:</strong> Dark magic lifesteal builds
+        </div>
+
+        <h2>📊 Class Comparison</h2>
+        <table>
+          <tr>
+            <th>Stat</th>
+            <th>Highest</th>
+            <th>Value</th>
+          </tr>
+          <tr>
+            <td>❤️ HP</td>
+            <td>Tank</td>
+            <td>600</td>
+          </tr>
+          <tr>
+            <td>⚔️ Strength</td>
+            <td>Glass Cannon</td>
+            <td>20 (double!)</td>
+          </tr>
+          <tr>
+            <td>🛡️ Defense</td>
+            <td>Tank</td>
+            <td>150%</td>
+          </tr>
+          <tr>
+            <td>💎 Crit Chance</td>
+            <td>Assassin</td>
+            <td>30%</td>
+          </tr>
+          <tr>
+            <td>💥 Crit Damage</td>
+            <td>Mage</td>
+            <td>250%</td>
+          </tr>
+          <tr>
+            <td>✨ Mana Regen</td>
+            <td>Mage</td>
+            <td>+10/turn</td>
+          </tr>
+        </table>
+
+        <h2>💡 Choosing Your Class</h2>
+        <p>
+          <strong>New Players:</strong> Start with Balanced, Warrior, Paladin, or Bruiser for more forgiving gameplay.<br><br>
+          <strong>Experienced Players:</strong> Try Glass Cannon, Assassin, Berserker, or Necromancer for higher skill ceiling.<br><br>
+          <strong>Like Tanking:</strong> Tank, Paladin<br>
+          <strong>Like Healing:</strong> Paladin, Bruiser, Necromancer<br>
+          <strong>Like Big Crits:</strong> Assassin, Mage, Glass Cannon<br>
+          <strong>Like Skills:</strong> Mage, Necromancer<br>
+          <strong>Like Basic Attacks:</strong> Warrior, Berserker<br>
+          <strong>Like Versatility:</strong> Balanced
+        </p>
+
+        <div class="warning-box">
+          ⚠️ <strong>Pro Tip:</strong> Your class defines your entire playstyle! Read the passive abilities carefully and choose a class that matches how you want to play. You cannot change your class after creation!
+        </div>
       </div>
     `;
   }

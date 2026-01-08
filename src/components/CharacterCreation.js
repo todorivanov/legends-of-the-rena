@@ -1,5 +1,6 @@
 import { BaseComponent } from './BaseComponent.js';
 import { SaveManager } from '../utils/saveManager.js';
+import { CHARACTER_CLASSES, getAllClasses } from '../data/classes.js';
 
 /**
  * CharacterCreation Web Component
@@ -119,8 +120,11 @@ export class CharacterCreation extends BaseComponent {
 
       .class-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
         gap: 15px;
+        max-height: 60vh;
+        overflow-y: auto;
+        padding: 10px;
       }
 
       .class-option {
@@ -130,7 +134,7 @@ export class CharacterCreation extends BaseComponent {
         padding: 20px;
         cursor: pointer;
         transition: all 0.3s ease;
-        text-align: center;
+        text-align: left;
       }
 
       .class-option:hover {
@@ -145,21 +149,99 @@ export class CharacterCreation extends BaseComponent {
         box-shadow: 0 0 25px rgba(0, 230, 118, 0.4);
       }
 
+      .class-header {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 12px;
+      }
+
       .class-icon {
         font-size: 48px;
-        margin-bottom: 10px;
+      }
+
+      .class-title {
+        flex: 1;
       }
 
       .class-name {
-        font-size: 16px;
+        font-size: 18px;
         font-weight: 700;
         color: white;
-        margin-bottom: 8px;
+        margin-bottom: 4px;
+      }
+
+      .class-description {
+        font-size: 12px;
+        color: #b39ddb;
+        font-style: italic;
+        margin-bottom: 10px;
       }
 
       .class-stats {
-        font-size: 12px;
-        color: #b39ddb;
+        font-size: 11px;
+        color: #9e9e9e;
+        margin-bottom: 10px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 5px;
+      }
+
+      .stat-item {
+        background: rgba(0, 0, 0, 0.3);
+        padding: 5px 8px;
+        border-radius: 5px;
+        border-left: 2px solid #ffa726;
+      }
+
+      .class-passive {
+        background: linear-gradient(135deg, rgba(255, 167, 38, 0.1), rgba(255, 111, 0, 0.1));
+        border: 1px solid rgba(255, 167, 38, 0.3);
+        border-radius: 8px;
+        padding: 10px;
+        margin-top: 10px;
+      }
+
+      .passive-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 5px;
+      }
+
+      .passive-icon {
+        font-size: 20px;
+      }
+
+      .passive-name {
+        font-size: 13px;
+        font-weight: 700;
+        color: #ffa726;
+      }
+
+      .passive-description {
+        font-size: 11px;
+        color: #ffecb3;
+        line-height: 1.4;
+      }
+
+      .difficulty-badge {
+        display: inline-block;
+        padding: 3px 8px;
+        font-size: 10px;
+        border-radius: 5px;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+
+      .difficulty-beginner {
+        background: rgba(76, 175, 80, 0.3);
+        color: #66bb6a;
+      }
+
+      .difficulty-advanced {
+        background: rgba(244, 67, 54, 0.3);
+        color: #ef5350;
       }
 
       .appearance-grid {
@@ -244,21 +326,17 @@ export class CharacterCreation extends BaseComponent {
   }
 
   template() {
-    const classes = [
-      { id: 'BALANCED', icon: '⚖️', name: 'Balanced', hp: 400, str: 10 },
-      { id: 'WARRIOR', icon: '⚔️', name: 'Warrior', hp: 350, str: 13 },
-      { id: 'TANK', icon: '🛡️', name: 'Tank', hp: 600, str: 4 },
-      { id: 'GLASS_CANNON', icon: '💥', name: 'Glass Cannon', hp: 300, str: 20 },
-      { id: 'BRUISER', icon: '👊', name: 'Bruiser', hp: 500, str: 6 },
-    ];
-
+    const classes = getAllClasses();
     const appearances = ['🧙', '🧑‍🚀', '🧝', '🧛', '🥷', '🤠', '🧙‍♀️', '🦸', '🦹'];
+    
+    // Determine difficulty for each class
+    const beginnerClasses = ['BALANCED', 'WARRIOR', 'PALADIN', 'BRUISER'];
 
     return `
       <div class="creation-container">
         <div class="creation-header">
           <h1 class="creation-title">⚔️ Create Your Hero ⚔️</h1>
-          <p class="creation-subtitle">Forge your legend</p>
+          <p class="creation-subtitle">Choose your path to glory</p>
         </div>
 
         <div class="creation-form">
@@ -281,16 +359,49 @@ export class CharacterCreation extends BaseComponent {
           <div class="form-section">
             <div class="section-label">
               <span class="section-icon">🎭</span>
-              Choose Your Class
+              Choose Your Class (${classes.length} Classes)
             </div>
             <div class="class-grid">
-              ${classes.map(cls => `
-                <div class="class-option ${this.selectedClass === cls.id ? 'selected' : ''}" data-class="${cls.id}">
-                  <div class="class-icon">${cls.icon}</div>
-                  <div class="class-name">${cls.name}</div>
-                  <div class="class-stats">HP: ${cls.hp} | STR: ${cls.str}</div>
-                </div>
-              `).join('')}
+              ${classes.map(cls => {
+                const baseHP = 400;
+                const baseSTR = 10;
+                const actualHP = Math.round(baseHP * cls.stats.healthMod);
+                const actualSTR = (baseSTR * cls.stats.strengthMod).toFixed(1);
+                const isBeginner = beginnerClasses.includes(cls.id);
+                
+                return `
+                  <div class="class-option ${this.selectedClass === cls.id ? 'selected' : ''}" data-class="${cls.id}">
+                    <div class="class-header">
+                      <div class="class-icon">${cls.icon}</div>
+                      <div class="class-title">
+                        <div class="class-name">${cls.name}</div>
+                        <span class="difficulty-badge ${isBeginner ? 'difficulty-beginner' : 'difficulty-advanced'}">
+                          ${isBeginner ? '★ Beginner' : '★★★ Advanced'}
+                        </span>
+                      </div>
+                    </div>
+                    
+                    <div class="class-description">${cls.description}</div>
+                    
+                    <div class="class-stats">
+                      <div class="stat-item">❤️ HP: ${actualHP}</div>
+                      <div class="stat-item">⚔️ STR: ${actualSTR}</div>
+                      <div class="stat-item">🛡️ DEF: ${(cls.stats.defenseMod * 100).toFixed(0)}%</div>
+                      <div class="stat-item">💎 Crit: ${(cls.stats.critChance * 100).toFixed(0)}%</div>
+                      <div class="stat-item">✨ Mana: +${cls.stats.manaRegen}/turn</div>
+                      <div class="stat-item">💥 Crit Dmg: ${(cls.stats.critDamage * 100).toFixed(0)}%</div>
+                    </div>
+                    
+                    <div class="class-passive">
+                      <div class="passive-header">
+                        <span class="passive-icon">${cls.passive.icon}</span>
+                        <span class="passive-name">${cls.passive.name}</span>
+                      </div>
+                      <div class="passive-description">${cls.passive.description}</div>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
             </div>
           </div>
 

@@ -2,6 +2,7 @@ import { BaseComponent } from './BaseComponent.js';
 import { SaveManager } from '../utils/saveManager.js';
 import { LevelingSystem } from '../game/LevelingSystem.js';
 import { EquipmentManager } from '../game/EquipmentManager.js';
+import { AchievementManager } from '../game/AchievementManager.js';
 import { RARITY_COLORS, RARITY_NAMES } from '../data/equipment.js';
 
 /**
@@ -16,6 +17,42 @@ export class ProfileScreen extends BaseComponent {
     super();
     this.profileData = SaveManager.load();
     this.currentTab = 'profile'; // 'profile' or 'equipment'
+  }
+
+  getTotalStars() {
+    const missionStars = this.profileData.storyProgress.missionStars || {};
+    return Object.values(missionStars).reduce((sum, stars) => sum + stars, 0);
+  }
+
+  getTotalAchievements() {
+    // Import dynamically to get total count
+    return 44; // Total achievements (original 22 + new 22)
+  }
+
+  getOverallProgress() {
+    // Calculate overall game completion percentage
+    const { stats, profile, storyProgress } = this.profileData;
+    
+    let totalProgress = 0;
+    let maxProgress = 0;
+
+    // Level progress (out of 20)
+    totalProgress += profile.level;
+    maxProgress += 20;
+
+    // Story missions (out of 25)
+    totalProgress += (storyProgress.completedMissions?.length || 0);
+    maxProgress += 25;
+
+    // Achievements (out of total)
+    totalProgress += AchievementManager.getUnlockedAchievements().length;
+    maxProgress += this.getTotalAchievements();
+
+    // Tournaments (out of 10)
+    totalProgress += Math.min(10, stats.tournamentsWon || 0);
+    maxProgress += 10;
+
+    return Math.floor((totalProgress / maxProgress) * 100);
   }
 
   styles() {
@@ -122,9 +159,21 @@ export class ProfileScreen extends BaseComponent {
 
       .profile-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-        gap: 30px;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 25px;
         animation: fadeInUp 0.8s ease;
+      }
+
+      @media (min-width: 1400px) {
+        .profile-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      @media (max-width: 768px) {
+        .profile-grid {
+          grid-template-columns: 1fr;
+        }
       }
 
       .profile-card {
@@ -404,6 +453,18 @@ export class ProfileScreen extends BaseComponent {
               <span class="stat-label">Items Used</span>
               <span class="stat-value">${stats.itemsUsed}</span>
             </div>
+            <div class="stat-row">
+              <span class="stat-label">Avg Damage/Fight</span>
+              <span class="stat-value highlight">
+                ${stats.totalFightsPlayed > 0 ? Math.round(stats.totalDamageDealt / stats.totalFightsPlayed).toLocaleString() : 0}
+              </span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Damage Ratio</span>
+              <span class="stat-value ${stats.totalDamageDealt > stats.totalDamageTaken ? 'highlight' : ''}">
+                ${stats.totalDamageTaken > 0 ? (stats.totalDamageDealt / stats.totalDamageTaken).toFixed(2) : '∞'}:1
+              </span>
+            </div>
           </div>
 
           <!-- Tournament Stats Card -->
@@ -414,17 +475,149 @@ export class ProfileScreen extends BaseComponent {
             </h2>
             <div class="stat-row">
               <span class="stat-label">Tournaments Played</span>
-              <span class="stat-value">${stats.tournamentsPlayed}</span>
+              <span class="stat-value">${stats.tournamentsPlayed || 0}</span>
             </div>
             <div class="stat-row">
               <span class="stat-label">Tournaments Won</span>
-              <span class="stat-value highlight">${stats.tournamentsWon}</span>
+              <span class="stat-value highlight">${stats.tournamentsWon || 0}</span>
             </div>
             <div class="stat-row">
               <span class="stat-label">Win Rate</span>
               <span class="stat-value highlight">
                 ${stats.tournamentsPlayed > 0 ? ((stats.tournamentsWon / stats.tournamentsPlayed) * 100).toFixed(1) : 0}%
               </span>
+            </div>
+          </div>
+
+          <!-- Story Mode Stats Card -->
+          <div class="profile-card">
+            <h2 class="card-title">
+              <span class="card-icon">📖</span>
+              Story Progress
+            </h2>
+            <div class="stat-row">
+              <span class="stat-label">Campaign Progress</span>
+              <span class="stat-value highlight">
+                ${Math.floor((this.profileData.storyProgress.completedMissions.length / 25) * 100)}%
+              </span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Missions Completed</span>
+              <span class="stat-value highlight">${this.profileData.storyProgress.completedMissions.length || 0}/25</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Total Stars Earned</span>
+              <span class="stat-value highlight">${this.getTotalStars()}/75</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Bosses Defeated</span>
+              <span class="stat-value">${stats.bossesDefeated || 0}/6</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Survival Missions</span>
+              <span class="stat-value">${stats.survivalMissionsCompleted || 0}</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Perfect Missions (3⭐)</span>
+              <span class="stat-value highlight">${stats.perfectMissions || 0}</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Speed Runs (≤5 rounds)</span>
+              <span class="stat-value">${stats.fastMissions || 0}</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Flawless Victories</span>
+              <span class="stat-value">${stats.flawlessMissions || 0}</span>
+            </div>
+          </div>
+
+          <!-- Economy Stats Card -->
+          <div class="profile-card">
+            <h2 class="card-title">
+              <span class="card-icon">💰</span>
+              Economy & Wealth
+            </h2>
+            <div class="stat-row">
+              <span class="stat-label">Current Gold</span>
+              <span class="stat-value highlight">${profile.gold?.toLocaleString() || 0} 💰</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Total Gold Earned</span>
+              <span class="stat-value">${stats.totalGoldEarned?.toLocaleString() || 0}</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Total Gold Spent</span>
+              <span class="stat-value">${stats.totalGoldSpent?.toLocaleString() || 0}</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Net Worth</span>
+              <span class="stat-value highlight">
+                ${((stats.totalGoldEarned || 0) - (stats.totalGoldSpent || 0)).toLocaleString()}
+              </span>
+            </div>
+          </div>
+
+          <!-- Marketplace Stats Card -->
+          <div class="profile-card">
+            <h2 class="card-title">
+              <span class="card-icon">🛒</span>
+              Marketplace Activity
+            </h2>
+            <div class="stat-row">
+              <span class="stat-label">Items Purchased</span>
+              <span class="stat-value highlight">${stats.marketplacePurchases || 0}</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Items Sold</span>
+              <span class="stat-value">${stats.itemsSold || 0}</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Gold from Sales</span>
+              <span class="stat-value highlight">${(stats.goldFromSales || 0).toLocaleString()} 💰</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Items Repaired</span>
+              <span class="stat-value">${stats.itemsRepaired || 0}</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Legendary Purchases</span>
+              <span class="stat-value highlight">${stats.legendaryPurchases || 0}</span>
+            </div>
+          </div>
+
+          <!-- General Info Card -->
+          <div class="profile-card">
+            <h2 class="card-title">
+              <span class="card-icon">ℹ️</span>
+              General Info
+            </h2>
+            <div class="stat-row">
+              <span class="stat-label">Character Name</span>
+              <span class="stat-value highlight">${profile.name}</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Character Class</span>
+              <span class="stat-value">${profile.character?.class || 'N/A'}</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Account Created</span>
+              <span class="stat-value">${new Date(profile.createdAt).toLocaleDateString()}</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Last Played</span>
+              <span class="stat-value">${new Date(profile.lastPlayedAt).toLocaleDateString()}</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Inventory Space</span>
+              <span class="stat-value">${this.profileData.inventory.equipment.length}/20</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Achievements Unlocked</span>
+              <span class="stat-value highlight">${AchievementManager.getUnlockedAchievements().length}/${this.getTotalAchievements()}</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Completion Progress</span>
+              <span class="stat-value highlight">${this.getOverallProgress()}%</span>
             </div>
             
             <div class="reset-section">
