@@ -5,6 +5,7 @@
 import { SaveManager } from '../utils/saveManager.js';
 import { Logger } from '../utils/logger.js';
 import { soundManager } from '../utils/soundManager.js';
+import { DifficultyManager } from './DifficultyManager.js';
 
 export class LevelingSystem {
   /**
@@ -50,10 +51,13 @@ export class LevelingSystem {
    * @returns {Object} - { leveledUp: boolean, newLevel: number, xpGained: number }
    */
   static awardXP(amount, reason = 'Victory') {
+    // Apply difficulty multiplier
+    const scaledAmount = DifficultyManager.getScaledXP(amount);
+    
     const currentProfile = SaveManager.get('profile');
     const currentLevel = currentProfile.level;
     const currentXP = currentProfile.xp;
-    const newXP = currentXP + amount;
+    const newXP = currentXP + scaledAmount;
     
     // Calculate new level
     const newLevel = this.getLevelFromXP(newXP);
@@ -69,9 +73,9 @@ export class LevelingSystem {
       SaveManager.update('profile.xpToNextLevel', xpForNextLevel - newXP);
     }
     
-    // Log XP gain
+    // Log XP gain (show scaled amount)
     const xpMessage = `<div class="xp-gain-message" style="background: rgba(255, 215, 0, 0.2); border-left-color: gold; color: white; padding: 12px; margin: 8px 0; border-radius: 8px;">
-      ✨ <strong>+${amount} XP</strong> earned from ${reason}!
+      ✨ <strong>+${scaledAmount} XP</strong> earned from ${reason}!
     </div>`;
     Logger.log(xpMessage);
     
@@ -82,7 +86,7 @@ export class LevelingSystem {
       soundManager.play('victory'); // Play victory sound for level up
     }
     
-    console.log(`🎯 Awarded ${amount} XP for ${reason}`);
+    console.log(`🎯 Awarded ${scaledAmount} XP for ${reason}`);
     if (leveledUp) {
       console.log(`🎉 LEVEL UP! ${currentLevel} → ${newLevel}`);
     }
@@ -91,7 +95,7 @@ export class LevelingSystem {
       leveledUp,
       newLevel,
       oldLevel: currentLevel,
-      xpGained: amount,
+      xpGained: scaledAmount,
       totalXP: newXP,
     };
   }

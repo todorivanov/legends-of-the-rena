@@ -21,6 +21,7 @@ import { LevelingSystem } from './game/LevelingSystem.js';
 import { EquipmentManager } from './game/EquipmentManager.js';
 import { tournamentMode } from './game/TournamentMode.js';
 import { AchievementManager } from './game/AchievementManager.js';
+import { DifficultyManager } from './game/DifficultyManager.js';
 
 // Make bootstrap available globally if needed
 window.bootstrap = bootstrap;
@@ -118,10 +119,11 @@ function showTitleScreen() {
   root.appendChild(titleScreen);
   appState.currentScreen = 'title';
   
-  // Add Profile, Tournament, and Achievements buttons to title screen
+  // Add Profile, Tournament, Achievements, and Settings buttons to title screen
   addProfileButton();
   addTournamentButton();
   addAchievementsButton();
+  addSettingsButton();
 }
 
 /**
@@ -408,6 +410,75 @@ function addAchievementsButton() {
 }
 
 /**
+ * Show settings screen
+ */
+function showSettingsScreen() {
+  const root = document.getElementById('root');
+  root.innerHTML = '';
+
+  const settingsScreen = document.createElement('settings-screen');
+  settingsScreen.addEventListener('back-to-menu', () => {
+    appState.reset();
+    showTitleScreen();
+  });
+
+  root.appendChild(settingsScreen);
+  appState.currentScreen = 'settings';
+}
+
+/**
+ * Add settings button overlay
+ */
+function addSettingsButton() {
+  // Remove existing settings button if any
+  const existingBtn = document.getElementById('settings-overlay-btn');
+  if (existingBtn) {
+    existingBtn.remove();
+  }
+
+  const settingsBtn = document.createElement('button');
+  settingsBtn.id = 'settings-overlay-btn';
+  settingsBtn.innerHTML = '⚙️ Settings';
+  settingsBtn.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 690px;
+    width: auto;
+    padding: 12px 24px;
+    border-radius: 8px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    background: rgba(26, 13, 46, 0.8);
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    z-index: 10000;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    font-family: 'Press Start 2P', cursive;
+  `;
+
+  settingsBtn.addEventListener('click', () => {
+    soundManager.play('event');
+    showSettingsScreen();
+  });
+
+  settingsBtn.addEventListener('mouseenter', () => {
+    settingsBtn.style.background = 'rgba(255, 167, 38, 0.3)';
+    settingsBtn.style.borderColor = '#ffa726';
+    settingsBtn.style.transform = 'translateY(-2px)';
+  });
+
+  settingsBtn.addEventListener('mouseleave', () => {
+    settingsBtn.style.background = 'rgba(26, 13, 46, 0.8)';
+    settingsBtn.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+    settingsBtn.style.transform = 'translateY(0)';
+  });
+
+  document.body.appendChild(settingsBtn);
+}
+
+/**
  * Start tournament mode
  */
 function startTournament(opponents, difficulty) {
@@ -509,8 +580,12 @@ function showOpponentSelection() {
     const saveData = SaveManager.load();
     const playerCharacter = createPlayerFighter(saveData.profile.character);
     
+    // Get opponent and apply difficulty modifiers
+    const opponent = e.detail.fighters[0];
+    DifficultyManager.applyDifficultyModifiers(opponent, false); // false = isEnemy
+    
     // Start battle: Player vs Opponent
-    startBattle([playerCharacter, e.detail.fighters[0]]);
+    startBattle([playerCharacter, opponent]);
   });
 
   gallery.addEventListener('back-to-menu', () => {
@@ -546,7 +621,10 @@ function createPlayerFighter(characterData) {
   // Apply equipment bonuses (modifies fighter in place)
   EquipmentManager.applyEquipmentBonuses(fighter);
   
-  console.log(`⚔️ Player Character: ${fighter.name} (Lvl ${SaveManager.get('profile.level')}) - HP: ${fighter.health}, STR: ${fighter.strength}`);
+  // Apply difficulty modifiers (modifies fighter in place)
+  DifficultyManager.applyDifficultyModifiers(fighter, true); // true = isPlayer
+  
+  console.log(`⚔️ Player Character: ${fighter.name} (Lvl ${SaveManager.get('profile.level')}, ${DifficultyManager.formatDifficultyDisplay()}) - HP: ${fighter.health}, STR: ${fighter.strength}`);
   
   return fighter;
 }
