@@ -9,6 +9,8 @@ export const ACHIEVEMENT_CATEGORIES = {
   STRATEGIC: 'strategic',
   SPECIAL: 'special',
   PROGRESSION: 'progression',
+  STORY: 'story',
+  ECONOMY: 'economy',
 };
 
 export const ACHIEVEMENTS = [
@@ -306,6 +308,274 @@ export const ACHIEVEMENTS = [
       target: 10000,
     },
     reward: { xp: 300 },
+  },
+
+  // STORY MODE ACHIEVEMENTS
+  {
+    id: 'first_mission',
+    name: 'Hero\'s Journey Begins',
+    description: 'Complete your first story mission',
+    icon: '📖',
+    category: ACHIEVEMENT_CATEGORIES.STORY,
+    requirement: {
+      type: 'storyMissionsCompleted',
+      target: 1,
+    },
+    reward: { xp: 100, gold: 50 },
+  },
+  {
+    id: 'story_veteran',
+    name: 'Story Veteran',
+    description: 'Complete 10 story missions',
+    icon: '📚',
+    category: ACHIEVEMENT_CATEGORIES.STORY,
+    requirement: {
+      type: 'storyMissionsCompleted',
+      target: 10,
+    },
+    reward: { xp: 300, gold: 150 },
+  },
+  {
+    id: 'perfect_mission',
+    name: 'Perfectionist',
+    description: 'Earn 3 stars on any mission',
+    icon: '⭐',
+    category: ACHIEVEMENT_CATEGORIES.STORY,
+    requirement: {
+      type: 'perfectMissions',
+      target: 1,
+    },
+    reward: { xp: 200, gold: 100 },
+  },
+  {
+    id: 'perfect_region',
+    name: 'Master of the Region',
+    description: 'Earn 3 stars on all missions in a region',
+    icon: '🌟',
+    category: ACHIEVEMENT_CATEGORIES.STORY,
+    requirement: {
+      type: 'perfectRegions',
+      target: 1,
+    },
+    reward: { xp: 500, gold: 250 },
+  },
+  {
+    id: 'boss_slayer',
+    name: 'Boss Slayer',
+    description: 'Defeat your first boss in story mode',
+    icon: '👑',
+    category: ACHIEVEMENT_CATEGORIES.STORY,
+    requirement: {
+      type: 'bossesDefeated',
+      target: 1,
+    },
+    reward: { xp: 300, gold: 150 },
+  },
+  {
+    id: 'boss_master',
+    name: 'Boss Master',
+    description: 'Defeat all story bosses',
+    icon: '🏆',
+    category: ACHIEVEMENT_CATEGORIES.STORY,
+    requirement: {
+      type: 'bossesDefeated',
+      target: 6, // Tutorial Arena boss + 5 region bosses
+    },
+    reward: { xp: 1000, gold: 500 },
+  },
+  {
+    id: 'speed_runner',
+    name: 'Speed Runner',
+    description: 'Complete a mission in 5 rounds or less',
+    icon: '⚡',
+    category: ACHIEVEMENT_CATEGORIES.STORY,
+    requirement: {
+      type: 'fastMissions',
+      target: 1,
+    },
+    reward: { xp: 200, gold: 100 },
+  },
+  {
+    id: 'survivor',
+    name: 'Survivor',
+    description: 'Complete your first survival mission',
+    icon: '🛡️',
+    category: ACHIEVEMENT_CATEGORIES.STORY,
+    requirement: {
+      type: 'survivalMissionsCompleted',
+      target: 1,
+    },
+    reward: { xp: 250, gold: 125 },
+  },
+  {
+    id: 'story_complete',
+    name: 'Legend of the Arena',
+    description: 'Complete the entire story campaign',
+    icon: '🎊',
+    category: ACHIEVEMENT_CATEGORIES.STORY,
+    requirement: {
+      type: 'storyMissionsCompleted',
+      target: 25, // All missions
+    },
+    reward: { xp: 2000, gold: 1000 },
+  },
+  {
+    id: 'star_collector',
+    name: 'Star Collector',
+    description: 'Earn 50 total stars in story mode',
+    icon: '✨',
+    category: ACHIEVEMENT_CATEGORIES.STORY,
+    requirement: {
+      type: 'totalStars',
+      target: 50,
+    },
+    reward: { xp: 750, gold: 400 },
+  },
+  {
+    id: 'flawless_mission',
+    name: 'Flawless Campaign',
+    description: 'Complete a story mission without taking damage',
+    icon: '💎',
+    category: ACHIEVEMENT_CATEGORIES.STORY,
+    requirement: {
+      type: 'flawlessMissions',
+      target: 1,
+    },
+    reward: { xp: 300, gold: 150 },
+  },
+
+  // ECONOMY & MARKETPLACE ACHIEVEMENTS
+  {
+    id: 'first_purchase',
+    name: 'First Purchase',
+    description: 'Buy an item from the marketplace',
+    icon: '🛒',
+    category: ACHIEVEMENT_CATEGORIES.ECONOMY,
+    requirement: {
+      type: 'marketplacePurchases',
+      target: 1,
+    },
+    reward: { xp: 100, gold: 50 },
+  },
+  {
+    id: 'shrewd_trader',
+    name: 'Shrewd Trader',
+    description: 'Buy and sell 10 items',
+    icon: '💼',
+    category: ACHIEVEMENT_CATEGORIES.ECONOMY,
+    requirement: {
+      type: 'marketplaceTransactions',
+      target: 10,
+    },
+    reward: { xp: 300, gold: 150 },
+  },
+  {
+    id: 'first_repair',
+    name: 'Blacksmith Apprentice',
+    description: 'Repair equipment for the first time',
+    icon: '🔧',
+    category: ACHIEVEMENT_CATEGORIES.ECONOMY,
+    requirement: {
+      type: 'itemsRepaired',
+      target: 1,
+    },
+    reward: { xp: 100, gold: 50 },
+  },
+  {
+    id: 'master_smith',
+    name: 'Master Smith',
+    description: 'Repair equipment 25 times',
+    icon: '🛠️',
+    category: ACHIEVEMENT_CATEGORIES.ECONOMY,
+    requirement: {
+      type: 'itemsRepaired',
+      target: 25,
+    },
+    reward: { xp: 500, gold: 250 },
+  },
+  {
+    id: 'gold_hoarder',
+    name: 'Gold Hoarder',
+    description: 'Accumulate 1,000 gold',
+    icon: '💰',
+    category: ACHIEVEMENT_CATEGORIES.ECONOMY,
+    requirement: {
+      type: 'goldBalance',
+      target: 1000,
+    },
+    reward: { xp: 300, gold: 100 },
+  },
+  {
+    id: 'wealthy',
+    name: 'Wealthy Champion',
+    description: 'Accumulate 5,000 gold',
+    icon: '💎',
+    category: ACHIEVEMENT_CATEGORIES.ECONOMY,
+    requirement: {
+      type: 'goldBalance',
+      target: 5000,
+    },
+    reward: { xp: 750, gold: 250 },
+  },
+  {
+    id: 'big_spender',
+    name: 'Big Spender',
+    description: 'Spend 2,000 total gold',
+    icon: '💸',
+    category: ACHIEVEMENT_CATEGORIES.ECONOMY,
+    requirement: {
+      type: 'totalGoldSpent',
+      target: 2000,
+    },
+    reward: { xp: 400, gold: 200 },
+  },
+  {
+    id: 'entrepreneur',
+    name: 'Entrepreneur',
+    description: 'Earn 5,000 total gold',
+    icon: '🤑',
+    category: ACHIEVEMENT_CATEGORIES.ECONOMY,
+    requirement: {
+      type: 'totalGoldEarned',
+      target: 5000,
+    },
+    reward: { xp: 600, gold: 300 },
+  },
+  {
+    id: 'legendary_buyer',
+    name: 'Legendary Buyer',
+    description: 'Purchase a legendary item from the marketplace',
+    icon: '🌟',
+    category: ACHIEVEMENT_CATEGORIES.ECONOMY,
+    requirement: {
+      type: 'legendaryPurchases',
+      target: 1,
+    },
+    reward: { xp: 500, gold: 250 },
+  },
+  {
+    id: 'merchant_prince',
+    name: 'Merchant Prince',
+    description: 'Sell items worth 1,000 gold',
+    icon: '👑',
+    category: ACHIEVEMENT_CATEGORIES.ECONOMY,
+    requirement: {
+      type: 'goldFromSales',
+      target: 1000,
+    },
+    reward: { xp: 500, gold: 250 },
+  },
+  {
+    id: 'maintenance_master',
+    name: 'Maintenance Master',
+    description: 'Never let equipment break (repair before it reaches 0)',
+    icon: '🏅',
+    category: ACHIEVEMENT_CATEGORIES.ECONOMY,
+    requirement: {
+      type: 'neverBrokenEquipment',
+      target: 1,
+    },
+    reward: { xp: 400, gold: 200 },
   },
 ];
 

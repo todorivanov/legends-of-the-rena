@@ -41,6 +41,19 @@ export class SaveManager {
         itemsUsed: 0,
         totalGoldEarned: 0,
         totalGoldSpent: 0,
+        // Story Mode stats
+        bossesDefeated: 0,
+        survivalMissionsCompleted: 0,
+        fastMissions: 0,
+        flawlessMissions: 0,
+        perfectMissions: 0,
+        perfectRegions: 0,
+        // Marketplace stats
+        marketplacePurchases: 0,
+        itemsSold: 0,
+        itemsRepaired: 0,
+        legendaryPurchases: 0,
+        goldFromSales: 0,
       },
       equipped: {
         weapon: null,

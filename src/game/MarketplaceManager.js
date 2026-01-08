@@ -9,6 +9,7 @@ import { EconomyManager } from './EconomyManager.js';
 import { EquipmentManager } from './EquipmentManager.js';
 import { DurabilityManager } from './DurabilityManager.js';
 import { Logger } from '../utils/logger.js';
+import { AchievementManager } from './AchievementManager.js';
 
 export class MarketplaceManager {
   // Refresh interval: 24 hours in milliseconds
@@ -292,6 +293,9 @@ export class MarketplaceManager {
     `;
     Logger.log(message);
 
+    // Track achievements
+    AchievementManager.trackMarketplacePurchase(equipment);
+
     return true;
   }
 
@@ -369,6 +373,9 @@ export class MarketplaceManager {
       </div>
     `;
     Logger.log(message);
+
+    // Track achievements
+    AchievementManager.trackItemSold(sellPrice);
 
     return true;
   }

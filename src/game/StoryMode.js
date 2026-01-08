@@ -11,6 +11,7 @@ import { LevelingSystem } from './LevelingSystem.js';
 import { EquipmentManager } from './EquipmentManager.js';
 import { DurabilityManager } from './DurabilityManager.js';
 import { Logger } from '../utils/logger.js';
+import { AchievementManager } from './AchievementManager.js';
 
 export class StoryMode {
   /**
@@ -197,6 +198,29 @@ export class StoryMode {
     SaveManager.update('storyProgress.currentMission', null);
 
     console.log(`✅ Mission Complete: ${starsEarned}/3 stars`);
+
+    // Track achievements
+    AchievementManager.trackStoryMissionCompleted(mission, starsEarned);
+    
+    // Check for flawless mission (no damage taken)
+    if (missionState.damageTaken === 0) {
+      SaveManager.increment('stats.flawlessMissions');
+      AchievementManager.trackFlawlessMission();
+    }
+    
+    // Check for fast mission (5 rounds or less)
+    if (missionState.roundCount <= 5) {
+      SaveManager.increment('stats.fastMissions');
+      AchievementManager.trackFastMission();
+    }
+    
+    // Check for perfect missions (3 stars)
+    if (starsEarned === 3) {
+      SaveManager.increment('stats.perfectMissions');
+    }
+    
+    // Check all achievements after mission completion
+    AchievementManager.checkAchievements();
 
     // Log completion message
     const message = `

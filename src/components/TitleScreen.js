@@ -74,18 +74,20 @@ export class TitleScreen extends BaseComponent {
         position: relative;
         z-index: 1;
         text-align: center;
-        max-width: 800px;
-        padding: 40px;
+        max-width: 700px;
+        padding: 20px;
+        max-height: 100vh;
+        overflow-y: auto;
       }
 
       .logo {
-        margin-bottom: 60px;
+        margin-bottom: 30px;
         animation: fadeInDown 1s ease 0.2s both;
       }
 
       .game-title {
         font-family: 'Orbitron', monospace;
-        font-size: 72px;
+        font-size: 56px;
         font-weight: 900;
         background: linear-gradient(135deg, #ffa726 0%, #ff6f00 50%, #ffa726 100%);
         background-size: 200% auto;
@@ -93,7 +95,7 @@ export class TitleScreen extends BaseComponent {
         -webkit-text-fill-color: transparent;
         background-clip: text;
         text-transform: uppercase;
-        letter-spacing: 8px;
+        letter-spacing: 6px;
         margin: 0;
         animation: shimmer 3s infinite linear;
         text-shadow: 0 0 40px rgba(255, 167, 38, 0.5);
@@ -106,10 +108,10 @@ export class TitleScreen extends BaseComponent {
       }
 
       .subtitle {
-        font-size: 24px;
+        font-size: 18px;
         color: #b39ddb;
-        margin-top: 10px;
-        letter-spacing: 4px;
+        margin-top: 8px;
+        letter-spacing: 3px;
         text-transform: uppercase;
         font-weight: 300;
       }
@@ -117,18 +119,18 @@ export class TitleScreen extends BaseComponent {
       .menu-options {
         display: flex;
         flex-direction: column;
-        gap: 20px;
-        margin-top: 80px;
+        gap: 12px;
+        margin-top: 40px;
         animation: fadeInUp 1s ease 0.4s both;
       }
 
       .menu-btn {
         position: relative;
-        padding: 24px 60px;
-        font-size: 28px;
+        padding: 16px 40px;
+        font-size: 20px;
         font-weight: 700;
         text-transform: uppercase;
-        letter-spacing: 3px;
+        letter-spacing: 2px;
         color: white;
         background: linear-gradient(135deg, rgba(106, 66, 194, 0.3) 0%, rgba(42, 26, 71, 0.5) 100%);
         border: 2px solid rgba(106, 66, 194, 0.5);
@@ -168,8 +170,8 @@ export class TitleScreen extends BaseComponent {
       }
 
       .btn-icon {
-        margin-right: 15px;
-        font-size: 32px;
+        margin-right: 12px;
+        font-size: 24px;
         vertical-align: middle;
       }
 
@@ -211,13 +213,32 @@ export class TitleScreen extends BaseComponent {
 
       @media (max-width: 768px) {
         .game-title {
-          font-size: 48px;
-          letter-spacing: 4px;
+          font-size: 36px;
+          letter-spacing: 3px;
+        }
+
+        .subtitle {
+          font-size: 14px;
         }
 
         .menu-btn {
-          padding: 20px 40px;
+          padding: 14px 30px;
+          font-size: 16px;
+          letter-spacing: 1px;
+        }
+
+        .btn-icon {
           font-size: 20px;
+          margin-right: 8px;
+        }
+
+        .logo {
+          margin-bottom: 20px;
+        }
+
+        .menu-options {
+          margin-top: 30px;
+          gap: 10px;
         }
       }
     `;
