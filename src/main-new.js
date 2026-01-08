@@ -25,12 +25,14 @@ import { DifficultyManager } from './game/DifficultyManager.js';
 import { getMissionById } from './data/storyMissions.js';
 import { router } from './utils/Router.js';
 import { getRouteConfig, RouteGuards, RoutePaths } from './config/routes.js';
+import { gameStore, setGameMode, setScreen } from './store/index.js';
 
 // Make bootstrap available globally if needed
 window.bootstrap = bootstrap;
 
 /**
- * Application State
+ * Application State (Legacy - migrating to Store)
+ * TODO: Gradually migrate all state to gameStore
  */
 const appState = {
   currentScreen: 'title', // 'title' | 'gallery' | 'combat' | 'tournament'
@@ -44,6 +46,9 @@ const appState = {
     this.gameMode = null;
     this.selectedFighters = [];
     this.tournamentActive = false;
+    // Also reset store state
+    gameStore.dispatch(setGameMode(null));
+    gameStore.dispatch(setScreen('title'));
   },
 };
 
@@ -52,6 +57,9 @@ const appState = {
  */
 function initApp() {
   console.log('🎮 Legends of the Arena v4.0.0 - Initializing...');
+
+  // Initialize store
+  console.log('📦 Store initialized with state:', gameStore.inspect());
 
   // Initialize router
   initializeRouter();
