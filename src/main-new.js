@@ -122,6 +122,12 @@ function showTitleScreen() {
     showTournamentBracketScreen();
   });
 
+  titleScreen.addEventListener('wiki-selected', () => {
+    soundManager.init();
+    soundManager.play('event');
+    showWikiScreen();
+  });
+
   root.appendChild(titleScreen);
   appState.currentScreen = 'title';
   
@@ -291,6 +297,23 @@ function showTournamentBracketScreen() {
 
   root.appendChild(bracket);
   appState.currentScreen = 'tournament';
+}
+
+/**
+ * Show wiki screen
+ */
+function showWikiScreen() {
+  const root = document.getElementById('root');
+  root.innerHTML = '';
+
+  const wiki = document.createElement('wiki-screen');
+
+  wiki.addEventListener('back', () => {
+    showTitleScreen();
+  });
+
+  root.appendChild(wiki);
+  appState.currentScreen = 'wiki';
 }
 
 /**

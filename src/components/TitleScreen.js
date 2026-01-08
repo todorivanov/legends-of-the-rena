@@ -247,10 +247,14 @@ export class TitleScreen extends BaseComponent {
               <span class="btn-icon">🏆</span>
               Tournament
             </button>
+            <button class="menu-btn" id="wiki-btn">
+              <span class="btn-icon">📚</span>
+              Game Wiki
+            </button>
           </div>
         </div>
 
-        <div class="version">v2.4.0</div>
+        <div class="version">v3.0.0</div>
       </div>
     `;
   }
@@ -270,6 +274,14 @@ export class TitleScreen extends BaseComponent {
     if (tournamentBtn) {
       tournamentBtn.addEventListener('click', () => {
         this.emit('tournament-selected');
+      });
+    }
+
+    // Wiki button
+    const wikiBtn = this.shadowRoot.querySelector('#wiki-btn');
+    if (wikiBtn) {
+      wikiBtn.addEventListener('click', () => {
+        this.emit('wiki-selected');
       });
     }
 
