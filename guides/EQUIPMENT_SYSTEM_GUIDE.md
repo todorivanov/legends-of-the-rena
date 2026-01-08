@@ -4,8 +4,11 @@
 
 ### **1. Earning Equipment**
 - 🎁 **Win battles** to earn random equipment drops (50% chance)
+- 🏪 **Purchase from Marketplace** using gold
+- 📖 **Story missions** provide guaranteed equipment rewards
 - 💎 Higher rarities = Better stats
 - 📦 Maximum **20 items** in inventory
+- 🔧 Equipment has **durability** and needs maintenance
 
 ### **2. Equipment Types**
 | Type | Icon | Description |
@@ -25,6 +28,23 @@
 ### **4. Requirements**
 - ⚡ **Level Requirements**: Must reach certain level to equip
 - 🎭 **Class Requirements**: Some items are class-specific (Warrior, Mage, Ranger)
+
+### **5. Durability System** ⭐NEW⭐
+- 🔧 All equipment has **100 durability points**
+- ⚔️ Loses **5-10 durability per battle** (random)
+- 📉 **Effectiveness penalties**:
+  - 100-51%: Full power ✅
+  - 50-26%: -10% effectiveness ⚠️
+  - 25-1%: -25% effectiveness ❌
+  - 0%: **Item breaks** and unequips 💔
+- 🛠️ **Repair at Marketplace** to restore durability
+- 💰 Repair cost: 5% of item's purchase price
+- 🎨 **Color indicators**:
+  - 🟢 Green: Good condition (75-100%)
+  - 🟡 Yellow: Worn (50-74%)
+  - 🟠 Orange: Damaged (25-49%)
+  - 🔴 Red: Critical (1-24%)
+  - ⚫ Black: Broken (0%)
 
 ---
 

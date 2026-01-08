@@ -25,6 +25,8 @@ export class BaseEntity {
     
     this.description = baseEntity.description;
     this.class = baseEntity.class || 'BALANCED';
+    this.level = baseEntity.level || 1; // Fighter level
+    this.isPlayer = baseEntity.isPlayer || false; // Track if this is the player
     this.mana = 100; // Starting mana
     this.maxMana = 100;
     this.isDefending = false;

@@ -1,10 +1,10 @@
-# ObjectFighterJS v3.0 ⚔️
+# Legends of the Arena v4.0 ⚔️
 
-**A modern browser-based RPG fighting game with turn-based tactical combat, character progression, and equipment systems.**
+**An epic browser-based RPG fighting game with story mode, turn-based tactical combat, character progression, equipment systems, and marketplace economy.**
 
-## 🎮 [Play Live Demo](https://yourusername.github.io/ObjectFighterJS/)
+## 🎮 [Play Live Demo](https://todorivanov.github.io/ObjectFighterJS/)
 
-> **Note**: Replace `yourusername` with your actual GitHub username after deployment.
+> **Note**: Once you enable GitHub Pages, your game will be available at the link above!
 
 ---
 
@@ -19,6 +19,7 @@
 - **Critical hits** - 15% chance for 1.5x damage
 
 ### 🎮 **Multiple Game Modes**
+- **Story Mode** - Epic 25-mission campaign across 5 unique regions
 - **Single Combat** - Face an opponent with your custom character
 - **Team Battle** - Assemble and command teams in epic battles
 - **Tournament Mode** - 3-round bracket championship with escalating rewards
@@ -33,6 +34,7 @@
 - **24 unique items** - 10 weapons, 8 armor pieces, 6 accessories
 - **4 rarity tiers** - Common, Rare, Epic, Legendary
 - **Stat bonuses** - Strength, HP, Defense, Crit Chance, Mana Regen
+- **Durability system** - Items degrade and require repairs
 - **Level requirements** - Unlock powerful gear as you progress
 - **Class restrictions** - Specialized equipment for each class
 
@@ -62,6 +64,21 @@
 - **Sound effects** - Immersive audio feedback
 - **Responsive design** - Works on all screen sizes
 
+### 💰 **Marketplace & Economy**
+- **Gold currency** - Earn from battles, missions, and tournaments
+- **Rotating shop** - New items every 24 hours
+- **Buy & Sell** - Trade equipment for profit
+- **Repair shop** - Restore durability of damaged items
+- **Consumables** - Purchase health and mana potions
+
+### 📖 **Story Mode Campaign**
+- **25 epic missions** across 5 unique regions
+- **Boss battles** with legendary opponents
+- **Survival mode** - Face multiple waves of enemies
+- **Star rating** - Complete objectives for bonus rewards
+- **Branching paths** - Choose between Forest or Mountain
+- **Rich narrative** - Dialogue and story progression
+
 ### 📚 **In-Game Wiki**
 - Comprehensive guides for all game systems
 - Achievement database
@@ -73,8 +90,11 @@
 
 ## 🎮 Game Modes
 
+### **Story Mode** ⭐NEW⭐
+Embark on an epic 25-mission campaign! Journey through 5 unique regions, from the Tutorial Arena to the legendary Champions' Valley. Face standard battles, survive enemy waves, and defeat powerful bosses. Earn stars by completing optional objectives, unlock new regions, and become a true Legend of the Arena!
+
 ### **Single Combat**
-Create your character and face opponents in 1v1 tactical battles. Choose your actions each turn and outsmart your enemy!
+Create your character and face opponents in 1v1 tactical battles. Choose your actions each turn and outsmart your enemy! Earn gold and equipment with each victory.
 
 ### **Team Battle**
 Select multiple fighters for each team and watch them battle it out in epic team combat.
@@ -185,6 +205,14 @@ npm run preview
 ### **First Time Setup**
 1. **Character Creation** - Create your custom character (name, class, avatar)
 2. **Learn the Basics** - Check the in-game Wiki (📚 button on main menu)
+3. **Visit Marketplace** - Spend your starting 100 gold on equipment!
+
+### **Story Mode** (NEW!)
+1. Click **"📖 Story Mode"** from main menu
+2. Select an unlocked region (Tutorial Arena starts unlocked)
+3. Choose a mission to view objectives and rewards
+4. Complete missions to earn stars, gold, XP, and equipment!
+5. Unlock new regions by defeating region bosses
 
 ### **Single Combat**
 1. Click **"⚔️ Single Combat"** from main menu
@@ -195,7 +223,13 @@ npm run preview
    - **Defend** when low on health
    - **Use Skill** for powerful effects (watch mana and cooldowns!)
    - **Use Item** to heal in emergencies
-5. Defeat your opponent to gain XP and equipment!
+5. Defeat your opponent to gain gold, XP, and equipment!
+
+### **Marketplace** (NEW!)
+1. Click **"🏪 Marketplace"** from main menu
+2. Browse equipment in the rotating shop (refreshes every 24 hours)
+3. Purchase equipment, consumables, or repair damaged items
+4. Sell unwanted equipment for gold
 
 ### **Team Battle**
 1. Click **"👥 Team Battle"** from main menu
@@ -328,16 +362,40 @@ This project includes automatic deployment to GitHub Pages via GitHub Actions.
    git push origin main
    ```
 
-4. **Access your game** (~1-2 minutes later):
-   ```
-   https://[your-username].github.io/ObjectFighterJS/
-   ```
+4. **Access your game** (~1-2 minutes later):  
+```  
+https://todorivanov.github.io/ObjectFighterJS/  
+```
 
 **Auto-Deploy**: Every push to main/master automatically triggers deployment!
 
 ---
 
 ## 🔄 Version History
+
+### **v4.0.0 - Legends of the Arena** (Jan 2026) ⚔️
+**MAJOR UPDATE - Story Mode, Economy, and Marketplace!**
+
+**New Name**: Rebranded to "Legends of the Arena"
+
+**New Features**:
+- 📖 **Story Mode** - 25-mission campaign across 5 regions
+- 💰 **Gold Economy** - Earn and spend gold currency
+- 🏪 **Marketplace** - Rotating shop with buy/sell/repair
+- 🔧 **Equipment Durability** - Items degrade and need repairs
+- ⭐ **Mission Stars** - Earn up to 3 stars per mission
+- 👑 **Boss Battles** - Epic encounters with legendary foes
+- 🛡️ **Survival Mode** - Face waves of increasingly powerful enemies
+
+**Improvements**:
+- Enhanced fighter class with unique methods
+- Centralized game configuration
+- Comprehensive JSDoc documentation
+- Removed legacy code and unused dependencies
+- Improved code organization and maintainability
+
+**Total Lines of Code**: ~14,000+ lines
+**New Files**: 15+ new game systems and components
 
 ### **v3.0.0 - The RPG Update** (Jan 2026) 🎮
 **Phase 5 Complete - Full RPG Experience!**
@@ -393,10 +451,11 @@ This project includes automatic deployment to GitHub Pages via GitHub Actions.
 - **Classes**: 7 (Tank, Balanced, Agile, Mage, Hybrid, Assassin, Brawler)
 - **Skills**: 14 (2 per class)
 - **Equipment Items**: 24 (10 weapons, 8 armor, 6 accessories)
+- **Story Missions**: 25 across 5 regions
 - **Achievements**: 25 across 4 categories
 - **Max Level**: 20
 - **Difficulty Levels**: 4
-- **Game Modes**: 3 (Single, Team, Tournament)
+- **Game Modes**: 4 (Story, Single, Team, Tournament)
 
 ---
 
@@ -439,9 +498,9 @@ MIT License - See [LICENSE](LICENSE) file for details
 
 ---
 
-**Version**: 3.0.0  
-**Status**: Complete RPG Experience! 🎮✨  
-**Play Now**: Deploy to GitHub Pages and start your journey!
+**Version**: 4.0.0  
+**Status**: Legends of the Arena - Epic Story Mode! ⚔️✨  
+**Play Now**: Deploy to GitHub Pages and become a legend!
 
 ---
 

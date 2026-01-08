@@ -326,6 +326,18 @@ export class WikiScreen extends BaseComponent {
         </div>
 
         <div class="tab-navigation">
+          <button class="tab-button ${this._activeTab === 'story' ? 'active' : ''}" data-tab="story">
+            📖 Story Mode
+          </button>
+          <button class="tab-button ${this._activeTab === 'marketplace' ? 'active' : ''}" data-tab="marketplace">
+            🏪 Marketplace
+          </button>
+          <button class="tab-button ${this._activeTab === 'economy' ? 'active' : ''}" data-tab="economy">
+            💰 Economy
+          </button>
+          <button class="tab-button ${this._activeTab === 'classes' ? 'active' : ''}" data-tab="classes">
+            🎭 Classes
+          </button>
           <button class="tab-button ${this._activeTab === 'achievements' ? 'active' : ''}" data-tab="achievements">
             🏅 Achievements
           </button>
@@ -341,10 +353,446 @@ export class WikiScreen extends BaseComponent {
         </div>
 
         <div class="wiki-content">
+          ${this.renderStoryContent()}
+          ${this.renderMarketplaceContent()}
+          ${this.renderEconomyContent()}
+          ${this.renderClassesContent()}
           ${this.renderAchievementsContent()}
           ${this.renderEquipmentContent()}
           ${this.renderTournamentContent()}
           ${this.renderDifficultyContent()}
+        </div>
+      </div>
+    `;
+  }
+
+  renderStoryContent() {
+    return `
+      <div class="content-section ${this._activeTab === 'story' ? 'active' : ''}" id="story-content">
+        <h1>📖 Story Mode Campaign</h1>
+        
+        <div class="info-box">
+          <strong>25 Epic Missions | 5 Unique Regions | 75 Stars to Earn</strong><br>
+          Journey from novice to legend in an epic campaign!
+        </div>
+
+        <h2>🗺️ Campaign Regions</h2>
+        <table>
+          <tr>
+            <th>Region</th>
+            <th>Missions</th>
+            <th>Difficulty</th>
+            <th>Description</th>
+          </tr>
+          <tr>
+            <td>🎯 Tutorial Arena</td>
+            <td>2</td>
+            <td>1-2</td>
+            <td>Learn combat basics</td>
+          </tr>
+          <tr>
+            <td>⚔️ Novice Grounds</td>
+            <td>3</td>
+            <td>3-5</td>
+            <td>Stop the bandit threat</td>
+          </tr>
+          <tr>
+            <td>🌲 Forest of Trials</td>
+            <td>3</td>
+            <td>6-8</td>
+            <td>Face corrupted beasts</td>
+          </tr>
+          <tr>
+            <td>⛰️ Mountain Pass</td>
+            <td>3</td>
+            <td>6-8</td>
+            <td>Climb treacherous peaks</td>
+          </tr>
+          <tr>
+            <td>🌑 Shadow Realm</td>
+            <td>3</td>
+            <td>9-12</td>
+            <td>Battle nightmares</td>
+          </tr>
+          <tr>
+            <td>👑 Champions' Valley</td>
+            <td>3</td>
+            <td>13-15</td>
+            <td>Face legendary heroes</td>
+          </tr>
+        </table>
+
+        <h2>🎯 Mission Types</h2>
+        <ul>
+          <li><strong>⚔️ Standard</strong> - 1v1 battles with objectives</li>
+          <li><strong>🛡️ Survival</strong> - Face 3 waves of enemies</li>
+          <li><strong>👑 Boss</strong> - Epic encounters with legendary opponents</li>
+        </ul>
+
+        <h2>⭐ Star Rating System</h2>
+        <ul>
+          <li><strong>1 Star</strong> - Complete the mission</li>
+          <li><strong>2 Stars</strong> - Complete 1 optional objective</li>
+          <li><strong>3 Stars</strong> - Complete ALL objectives (Perfect!)</li>
+        </ul>
+
+        <h2>🎁 Rewards</h2>
+        <ul>
+          <li><strong>💰 Gold</strong> - 50-600 per mission (difficulty + stars)</li>
+          <li><strong>✨ XP</strong> - 100-1500 per mission</li>
+          <li><strong>🎁 Equipment</strong> - Guaranteed drops</li>
+          <li><strong>📖 Story</strong> - Unlock new regions and narrative</li>
+        </ul>
+
+        <div class="tip-box">
+          <strong>💡 Pro Tip:</strong> Complete missions with 3 stars for maximum rewards! You can replay missions anytime to improve your rating.
+        </div>
+
+        <p style="text-align: center; margin-top: 30px;">
+          <strong>📚 For detailed mission list and strategies, see STORY_MODE_GUIDE.md</strong>
+        </p>
+      </div>
+    `;
+  }
+
+  renderMarketplaceContent() {
+    return `
+      <div class="content-section ${this._activeTab === 'marketplace' ? 'active' : ''}" id="marketplace-content">
+        <h1>🏪 Marketplace System</h1>
+        
+        <div class="info-box">
+          <strong>Buy, Sell, Repair | Rotating Shop | 24-Hour Refresh</strong><br>
+          Your one-stop shop for all equipment needs!
+        </div>
+
+        <h2>🛍️ Shop Tabs</h2>
+        <table>
+          <tr>
+            <th>Tab</th>
+            <th>Description</th>
+          </tr>
+          <tr>
+            <td>⚔️ Equipment Shop</td>
+            <td>6-8 rotating items, refreshes every 24 hours (or force refresh for 100 gold!)</td>
+          </tr>
+          <tr>
+            <td>🧪 Consumables</td>
+            <td>Health & Mana potions (always available)</td>
+          </tr>
+          <tr>
+            <td>🔧 Repair Shop</td>
+            <td>Restore durability of damaged equipment</td>
+          </tr>
+          <tr>
+            <td>💰 Sell Items</td>
+            <td>Sell unwanted equipment for 50% value</td>
+          </tr>
+        </table>
+
+        <h2>💎 Equipment Prices</h2>
+        <table>
+          <tr>
+            <th>Rarity</th>
+            <th>Price Range</th>
+            <th>Sell Value</th>
+          </tr>
+          <tr>
+            <td><span class="rarity-common">Common</span></td>
+            <td>50-150 gold</td>
+            <td>25-75 gold</td>
+          </tr>
+          <tr>
+            <td><span class="rarity-rare">Rare</span></td>
+            <td>200-500 gold</td>
+            <td>100-250 gold</td>
+          </tr>
+          <tr>
+            <td><span class="rarity-epic">Epic</span></td>
+            <td>600-1200 gold</td>
+            <td>300-600 gold</td>
+          </tr>
+          <tr>
+            <td><span class="rarity-legendary">Legendary</span></td>
+            <td>1500-3000 gold</td>
+            <td>750-1500 gold</td>
+          </tr>
+        </table>
+
+        <h2>🔧 Repair Costs</h2>
+        <ul>
+          <li><strong>Formula</strong> - 5% of item's purchase price</li>
+          <li><strong>Common</strong> - ~5-8 gold per repair</li>
+          <li><strong>Rare</strong> - ~20-25 gold per repair</li>
+          <li><strong>Epic</strong> - ~50-60 gold per repair</li>
+          <li><strong>Legendary</strong> - ~125-150 gold per repair</li>
+        </ul>
+
+        <h2>🧪 Consumable Prices</h2>
+        <ul>
+          <li><strong>💚 Health Potion</strong> - 30 gold (restores 20 HP)</li>
+          <li><strong>💙 Mana Potion</strong> - 25 gold (restores 30 Mana)</li>
+        </ul>
+
+        <h2>🔄 Force Refresh</h2>
+        <div class="info-box" style="border-color: #673ab7;">
+          <strong>Don't want to wait for the 24-hour refresh?</strong><br>
+          Pay <strong>100 gold</strong> to instantly refresh the shop inventory!<br><br>
+          Click the <strong>"🔄 Refresh"</strong> button in the marketplace header.<br>
+          Great for when you're hunting for specific items or legendary gear.
+        </div>
+
+        <div class="tip-box">
+          <strong>💡 Pro Tip:</strong> Check the marketplace daily! The shop refreshes every 24 hours automatically, or pay 100 gold to refresh instantly. Save gold for legendary items at level 15+!
+        </div>
+
+        <p style="text-align: center; margin-top: 30px;">
+          <strong>📚 For detailed shopping strategies, see MARKETPLACE_GUIDE.md</strong>
+        </p>
+      </div>
+    `;
+  }
+
+  renderEconomyContent() {
+    return `
+      <div class="content-section ${this._activeTab === 'economy' ? 'active' : ''}" id="economy-content">
+        <h1>💰 Economy System</h1>
+        
+        <div class="info-box">
+          <strong>Gold Currency | Earn, Spend, Manage</strong><br>
+          Master the economy to become a legendary champion!
+        </div>
+
+        <h2>💸 Earning Gold</h2>
+        <table>
+          <tr>
+            <th>Source</th>
+            <th>Gold Earned</th>
+          </tr>
+          <tr>
+            <td>⚔️ Battle Victory (Easy)</td>
+            <td>24-40 gold</td>
+          </tr>
+          <tr>
+            <td>⚔️ Battle Victory (Normal)</td>
+            <td>30-50 gold</td>
+          </tr>
+          <tr>
+            <td>⚔️ Battle Victory (Hard)</td>
+            <td>45-75 gold</td>
+          </tr>
+          <tr>
+            <td>⚔️ Battle Victory (Nightmare)</td>
+            <td>60-100 gold</td>
+          </tr>
+          <tr>
+            <td>📖 Story Mission</td>
+            <td>50-200 gold (+ star bonus)</td>
+          </tr>
+          <tr>
+            <td>🏆 Tournament (Normal)</td>
+            <td>350 gold total</td>
+          </tr>
+          <tr>
+            <td>🏆 Tournament (Hard)</td>
+            <td>700 gold total</td>
+          </tr>
+          <tr>
+            <td>🏆 Tournament (Nightmare)</td>
+            <td>1050 gold total</td>
+          </tr>
+          <tr>
+            <td>💰 Selling Equipment</td>
+            <td>50% of purchase price</td>
+          </tr>
+        </table>
+
+        <h2>💳 Spending Gold</h2>
+        <ul>
+          <li><strong>🏪 Equipment</strong> - 50-3000 gold per item</li>
+          <li><strong>🔧 Repairs</strong> - 5-150 gold per repair</li>
+          <li><strong>🧪 Consumables</strong> - 25-30 gold each</li>
+        </ul>
+
+        <h2>📊 Gold Management Tips</h2>
+        <ul>
+          <li><strong>Early Game</strong> - Buy 1-2 common items, save rest</li>
+          <li><strong>Mid Game</strong> - Upgrade to rare/epic, maintain 500g reserve</li>
+          <li><strong>Late Game</strong> - Hunt legendaries, keep 2000g+ saved</li>
+          <li><strong>Always</strong> - Keep 20% gold as emergency fund</li>
+        </ul>
+
+        <h2>💎 Fast Gold Farming</h2>
+        <ol>
+          <li><strong>Nightmare Tournaments</strong> - 1050g per run (best gold/hour)</li>
+          <li><strong>Story Missions</strong> - 100-200g + guaranteed equipment</li>
+          <li><strong>Hard Battles</strong> - 45-75g quick and consistent</li>
+          <li><strong>Selling Duplicates</strong> - Clean inventory for 200-500g</li>
+        </ol>
+
+        <div class="tip-box">
+          <strong>💡 Pro Tip:</strong> Start with 100 gold! Buy a weapon first, then armor. Keep 20% of your gold as reserve for repairs and emergencies.
+        </div>
+
+        <p style="text-align: center; margin-top: 30px;">
+          <strong>📚 For advanced economy strategies, see ECONOMY_GUIDE.md</strong>
+        </p>
+      </div>
+    `;
+  }
+
+  renderClassesContent() {
+    return `
+      <div class="content-section ${this._activeTab === 'classes' ? 'active' : ''}" id="classes-content">
+        <h1>🎭 Character Classes</h1>
+        
+        <div class="info-box">
+          <strong>10 Unique Classes | Unique Passives | Distinct Playstyles</strong><br>
+          Choose your path to glory! Each class has different stats and passive abilities.
+        </div>
+
+        <h2>🌟 Beginner Classes</h2>
+        
+        <h3>⚖️ Balanced Fighter</h3>
+        <div class="info-box" style="border-color: #4caf50;">
+          <strong>Difficulty: ★ Beginner</strong><br>
+          <strong>HP:</strong> 400 | <strong>STR:</strong> 10 | <strong>Crit:</strong> 15% | <strong>Mana:</strong> +5/turn<br>
+          <strong>Passive - Versatility ✨:</strong> Gain +5% to all stats for each different action type used (attack, skill, defend, item). Use all 4 = +20% bonus!<br>
+          <strong>Best For:</strong> New players learning game mechanics
+        </div>
+
+        <h3>⚔️ Warrior</h3>
+        <div class="info-box" style="border-color: #f44336;">
+          <strong>Difficulty: ★ Beginner</strong><br>
+          <strong>HP:</strong> 360 (-10%) | <strong>STR:</strong> 13 (+30%) | <strong>Crit:</strong> 20% (+33%) | <strong>Crit Dmg:</strong> 175%<br>
+          <strong>Passive - Battle Fury 🔥:</strong> Critical hits reduce skill cooldowns by 1 turn and grant +10% damage on next attack. +5% damage per combo hit.<br>
+          <strong>Best For:</strong> Aggressive damage dealers
+        </div>
+
+        <h3>⚜️ Paladin</h3>
+        <div class="info-box" style="border-color: #ffd700;">
+          <strong>Difficulty: ★ Beginner</strong><br>
+          <strong>HP:</strong> 480 (+20%) | <strong>STR:</strong> 10.5 (+5%) | <strong>DEF:</strong> 115% | <strong>Mana:</strong> +7/turn<br>
+          <strong>Passive - Divine Protection ✝️:</strong> Heal 3% max HP each turn. Defending heals additional 8% max HP. +40% healing from items.<br>
+          <strong>Best For:</strong> Survivability and sustain
+        </div>
+
+        <h3>👊 Bruiser</h3>
+        <div class="info-box" style="border-color: #9c27b0;">
+          <strong>Difficulty: ★ Beginner</strong><br>
+          <strong>HP:</strong> 500 (+25%) | <strong>STR:</strong> 9 (-10%) | <strong>DEF:</strong> 110% | <strong>Healing:</strong> +15%<br>
+          <strong>Passive - Lifesteal 💪:</strong> Heal for 10% of damage dealt. Gain 2% max HP permanently every 3 kills. Grows stronger over time!<br>
+          <strong>Best For:</strong> Tank + heal through combat
+        </div>
+
+        <h2>🛡️ Defensive Class</h2>
+
+        <h3>🛡️ Tank</h3>
+        <div class="info-box" style="border-color: #607d8b;">
+          <strong>Difficulty: ★ Beginner</strong><br>
+          <strong>HP:</strong> 600 (+50%) | <strong>STR:</strong> 6 (-40%) | <strong>DEF:</strong> 150% (+50%)<br>
+          <strong>Passive - Iron Will 🛡️:</strong> Defending grants shield that absorbs 30% of next damage. Heal 5% max HP each turn. +30% defend bonus (80% total reduction!).<br>
+          <strong>Best For:</strong> Outlasting enemies
+        </div>
+
+        <h2>🔥 Offense Classes</h2>
+
+        <h3>💥 Glass Cannon</h3>
+        <div class="info-box" style="border-color: #ff5722;">
+          <strong>Difficulty: ★★★ Advanced</strong><br>
+          <strong>HP:</strong> 300 (-25%) | <strong>STR:</strong> 20 (+100%) | <strong>Crit:</strong> 25% | <strong>Crit Dmg:</strong> 200%<br>
+          <strong>Passive - Glass Cannon 💥:</strong> Deal 15% more damage for every 25% HP missing (up to +60%!). Skills cost 30% less mana. +8% per combo.<br>
+          <strong>WARNING:</strong> Very fragile, 20% less effective defend<br>
+          <strong>Best For:</strong> Expert players who can avoid damage
+        </div>
+
+        <h3>🗡️ Assassin</h3>
+        <div class="info-box" style="border-color: #9e9e9e;">
+          <strong>Difficulty: ★★★ Advanced</strong><br>
+          <strong>HP:</strong> 320 (-20%) | <strong>STR:</strong> 12 (+20%) | <strong>Crit:</strong> 30% (highest!) | <strong>Crit Dmg:</strong> 220%<br>
+          <strong>Passive - First Strike ⚡:</strong> First attack each combat deals DOUBLE damage. 15% chance to attack again immediately. +10% per combo (highest!).<br>
+          <strong>Best For:</strong> Burst damage and high crits
+        </div>
+
+        <h3>🪓 Berserker</h3>
+        <div class="info-box" style="border-color: #d32f2f;">
+          <strong>Difficulty: ★★★ Advanced</strong><br>
+          <strong>HP:</strong> 440 (+10%) | <strong>STR:</strong> 11.5 (+15%) | <strong>DEF:</strong> 80% (-20%)<br>
+          <strong>Passive - Rage 😡:</strong> Gain 3% damage and 1% crit for every 10% HP missing. At 10% HP = +27% damage, +9% crit! Taking damage grants +5 mana.<br>
+          <strong>WARNING:</strong> 25% less effective defend, 20% less healing<br>
+          <strong>Best For:</strong> High risk, high reward playstyle
+        </div>
+
+        <h2>🔮 Magic Classes</h2>
+
+        <h3>🔮 Mage</h3>
+        <div class="info-box" style="border-color: #3f51b5;">
+          <strong>Difficulty: ★★ Intermediate</strong><br>
+          <strong>HP:</strong> 340 (-15%) | <strong>STR:</strong> 8 (-20%) | <strong>Crit Dmg:</strong> 250% (highest!) | <strong>Mana:</strong> +10/turn (highest!)<br>
+          <strong>Passive - Arcane Power ✨:</strong> Skills deal 30% more damage. Using skill grants +20% damage on next basic attack. Skills cost 20% less mana.<br>
+          <strong>Best For:</strong> Skill-focused playstyle
+        </div>
+
+        <h3>💀 Necromancer</h3>
+        <div class="info-box" style="border-color: #4a148c;">
+          <strong>Difficulty: ★★★ Advanced</strong><br>
+          <strong>HP:</strong> 360 (-10%) | <strong>STR:</strong> 8.5 (-15%) | <strong>Mana:</strong> +8/turn | <strong>Crit Dmg:</strong> 170%<br>
+          <strong>Passive - Life Drain 🩸:</strong> Heal for 15% of SKILL damage dealt. Defeating enemies permanently increases max HP by 5%. Skills cost 25% less mana.<br>
+          <strong>Best For:</strong> Dark magic lifesteal builds
+        </div>
+
+        <h2>📊 Class Comparison</h2>
+        <table>
+          <tr>
+            <th>Stat</th>
+            <th>Highest</th>
+            <th>Value</th>
+          </tr>
+          <tr>
+            <td>❤️ HP</td>
+            <td>Tank</td>
+            <td>600</td>
+          </tr>
+          <tr>
+            <td>⚔️ Strength</td>
+            <td>Glass Cannon</td>
+            <td>20 (double!)</td>
+          </tr>
+          <tr>
+            <td>🛡️ Defense</td>
+            <td>Tank</td>
+            <td>150%</td>
+          </tr>
+          <tr>
+            <td>💎 Crit Chance</td>
+            <td>Assassin</td>
+            <td>30%</td>
+          </tr>
+          <tr>
+            <td>💥 Crit Damage</td>
+            <td>Mage</td>
+            <td>250%</td>
+          </tr>
+          <tr>
+            <td>✨ Mana Regen</td>
+            <td>Mage</td>
+            <td>+10/turn</td>
+          </tr>
+        </table>
+
+        <h2>💡 Choosing Your Class</h2>
+        <p>
+          <strong>New Players:</strong> Start with Balanced, Warrior, Paladin, or Bruiser for more forgiving gameplay.<br><br>
+          <strong>Experienced Players:</strong> Try Glass Cannon, Assassin, Berserker, or Necromancer for higher skill ceiling.<br><br>
+          <strong>Like Tanking:</strong> Tank, Paladin<br>
+          <strong>Like Healing:</strong> Paladin, Bruiser, Necromancer<br>
+          <strong>Like Big Crits:</strong> Assassin, Mage, Glass Cannon<br>
+          <strong>Like Skills:</strong> Mage, Necromancer<br>
+          <strong>Like Basic Attacks:</strong> Warrior, Berserker<br>
+          <strong>Like Versatility:</strong> Balanced
+        </p>
+
+        <div class="warning-box">
+          ⚠️ <strong>Pro Tip:</strong> Your class defines your entire playstyle! Read the passive abilities carefully and choose a class that matches how you want to play. You cannot change your class after creation!
         </div>
       </div>
     `;
@@ -564,8 +1012,23 @@ export class WikiScreen extends BaseComponent {
         
         <div class="info-box">
           <strong>Collect powerful equipment to boost your stats!</strong><br>
-          Win battles to earn random equipment drops (50% chance base rate)
+          Win battles, complete story missions, or buy from marketplace. Equipment has durability and needs repairs!
         </div>
+
+        <h2>🔧 Durability System (NEW!)</h2>
+        <ul>
+          <li><strong>100 Durability</strong> - All items start at full durability</li>
+          <li><strong>5-10 Loss/Battle</strong> - Items degrade with each battle</li>
+          <li><strong>Effectiveness Penalties:</strong>
+            <ul>
+              <li>100-51%: Full power ✅</li>
+              <li>50-26%: -10% effectiveness ⚠️</li>
+              <li>25-1%: -25% effectiveness ❌</li>
+              <li>0%: Item breaks and unequips 💔</li>
+            </ul>
+          </li>
+          <li><strong>Repair at Marketplace</strong> - 5% of purchase price</li>
+        </ul>
 
         <h2>📦 Equipment Types</h2>
         <table>

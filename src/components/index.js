@@ -21,6 +21,9 @@ export { TournamentBracket } from './TournamentBracket.js'; // Phase 5 - Sprint 
 export { AchievementsScreen } from './AchievementsScreen.js'; // Phase 5 - Sprint 4
 export { SettingsScreen } from './SettingsScreen.js';
 export { WikiScreen } from './WikiScreen.js'; // Phase 5 - Sprint 4
+export { CampaignMap } from './CampaignMap.js'; // v4.0 - Story Mode
+export { MissionBriefing } from './MissionBriefing.js'; // v4.0 - Story Mode
+export { MarketplaceScreen } from './MarketplaceScreen.js'; // v4.0 - Marketplace
 
 // Auto-register all components by importing this file
 console.log('✅ All Web Components registered');

@@ -22,6 +22,7 @@ import { EquipmentManager } from './game/EquipmentManager.js';
 import { tournamentMode } from './game/TournamentMode.js';
 import { AchievementManager } from './game/AchievementManager.js';
 import { DifficultyManager } from './game/DifficultyManager.js';
+import { getMissionById } from './data/storyMissions.js';
 
 // Make bootstrap available globally if needed
 window.bootstrap = bootstrap;
@@ -126,6 +127,18 @@ function showTitleScreen() {
     soundManager.init();
     soundManager.play('event');
     showWikiScreen();
+  });
+
+  titleScreen.addEventListener('story-selected', () => {
+    soundManager.init();
+    soundManager.play('event');
+    showCampaignMapScreen();
+  });
+
+  titleScreen.addEventListener('marketplace-selected', () => {
+    soundManager.init();
+    soundManager.play('event');
+    showMarketplaceScreen();
   });
 
   root.appendChild(titleScreen);
@@ -314,6 +327,331 @@ function showWikiScreen() {
 
   root.appendChild(wiki);
   appState.currentScreen = 'wiki';
+}
+
+/**
+ * Show campaign map screen
+ */
+function showCampaignMapScreen() {
+  const root = document.getElementById('root');
+  root.innerHTML = '';
+
+  const campaignMap = document.createElement('campaign-map');
+
+  campaignMap.addEventListener('close', () => {
+    showTitleScreen();
+  });
+
+  campaignMap.addEventListener('mission-selected', (e) => {
+    const { missionId } = e.detail;
+    showMissionBriefing(missionId);
+  });
+
+  root.appendChild(campaignMap);
+  appState.currentScreen = 'campaign';
+}
+
+/**
+ * Show mission briefing screen
+ */
+function showMissionBriefing(missionId) {
+  const root = document.getElementById('root');
+  root.innerHTML = '';
+
+  const briefing = document.createElement('mission-briefing');
+  briefing.mission = missionId;
+
+  briefing.addEventListener('cancel', () => {
+    showCampaignMapScreen();
+  });
+
+  briefing.addEventListener('start-mission', (e) => {
+    const missionId = e.detail.missionId;
+    console.log('Starting mission:', missionId);
+    soundManager.play('event');
+    startStoryMission(missionId);
+  });
+
+  root.appendChild(briefing);
+}
+
+/**
+ * Start a story mission with combat
+ */
+function startStoryMission(missionId) {
+  const mission = getMissionById(missionId);
+  if (!mission) {
+    console.error('Mission not found:', missionId);
+    return;
+  }
+
+  // Create the player fighter
+  const playerData = SaveManager.load();
+  const playerFighter = new Fighter({
+    name: playerData.profile.name,
+    class: playerData.profile.class,
+    level: playerData.profile.level,
+    health: playerData.profile.maxHealth,
+    isPlayer: true,
+  });
+
+  // Apply player's equipped items
+  EquipmentManager.applyEquipmentBonuses(playerFighter);
+
+  // Create the enemy fighter from mission data
+  let enemyFighter;
+  
+  if (mission.type === 'survival' && mission.waves) {
+    // For survival missions, start with the first wave
+    const firstWave = mission.waves[0];
+    enemyFighter = new Fighter({
+      name: firstWave.name,
+      class: firstWave.class,
+      level: firstWave.level,
+      health: firstWave.health,
+      strength: firstWave.strength,
+      isPlayer: false,
+    });
+  } else if (mission.enemy) {
+    // Standard or boss mission
+    enemyFighter = new Fighter({
+      name: mission.enemy.name,
+      class: mission.enemy.class,
+      level: mission.enemy.level,
+      health: mission.enemy.health,
+      strength: mission.enemy.strength,
+      isPlayer: false,
+    });
+  } else {
+    console.error('No enemy configuration found for mission:', missionId);
+    return;
+  }
+
+  // Prepare battle setup
+  const root = document.getElementById('root');
+  root.innerHTML = '';
+
+  // Create combat arena component
+  const arena = document.createElement('combat-arena');
+  
+  arena.addEventListener('return-to-menu', () => {
+    Game.stopGame();
+    appState.reset();
+    showTitleScreen();
+  });
+
+  arena.addEventListener('auto-battle-toggle', (e) => {
+    Game.setAutoBattle(e.detail.enabled);
+  });
+
+  arena.addEventListener('auto-scroll-toggle', (e) => {
+    Logger.setAutoScroll(e.detail.enabled);
+  });
+
+  root.appendChild(arena);
+  appState.currentScreen = 'combat';
+
+  // Wait for arena to be fully rendered, then start game
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      // Initialize Logger with the combat arena's log element
+      const logElement = arena.shadowRoot?.querySelector('#log');
+      if (logElement) {
+        Logger.setLogHolder(logElement);
+        Logger.setAutoScroll(arena.autoScroll);
+        console.log('✅ Logger initialized for story mission combat');
+        
+        // Log mission start message
+        if (mission.dialogue?.before) {
+          const message = `
+            <div class="mission-dialogue" style="
+              background: linear-gradient(135deg, rgba(106, 66, 194, 0.3), rgba(42, 26, 71, 0.4));
+              border: 3px solid #b39ddb;
+              border-radius: 12px;
+              padding: 20px;
+              margin: 20px 0;
+              text-align: center;
+            ">
+              <div style="font-size: 24px; font-weight: bold; color: #ffa726; margin-bottom: 10px;">
+                📖 ${mission.name}
+              </div>
+              <div style="font-size: 16px; color: #e1bee7; font-style: italic;">
+                ${mission.dialogue.before}
+              </div>
+            </div>
+          `;
+          Logger.log(message);
+        }
+
+        // Start the game with the mission ID
+        Game.startGame(playerFighter, enemyFighter, missionId);
+      } else {
+        console.error('❌ Could not find log element in combat arena');
+      }
+    });
+  });
+}
+
+/**
+ * Show mission results screen
+ */
+function showMissionResults(missionResult) {
+  if (!missionResult || !missionResult.success) {
+    // Mission failed - show failure screen
+    Logger.log(`
+      <div class="mission-failed" style="
+        background: linear-gradient(135deg, rgba(244, 67, 54, 0.3), rgba(211, 47, 47, 0.4));
+        border: 3px solid #f44336;
+        border-radius: 15px;
+        padding: 30px;
+        margin: 20px 0;
+        text-align: center;
+      ">
+        <div style="font-size: 64px; margin-bottom: 15px;">💔</div>
+        <div style="font-size: 32px; font-weight: 900; color: #ef5350; margin-bottom: 15px;">MISSION FAILED</div>
+        <div style="color: #ffcdd2; font-size: 18px; margin-bottom: 15px;">
+          ${missionResult ? missionResult.mission.name : 'Unknown Mission'}
+        </div>
+        <div style="color: #ffcdd2; font-size: 16px;">
+          Don't give up! Try again with better equipment or skills.
+        </div>
+      </div>
+    `);
+    
+    // Add a button to return to campaign map (instead of auto-redirect)
+    Logger.log(`
+      <div style="margin-top: 20px; text-align: center;">
+        <button id="return-to-map-btn-failed" style="
+          padding: 15px 40px;
+          font-size: 18px;
+          font-weight: 700;
+          background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+          color: white;
+          border: 2px solid #f44336;
+          border-radius: 12px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+        ">
+        🗺️ Return to Campaign Map
+        </button>
+        <div style="margin-top: 10px; font-size: 14px; color: rgba(255, 255, 255, 0.6); font-style: italic;">
+          Review the combat logs to see what went wrong
+        </div>
+      </div>
+    `);
+    
+    // Add event listener to the button
+    setTimeout(() => {
+      const returnBtn = document.querySelector('#return-to-map-btn-failed');
+      if (returnBtn) {
+        returnBtn.addEventListener('click', () => {
+          showCampaignMapScreen();
+        });
+        returnBtn.addEventListener('mouseover', () => {
+          returnBtn.style.transform = 'translateY(-3px)';
+          returnBtn.style.boxShadow = '0 10px 30px rgba(244, 67, 54, 0.5)';
+        });
+        returnBtn.addEventListener('mouseout', () => {
+          returnBtn.style.transform = 'translateY(0)';
+          returnBtn.style.boxShadow = 'none';
+        });
+      }
+    }, 100);
+    return;
+  }
+
+  // Mission succeeded - show results in logger (already done in StoryMode.completeMission)
+  // Show detailed rewards breakdown
+  const rewards = missionResult.rewards;
+  if (rewards) {
+    let rewardsHTML = '<div style="margin-top: 20px; padding: 15px; background: rgba(76, 175, 80, 0.2); border-radius: 10px; border: 2px solid #4caf50;">';
+    rewardsHTML += '<div style="font-size: 20px; font-weight: 700; color: #66bb6a; margin-bottom: 10px;">🎁 Rewards Earned:</div>';
+    
+    if (rewards.gold) {
+      rewardsHTML += `<div style="color: #ffc107; font-size: 18px; margin: 5px 0;">💰 ${rewards.gold} Gold</div>`;
+    }
+    if (rewards.xp) {
+      rewardsHTML += `<div style="color: #42a5f5; font-size: 18px; margin: 5px 0;">✨ ${rewards.xp} XP</div>`;
+    }
+    if (rewards.equipment && rewards.equipment.length > 0) {
+      rewardsHTML += `<div style="color: #ba68c8; font-size: 18px; margin: 5px 0;">🎁 ${rewards.equipment.length} Equipment Item(s)</div>`;
+    }
+    
+    rewardsHTML += '</div>';
+    Logger.log(rewardsHTML);
+  }
+
+  // Show objectives completion
+  if (missionResult.objectives) {
+    let objectivesHTML = '<div style="margin-top: 15px; padding: 15px; background: rgba(106, 66, 194, 0.2); border-radius: 10px; border: 2px solid #6a42c2;">';
+    objectivesHTML += '<div style="font-size: 18px; font-weight: 700; color: #b39ddb; margin-bottom: 10px;">📋 Objectives:</div>';
+    
+    Object.values(missionResult.objectives).forEach(obj => {
+      const icon = obj.completed ? '✅' : '❌';
+      const color = obj.completed ? '#66bb6a' : '#ef5350';
+      objectivesHTML += `<div style="color: ${color}; font-size: 14px; margin: 5px 0;">${icon} ${obj.description}</div>`;
+    });
+    
+    objectivesHTML += '</div>';
+    Logger.log(objectivesHTML);
+  }
+
+  // Add a button to return to campaign map (instead of auto-redirect)
+  Logger.log(`
+    <div style="margin-top: 20px; text-align: center;">
+      <button id="return-to-map-btn" style="
+        padding: 15px 40px;
+        font-size: 18px;
+        font-weight: 700;
+        background: linear-gradient(135deg, #6a42c2 0%, #2d1b69 100%);
+        color: white;
+        border: 2px solid #6a42c2;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      ">
+        🗺️ Return to Campaign Map
+      </button>
+      <div style="margin-top: 10px; font-size: 14px; color: rgba(255, 255, 255, 0.6); font-style: italic;">
+        Take your time to review the combat logs above
+      </div>
+    </div>
+  `);
+
+  // Add event listener to the button
+  setTimeout(() => {
+    const returnBtn = document.querySelector('#return-to-map-btn');
+    if (returnBtn) {
+      returnBtn.addEventListener('click', () => {
+        showCampaignMapScreen();
+      });
+      returnBtn.addEventListener('mouseover', () => {
+        returnBtn.style.transform = 'translateY(-3px)';
+        returnBtn.style.boxShadow = '0 10px 30px rgba(106, 66, 194, 0.5)';
+      });
+      returnBtn.addEventListener('mouseout', () => {
+        returnBtn.style.transform = 'translateY(0)';
+        returnBtn.style.boxShadow = 'none';
+      });
+    }
+  }, 100);
+}
+
+/**
+ * Show marketplace screen
+ */
+function showMarketplaceScreen() {
+  const root = document.getElementById('root');
+  root.innerHTML = '';
+
+  const marketplace = document.createElement('marketplace-screen');
+
+  marketplace.addEventListener('close', () => {
+    showTitleScreen();
+  });
+
+  root.appendChild(marketplace);
+  appState.currentScreen = 'marketplace';
 }
 
 /**
@@ -795,6 +1133,12 @@ function showRegularVictoryScreen(winner) {
     showTitleScreen();
   });
 
+  victoryScreen.addEventListener('close', () => {
+    // Just remove the victory screen overlay without navigating away
+    // This allows the user to view combat logs and final stats
+    victoryScreen.remove();
+  });
+
   document.body.appendChild(victoryScreen);
 }
 
@@ -818,6 +1162,12 @@ function showTournamentVictoryScreen() {
     Game.stopGame();
     appState.reset();
     showTitleScreen();
+  });
+
+  victoryScreen.addEventListener('close', () => {
+    // Just remove the victory screen overlay without navigating away
+    // This allows the user to view combat logs and final stats
+    victoryScreen.remove();
   });
 
   document.body.appendChild(victoryScreen);
@@ -905,6 +1255,9 @@ if (document.readyState === 'loading') {
 
 // Export for game to show victory screen
 window.showVictoryScreen = showVictoryScreen;
+
+// Export for game to show mission results
+window.showMissionResults = showMissionResults;
 
 // Export AchievementManager globally for equipment tracking
 window.AchievementManager = AchievementManager;

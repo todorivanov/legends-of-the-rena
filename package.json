@@ -1,25 +1,69 @@
 {
-  "name": "object-fighter",
-  "version": "3.0.0",
+  "name": "legends-of-the-arena",
+  "version": "4.0.0",
+  "description": "An epic browser-based RPG fighting game with story mode, turn-based tactical combat, character progression, equipment systems, and marketplace economy",
   "type": "module",
+  "main": "src/main-new.js",
+  "keywords": [
+    "game",
+    "rpg",
+    "fighting",
+    "turn-based",
+    "combat",
+    "browser-game",
+    "javascript",
+    "web-components",
+    "story-mode",
+    "equipment-system",
+    "character-progression",
+    "achievements",
+    "marketplace",
+    "tournament",
+    "vanilla-js"
+  ],
+  "homepage": "https://github.com/todorivanov/ObjectFighterJS#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/todorivanov/ObjectFighterJS.git"
+  },
+  "bugs": {
+    "url": "https://github.com/todorivanov/ObjectFighterJS/issues"
+  },
+  "author": {
+    "name": "Todor Ivanov",
+    "url": "https://github.com/todorivanov"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint . --ext js --report-unused-disable-directives --max-warnings 0",
+    "lint:fix": "eslint . --ext js --fix",
     "format": "prettier --write \"src/**/*.{js,css,html}\"",
-    "format:check": "prettier --check \"src/**/*.{js,css,html}\""
+    "format:check": "prettier --check \"src/**/*.{js,css,html}\"",
+    "clean": "rm -rf dist node_modules",
+    "clean:dist": "rm -rf dist",
+    "prebuild": "npm run clean:dist",
+    "check": "npm run lint && npm run format:check",
+    "prepare": "npm run check"
   },
-  "author": "Todor Ivanov",
-  "license": "MIT",
-  "dependencies": {
-    "bootstrap": "^5.3.3"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@eslint/js": "^9.15.0",
     "eslint": "^9.15.0",
     "globals": "^15.12.0",
     "prettier": "^3.3.3",
     "vite": "^5.4.11"
-  }
+  },
+  "browserslist": [
+    ">0.5%",
+    "last 2 versions",
+    "not dead",
+    "not ie 11"
+  ]
 }

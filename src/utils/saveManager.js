@@ -3,8 +3,8 @@
  * Uses localStorage for profile, progress, and settings
  */
 
-const SAVE_KEY = 'objectfighter_save';
-const SAVE_VERSION = '3.0.0';
+const SAVE_KEY = 'legends_arena_save';
+const SAVE_VERSION = '4.0.0';
 
 export class SaveManager {
   /**
@@ -19,6 +19,7 @@ export class SaveManager {
         level: 1,
         xp: 0,
         xpToNextLevel: 100,
+        gold: 100, // Starting gold
         createdAt: Date.now(),
         lastPlayedAt: Date.now(),
         characterCreated: false,
@@ -38,6 +39,21 @@ export class SaveManager {
         criticalHits: 0,
         skillsUsed: 0,
         itemsUsed: 0,
+        totalGoldEarned: 0,
+        totalGoldSpent: 0,
+        // Story Mode stats
+        bossesDefeated: 0,
+        survivalMissionsCompleted: 0,
+        fastMissions: 0,
+        flawlessMissions: 0,
+        perfectMissions: 0,
+        perfectRegions: 0,
+        // Marketplace stats
+        marketplacePurchases: 0,
+        itemsSold: 0,
+        itemsRepaired: 0,
+        legendaryPurchases: 0,
+        goldFromSales: 0,
       },
       equipped: {
         weapon: null,
@@ -45,12 +61,13 @@ export class SaveManager {
         accessory: null,
       },
       inventory: {
-        equipment: [], // Array of equipment IDs
+        equipment: [], // Array of equipment IDs with durability
         consumables: {
           'health_potion': 3,
           'mana_potion': 3,
         },
       },
+      equipmentDurability: {}, // Map of equipmentId -> current durability
       unlocks: {
         fighters: [], // Array of unlocked fighter IDs (all unlocked by default)
         skills: [], // Array of unlocked skill IDs
@@ -63,6 +80,17 @@ export class SaveManager {
         darkMode: false,
       },
       achievements: [], // Achievement progress tracking
+      storyProgress: {
+        unlockedRegions: ['tutorial'], // Start with tutorial unlocked
+        completedMissions: [],
+        currentMission: null,
+        missionStars: {}, // missionId: stars (1-3)
+      },
+      marketplace: {
+        lastRefresh: null,
+        currentInventory: [], // Array of equipment IDs in shop
+        purchaseHistory: [],
+      },
     };
   }
 
@@ -136,11 +164,14 @@ export class SaveManager {
       profile: {
         ...newData.profile,
         ...oldData.profile,
+        gold: oldData.profile?.gold || 100, // Add gold if missing
         lastPlayedAt: Date.now(),
       },
       stats: {
         ...newData.stats,
         ...oldData.stats,
+        totalGoldEarned: oldData.stats?.totalGoldEarned || 0,
+        totalGoldSpent: oldData.stats?.totalGoldSpent || 0,
       },
       settings: {
         ...newData.settings,
@@ -149,7 +180,40 @@ export class SaveManager {
       equipped: oldData.equipped || newData.equipped,
       inventory: oldData.inventory || newData.inventory,
       unlocks: oldData.unlocks || newData.unlocks,
+      equipmentDurability: oldData.equipmentDurability || {},
+      storyProgress: oldData.storyProgress || newData.storyProgress,
+      marketplace: oldData.marketplace || newData.marketplace,
     };
+  }
+
+  /**
+   * Validate save data structure
+   * @param {Object} data - Save data to validate
+   * @returns {Object} - Validated and fixed save data
+   */
+  static validateSaveData(data) {
+    const defaultData = this.getDefaultProfile();
+    
+    // Deep merge ensuring all required fields exist
+    const validated = {
+      version: data.version || defaultData.version,
+      profile: { ...defaultData.profile, ...(data.profile || {}) },
+      stats: { ...defaultData.stats, ...(data.stats || {}) },
+      equipped: { ...defaultData.equipped, ...(data.equipped || {}) },
+      inventory: { 
+        ...defaultData.inventory, 
+        ...(data.inventory || {}),
+        equipment: Array.isArray(data.inventory?.equipment) ? data.inventory.equipment : [],
+      },
+      equipmentDurability: data.equipmentDurability || {},
+      unlocks: { ...defaultData.unlocks, ...(data.unlocks || {}) },
+      settings: { ...defaultData.settings, ...(data.settings || {}) },
+      achievements: Array.isArray(data.achievements) ? data.achievements : [],
+      storyProgress: { ...defaultData.storyProgress, ...(data.storyProgress || {}) },
+      marketplace: { ...defaultData.marketplace, ...(data.marketplace || {}) },
+    };
+
+    return validated;
   }
 
   /**

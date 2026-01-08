@@ -12,6 +12,7 @@ import { BaseComponent } from './BaseComponent.js';
  * Events:
  * - play-again: User wants to play again
  * - main-menu: User wants to return to main menu
+ * - close: User wants to close overlay and view logs
  */
 export class VictoryScreen extends BaseComponent {
   static get observedAttributes() {
@@ -233,6 +234,26 @@ export class VictoryScreen extends BaseComponent {
         box-shadow: 0 10px 30px rgba(106, 66, 194, 0.5);
       }
 
+      .btn-close {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+        border-color: rgba(255, 255, 255, 0.3);
+        font-size: 16px;
+        padding: 12px 30px;
+      }
+
+      .btn-close:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2);
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.1) 100%);
+      }
+
+      .close-hint {
+        margin-top: 15px;
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.6);
+        font-style: italic;
+      }
+
       .sparkles {
         position: absolute;
         width: 100%;
@@ -324,11 +345,18 @@ export class VictoryScreen extends BaseComponent {
 
             <div class="victory-buttons">
               <button class="victory-btn btn-primary" data-action="play-again">
-                Play Again
+                ⚔️ Play Again
               </button>
               <button class="victory-btn btn-secondary" data-action="main-menu">
-                Main Menu
+                🏠 Main Menu
               </button>
+            </div>
+            
+            <button class="victory-btn btn-close" data-action="close">
+              👁️ Close & View Logs
+            </button>
+            <div class="close-hint">
+              Close this screen to review combat logs and final stats
             </div>
           </div>
         </div>

@@ -19,6 +19,11 @@ export const EQUIPMENT_DATABASE = {
       level: 1,
       class: ['WARRIOR', 'BALANCED'],
     },
+    durability: {
+      max: 100,
+      degradationRate: 10, // Durability lost per battle
+      repairCostBase: 8, // Base repair cost
+    },
     description: 'A simple training sword. Better than nothing.',
     icon: '🗡️',
   },
@@ -36,6 +41,11 @@ export const EQUIPMENT_DATABASE = {
       level: 3,
       class: ['WARRIOR', 'BALANCED'],
     },
+    durability: {
+      max: 100,
+      degradationRate: 8,
+      repairCostBase: 12,
+    },
     description: 'A sturdy iron blade. Reliable in combat.',
     icon: '⚔️',
   },
@@ -51,6 +61,11 @@ export const EQUIPMENT_DATABASE = {
     requirements: {
       level: 4,
       class: ['WARRIOR', 'BRUISER'],
+    },
+    durability: {
+      max: 100,
+      degradationRate: 9,
+      repairCostBase: 15,
     },
     description: 'Heavy but devastating. Cleaves through armor.',
     icon: '🪓',
@@ -70,6 +85,11 @@ export const EQUIPMENT_DATABASE = {
       level: 6,
       class: ['WARRIOR', 'GLASS_CANNON'],
     },
+    durability: {
+      max: 100,
+      degradationRate: 7,
+      repairCostBase: 25,
+    },
     description: 'Enchanted with fire magic. Burns enemies on hit.',
     icon: '🔥',
   },
@@ -87,6 +107,11 @@ export const EQUIPMENT_DATABASE = {
       level: 5,
       class: ['GLASS_CANNON', 'BALANCED'],
     },
+    durability: {
+      max: 100,
+      degradationRate: 7,
+      repairCostBase: 22,
+    },
     description: 'Strike from the shadows. High critical chance.',
     icon: '🗡️',
   },
@@ -103,6 +128,11 @@ export const EQUIPMENT_DATABASE = {
     requirements: {
       level: 5,
       class: ['BALANCED'],
+    },
+    durability: {
+      max: 100,
+      degradationRate: 6,
+      repairCostBase: 28,
     },
     description: 'Channel magical energy. Increases mana regeneration.',
     icon: '🪄',
@@ -123,6 +153,11 @@ export const EQUIPMENT_DATABASE = {
       level: 10,
       class: ['WARRIOR', 'GLASS_CANNON'],
     },
+    durability: {
+      max: 100,
+      degradationRate: 5,
+      repairCostBase: 60,
+    },
     description: 'Forged from a dragon tooth. Legendary power.',
     icon: '🐉',
   },
@@ -139,6 +174,11 @@ export const EQUIPMENT_DATABASE = {
     requirements: {
       level: 9,
       class: ['BALANCED', 'GLASS_CANNON'],
+    },
+    durability: {
+      max: 100,
+      degradationRate: 5,
+      repairCostBase: 55,
     },
     description: 'Crackles with lightning. Devastating special attacks.',
     icon: '⚡',
@@ -160,6 +200,11 @@ export const EQUIPMENT_DATABASE = {
       level: 15,
       class: ['WARRIOR', 'BALANCED'],
     },
+    durability: {
+      max: 100,
+      degradationRate: 3,
+      repairCostBase: 150,
+    },
     description: 'The legendary blade of heroes. Unmatched power.',
     icon: '🗡️',
   },
@@ -179,6 +224,11 @@ export const EQUIPMENT_DATABASE = {
     requirements: {
       level: 1,
     },
+    durability: {
+      max: 100,
+      degradationRate: 9,
+      repairCostBase: 8,
+    },
     description: 'Light armor for beginners. Better than nothing.',
     icon: '🦺',
   },
@@ -194,6 +244,11 @@ export const EQUIPMENT_DATABASE = {
     },
     requirements: {
       level: 3,
+    },
+    durability: {
+      max: 100,
+      degradationRate: 8,
+      repairCostBase: 12,
     },
     description: 'Interlocked metal rings. Decent protection.',
     icon: '🛡️',
@@ -213,6 +268,11 @@ export const EQUIPMENT_DATABASE = {
       level: 6,
       class: ['TANK', 'WARRIOR', 'BRUISER'],
     },
+    durability: {
+      max: 100,
+      degradationRate: 6,
+      repairCostBase: 25,
+    },
     description: 'Heavy plate armor. Excellent defense.',
     icon: '🛡️',
   },
@@ -230,6 +290,11 @@ export const EQUIPMENT_DATABASE = {
     requirements: {
       level: 5,
       class: ['BALANCED', 'GLASS_CANNON'],
+    },
+    durability: {
+      max: 100,
+      degradationRate: 7,
+      repairCostBase: 22,
     },
     description: 'Enchanted robes. Light but magical.',
     icon: '👘',
@@ -250,6 +315,11 @@ export const EQUIPMENT_DATABASE = {
       level: 10,
       class: ['TANK', 'BRUISER'],
     },
+    durability: {
+      max: 100,
+      degradationRate: 5,
+      repairCostBase: 55,
+    },
     description: 'Armor of ancient titans. Impenetrable defense.',
     icon: '🛡️',
   },
@@ -266,6 +336,11 @@ export const EQUIPMENT_DATABASE = {
     },
     requirements: {
       level: 9,
+    },
+    durability: {
+      max: 100,
+      degradationRate: 5,
+      repairCostBase: 60,
     },
     description: 'Born from phoenix flames. Grants resilience.',
     icon: '🔥',
@@ -284,6 +359,11 @@ export const EQUIPMENT_DATABASE = {
     },
     requirements: {
       level: 15,
+    },
+    durability: {
+      max: 100,
+      degradationRate: 3,
+      repairCostBase: 140,
     },
     description: 'The ultimate shield. Protects against all harm.',
     icon: '🛡️',
@@ -304,6 +384,11 @@ export const EQUIPMENT_DATABASE = {
     requirements: {
       level: 1,
     },
+    durability: {
+      max: 100,
+      degradationRate: 6,
+      repairCostBase: 7,
+    },
     description: 'A simple ring. Provides minor bonuses.',
     icon: '💍',
   },
@@ -321,6 +406,11 @@ export const EQUIPMENT_DATABASE = {
     requirements: {
       level: 5,
     },
+    durability: {
+      max: 100,
+      degradationRate: 5,
+      repairCostBase: 20,
+    },
     description: 'Amplifies your strength. Feel the power!',
     icon: '📿',
   },
@@ -336,6 +426,11 @@ export const EQUIPMENT_DATABASE = {
     },
     requirements: {
       level: 4,
+    },
+    durability: {
+      max: 100,
+      degradationRate: 5,
+      repairCostBase: 18,
     },
     description: 'Pure crystallized mana. Endless energy.',
     icon: '💎',
@@ -355,6 +450,11 @@ export const EQUIPMENT_DATABASE = {
     requirements: {
       level: 8,
     },
+    durability: {
+      max: 100,
+      degradationRate: 4,
+      repairCostBase: 50,
+    },
     description: 'Unleash devastating criticals. Pure rage!',
     icon: '💍',
   },
@@ -371,6 +471,11 @@ export const EQUIPMENT_DATABASE = {
     },
     requirements: {
       level: 9,
+    },
+    durability: {
+      max: 100,
+      degradationRate: 4,
+      repairCostBase: 55,
     },
     description: 'Touched by the void. Balanced power.',
     icon: '🌀',
@@ -391,6 +496,11 @@ export const EQUIPMENT_DATABASE = {
     },
     requirements: {
       level: 15,
+    },
+    durability: {
+      max: 100,
+      degradationRate: 2,
+      repairCostBase: 160,
     },
     description: 'Worn by legends. The ultimate accessory.',
     icon: '👑',

@@ -55,4 +55,68 @@ export const GameConfig = {
     placeholderAPI: 'https://api.dicebear.com/7.x',
     style: 'avataaars', // avatar style
   },
+
+  // Economy System
+  economy: {
+    startingGold: 100,
+    battleRewardBase: 30,
+    difficultyMultipliers: {
+      easy: 0.8,
+      normal: 1.0,
+      hard: 1.5,
+      nightmare: 2.0,
+    },
+    sellPriceMultiplier: 0.5, // Items sell for 50% of purchase price
+  },
+
+  // Equipment System
+  equipment: {
+    inventoryLimit: 20,
+    durabilityMax: 100,
+    durabilityLossMin: 5,
+    durabilityLossMax: 10,
+    durabilityEffectivenessThresholds: {
+      broken: 0,
+      damaged: 25,
+      worn: 50,
+      good: 75,
+    },
+  },
+
+  // Marketplace System
+  marketplace: {
+    refreshIntervalHours: 24,
+    refreshCost: 100, // Gold cost to force refresh
+    inventorySize: { min: 6, max: 8 },
+    legendaryChance: 0.05, // 5% at level 15+
+    epicChance: 0.15, // 15% at level 10+
+    rareChance: 0.30, // 30% at level 5+
+  },
+
+  // Story Mode
+  story: {
+    totalMissions: 25,
+    starBonusXP: 50, // Bonus XP per star above 1
+  },
+
+  // Turn-Based Combat
+  turnBased: {
+    roundInterval: 1500,
+    aiTurnDelay: 1200,
+    baseCritChance: 15,
+    critDamageMultiplier: 1.5,
+    defendDamageReduction: 0.5,
+    manaRegenPerTurn: 10,
+    itemHealAmount: 20,
+  },
+
+  // Leveling System
+  leveling: {
+    maxLevel: 20,
+    baseXP: 100,
+    xpScaling: 1.5,
+    hpPerLevel: 20,
+    strengthPerLevel: 2,
+    defensePerLevel: 1,
+  },
 };
