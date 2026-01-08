@@ -21,5 +21,13 @@ export default [
       'prefer-const': 'warn',
       'no-var': 'error'
     }
+  },
+  {
+    files: ['vite.config.js'],
+    languageOptions: {
+      globals: {
+        ...globals.node
+      }
+    }
   }
 ];

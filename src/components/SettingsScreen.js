@@ -304,7 +304,6 @@ export class SettingsScreen extends BaseComponent {
   }
 
   renderDifficultyCard(difficulty, currentDifficulty) {
-    const config = DIFFICULTY_CONFIG[difficulty.id];
     const isSelected = difficulty.id === currentDifficulty;
 
     return `

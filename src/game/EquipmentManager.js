@@ -96,7 +96,7 @@ export class EquipmentManager {
    * @returns {boolean} - Success
    */
   static removeFromInventory(equipmentId) {
-    let inventory = SaveManager.get('inventory.equipment') || [];
+    const inventory = SaveManager.get('inventory.equipment') || [];
     const index = inventory.indexOf(equipmentId);
     
     if (index === -1) {

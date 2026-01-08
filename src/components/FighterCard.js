@@ -327,7 +327,7 @@ export class FighterCard extends BaseComponent {
     if (this.hasAttribute('draggable')) {
       card.draggable = true;
       
-      card.addEventListener('dragstart', (e) => {
+      card.addEventListener('dragstart', (_e) => {
         this.emit('fighter-dragstart', { 
           fighterId: this.getAttribute('fighter-id'),
           fighter: this._fighter

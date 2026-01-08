@@ -204,7 +204,7 @@ export default class Game {
     }
 
     switch(action) {
-      case 'attack':
+      case 'attack': {
         const attackResult = attacker.normalAttack();
         const actualDmg = defender.takeDamage(attackResult.damage);
         
@@ -246,6 +246,7 @@ export default class Game {
           }
         }
         break;
+      }
       
       case 'defend':
         attacker.defend();
@@ -257,7 +258,7 @@ export default class Game {
         }
         break;
       
-      case 'skill':
+      case 'skill': {
         const skillIndex = actionData.skillIndex;
         if (skillIndex !== undefined && attacker.skills[skillIndex]) {
           const skill = attacker.skills[skillIndex];
@@ -275,8 +276,9 @@ export default class Game {
           }
         }
         break;
+      }
       
-      case 'item':
+      case 'item': {
         const previousHealth = attacker.health;
         attacker.useItem();
         if (attacker.isPlayer) {
@@ -290,6 +292,7 @@ export default class Game {
         }
         attacker.combo = 0; // Reset combo on item use
         break;
+      }
     }
 
     // Defender's combo resets when taking damage

@@ -320,7 +320,7 @@ export class CampaignMap extends BaseComponent {
     `;
   }
 
-  renderMission(missionId, storyProgress) {
+  renderMission(missionId, _storyProgress) {
     const mission = getMissionById(missionId);
     const completed = StoryMode.isMissionCompleted(missionId);
     const stars = StoryMode.getMissionStars(missionId);

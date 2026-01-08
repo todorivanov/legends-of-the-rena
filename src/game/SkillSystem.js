@@ -53,21 +53,23 @@ export class Skill {
    */
   executeEffect(caster, target) {
     switch(this.type) {
-      case 'damage':
+      case 'damage': {
         const damage = Math.ceil(this.power + caster.strength * 0.5);
         target.takeDamage(damage);
         target.showFloatingDamage(damage, 'critical');
         Logger.log(`<div class="attack-div special-attack text-center">💫 <strong>${caster.name}</strong> used ${this.name}! <span class="badge bg-danger">${damage} damage</span></div>`);
         soundManager.play('special');
         break;
+      }
 
-      case 'heal':
+      case 'heal': {
         const healAmount = this.power;
         caster.health = Math.min(caster.maxHealth, caster.health + healAmount);
         caster.showFloatingDamage(healAmount, 'heal');
         Logger.log(`<div class="consumable text-center">💚 <strong>${caster.name}</strong> used ${this.name}! <span class="badge bg-success">+${healAmount} HP</span></div>`);
         soundManager.play('heal');
         break;
+      }
 
       case 'buff':
         if (this.statusEffect) {

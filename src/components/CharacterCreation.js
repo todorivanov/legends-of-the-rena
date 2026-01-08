@@ -1,6 +1,6 @@
 import { BaseComponent } from './BaseComponent.js';
 import { SaveManager } from '../utils/saveManager.js';
-import { CHARACTER_CLASSES, getAllClasses } from '../data/classes.js';
+import { getAllClasses } from '../data/classes.js';
 
 /**
  * CharacterCreation Web Component

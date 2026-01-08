@@ -7,6 +7,7 @@ import { LevelingSystem } from './LevelingSystem.js';
 import { Logger } from '../utils/logger.js';
 import { soundManager } from '../utils/soundManager.js';
 import { ACHIEVEMENTS, getAchievementById } from '../data/achievements.js';
+import { EconomyManager } from './EconomyManager.js';
 
 export class AchievementManager {
   /**
@@ -167,42 +168,47 @@ export class AchievementManager {
           shouldUnlock = stats.totalDamageDealt >= achievement.requirement.target;
           break;
 
-        case 'equipmentCollected':
-          const inventorySize = SaveManager.get('inventory.equipment')?.length || 0;
-          shouldUnlock = inventorySize >= achievement.requirement.target;
-          break;
+      case 'equipmentCollected': {
+        const inventorySize = SaveManager.get('inventory.equipment')?.length || 0;
+        shouldUnlock = inventorySize >= achievement.requirement.target;
+        break;
+      }
 
-        // Story Mode achievements
-        case 'storyMissionsCompleted':
-          const completedMissions = SaveManager.get('storyProgress.completedMissions')?.length || 0;
-          shouldUnlock = completedMissions >= achievement.requirement.target;
-          break;
+      // Story Mode achievements
+      case 'storyMissionsCompleted': {
+        const completedMissions = SaveManager.get('storyProgress.completedMissions')?.length || 0;
+        shouldUnlock = completedMissions >= achievement.requirement.target;
+        break;
+      }
 
-        case 'totalStars':
-          const missionStars = SaveManager.get('storyProgress.missionStars') || {};
-          const totalStars = Object.values(missionStars).reduce((sum, stars) => sum + stars, 0);
-          shouldUnlock = totalStars >= achievement.requirement.target;
-          break;
+      case 'totalStars': {
+        const missionStars = SaveManager.get('storyProgress.missionStars') || {};
+        const totalStars = Object.values(missionStars).reduce((sum, stars) => sum + stars, 0);
+        shouldUnlock = totalStars >= achievement.requirement.target;
+        break;
+      }
 
-        // Economy achievements
-        case 'marketplacePurchases':
-          shouldUnlock = stats.marketplacePurchases >= achievement.requirement.target;
-          break;
+      // Economy achievements
+      case 'marketplacePurchases':
+        shouldUnlock = stats.marketplacePurchases >= achievement.requirement.target;
+        break;
 
-        case 'marketplaceTransactions':
-          const purchases = stats.marketplacePurchases || 0;
-          const sales = stats.itemsSold || 0;
-          shouldUnlock = (purchases + sales) >= achievement.requirement.target;
-          break;
+      case 'marketplaceTransactions': {
+        const purchases = stats.marketplacePurchases || 0;
+        const sales = stats.itemsSold || 0;
+        shouldUnlock = (purchases + sales) >= achievement.requirement.target;
+        break;
+      }
 
-        case 'itemsRepaired':
-          shouldUnlock = stats.itemsRepaired >= achievement.requirement.target;
-          break;
+      case 'itemsRepaired':
+        shouldUnlock = stats.itemsRepaired >= achievement.requirement.target;
+        break;
 
-        case 'goldBalance':
-          const currentGold = SaveManager.get('profile.gold') || 0;
-          shouldUnlock = currentGold >= achievement.requirement.target;
-          break;
+      case 'goldBalance': {
+        const currentGold = SaveManager.get('profile.gold') || 0;
+        shouldUnlock = currentGold >= achievement.requirement.target;
+        break;
+      }
 
         case 'totalGoldSpent':
           shouldUnlock = stats.totalGoldSpent >= achievement.requirement.target;
@@ -370,7 +376,6 @@ export class AchievementManager {
    */
   static awardAchievementRewards(achievement) {
     if (achievement.reward.gold) {
-      const { EconomyManager } = require('./EconomyManager.js');
       EconomyManager.addGold(achievement.reward.gold, `Achievement: ${achievement.name}`);
     }
   }
@@ -423,18 +428,20 @@ export class AchievementManager {
       case 'storyMissionsCompleted':
         current = SaveManager.get('storyProgress.completedMissions')?.length || 0;
         break;
-      case 'totalStars':
+      case 'totalStars': {
         const stars = SaveManager.get('storyProgress.missionStars') || {};
         current = Object.values(stars).reduce((sum, s) => sum + s, 0);
         break;
+      }
       case 'marketplacePurchases':
         current = stats.marketplacePurchases || 0;
         break;
-      case 'marketplaceTransactions':
+      case 'marketplaceTransactions': {
         const purchases = stats.marketplacePurchases || 0;
         const sales = stats.itemsSold || 0;
         current = purchases + sales;
         break;
+      }
       case 'itemsRepaired':
         current = stats.itemsRepaired || 0;
         break;

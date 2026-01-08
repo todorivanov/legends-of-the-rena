@@ -1,5 +1,4 @@
 import { BaseComponent } from './BaseComponent.js';
-import { tournamentMode } from '../game/TournamentMode.js';
 
 /**
  * TournamentBracket Web Component

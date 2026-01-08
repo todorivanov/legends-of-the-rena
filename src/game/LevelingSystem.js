@@ -68,7 +68,6 @@ export class LevelingSystem {
     SaveManager.update('profile.level', newLevel);
     
     if (newLevel > 1) {
-      const xpForCurrentLevel = this.getTotalXPForLevel(newLevel);
       const xpForNextLevel = this.getTotalXPForLevel(newLevel + 1);
       SaveManager.update('profile.xpToNextLevel', xpForNextLevel - newXP);
     }
@@ -103,7 +102,7 @@ export class LevelingSystem {
   /**
    * Show level-up animation and notification
    */
-  static showLevelUpAnimation(newLevel, levelsGained = 1) {
+  static showLevelUpAnimation(newLevel, _levelsGained = 1) {
     const levelUpMessage = `<div class="level-up-message" style="
       background: linear-gradient(135deg, rgba(255, 215, 0, 0.3), rgba(255, 165, 0, 0.3));
       border: 2px solid gold;

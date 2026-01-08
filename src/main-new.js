@@ -220,75 +220,6 @@ function addProfileButton() {
 }
 
 /**
- * Show equipment screen
- */
-function showEquipmentScreen() {
-  const root = document.getElementById('root');
-  root.innerHTML = '';
-
-  const equipmentScreen = document.createElement('equipment-screen');
-  equipmentScreen.addEventListener('back-to-menu', () => {
-    appState.reset();
-    showTitleScreen();
-  });
-
-  root.appendChild(equipmentScreen);
-  appState.currentScreen = 'equipment';
-}
-
-/**
- * Add equipment button overlay
- */
-function addEquipmentButton() {
-  // Remove existing equipment button if any
-  const existingBtn = document.getElementById('equipment-overlay-btn');
-  if (existingBtn) {
-    existingBtn.remove();
-  }
-
-  const equipmentBtn = document.createElement('button');
-  equipmentBtn.id = 'equipment-overlay-btn';
-  equipmentBtn.innerHTML = '⚔️ Equipment';
-  equipmentBtn.style.cssText = `
-    position: fixed;
-    top: 20px;
-    right: 280px;
-    width: auto;
-    padding: 12px 24px;
-    border-radius: 8px;
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    background: rgba(26, 13, 46, 0.8);
-    color: white;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    z-index: 10000;
-    backdrop-filter: blur(10px);
-    transition: all 0.3s ease;
-    font-family: 'Press Start 2P', cursive;
-  `;
-
-  equipmentBtn.addEventListener('click', () => {
-    soundManager.play('event');
-    showEquipmentScreen();
-  });
-
-  equipmentBtn.addEventListener('mouseenter', () => {
-    equipmentBtn.style.background = 'rgba(255, 167, 38, 0.3)';
-    equipmentBtn.style.borderColor = '#ffa726';
-    equipmentBtn.style.transform = 'translateY(-2px)';
-  });
-
-  equipmentBtn.addEventListener('mouseleave', () => {
-    equipmentBtn.style.background = 'rgba(26, 13, 46, 0.8)';
-    equipmentBtn.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-    equipmentBtn.style.transform = 'translateY(0)';
-  });
-
-  document.body.appendChild(equipmentBtn);
-}
-
-/**
  * Show tournament bracket screen
  */
 function showTournamentBracketScreen() {
@@ -840,7 +771,7 @@ function startTournamentBattle() {
 /**
  * Handle tournament victory
  */
-export function handleTournamentVictory(winner) {
+export function handleTournamentVictory(_winner) {
   if (!appState.tournamentActive) {
     return false;
   }
@@ -942,36 +873,6 @@ function createPlayerFighter(characterData) {
   console.log(`⚔️ Player Character: ${fighter.name} (Lvl ${SaveManager.get('profile.level')}, ${DifficultyManager.formatDifficultyDisplay()}) - HP: ${fighter.health}, STR: ${fighter.strength}`);
   
   return fighter;
-}
-
-/**
- * Show fighter gallery (LEGACY - for team matches if needed)
- */
-function showFighterGallery() {
-  const root = document.getElementById('root');
-  root.innerHTML = '';
-
-  const gallery = document.createElement('fighter-gallery');
-  gallery.fighters = appState.fighters;
-  gallery.mode = appState.gameMode;
-
-  gallery.addEventListener('fighter-selected', (e) => {
-    console.log('Fighter selected:', e.detail.fighter.name);
-    appState.selectedFighters.push(e.detail.fighter);
-  });
-
-  gallery.addEventListener('selection-complete', (e) => {
-    console.log('Selection complete:', e.detail);
-    startBattle(e.detail.fighters);
-  });
-
-  gallery.addEventListener('back-to-menu', () => {
-    appState.reset();
-    showTitleScreen();
-  });
-
-  root.appendChild(gallery);
-  appState.currentScreen = 'gallery';
 }
 
 /**

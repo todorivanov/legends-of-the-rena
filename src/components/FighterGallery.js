@@ -465,7 +465,7 @@ export class FighterGallery extends BaseComponent {
     const selectionCount = this._selectedFighters.length;
 
     // Update or create selection status
-    let statusEl = this.shadowRoot.querySelector('.selection-status');
+    const statusEl = this.shadowRoot.querySelector('.selection-status');
     
     if (selectionCount >= needsCount) {
       if (!statusEl) {

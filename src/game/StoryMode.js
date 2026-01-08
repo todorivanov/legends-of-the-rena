@@ -260,7 +260,6 @@ export class StoryMode {
    * @returns {Object} - Evaluation results
    */
   static evaluateObjectives(missionState, playerState) {
-    const mission = missionState.mission;
     const objectives = missionState.objectives;
     let starsEarned = 0;
 
@@ -314,9 +313,10 @@ export class StoryMode {
       case 'damage_taken':
         return missionState.damageTaken <= objective.value;
 
-      case 'health_percent':
+      case 'health_percent': {
         const hpPercent = (playerState.currentHP / playerState.maxHP) * 100;
         return hpPercent >= objective.value;
+      }
 
       case 'crits':
         return missionState.critsLanded >= objective.value;
@@ -416,7 +416,6 @@ export class StoryMode {
    */
   static getTotalProgress() {
     const completedMissions = SaveManager.get('storyProgress.completedMissions') || [];
-    const totalMissions = Object.keys(getMissionById('tutorial_1') ? 25 : 0).length; // Approximate
     
     // Calculate based on completed missions count
     return Math.floor((completedMissions.length / 25) * 100);

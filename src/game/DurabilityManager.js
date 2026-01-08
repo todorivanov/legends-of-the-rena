@@ -132,7 +132,6 @@ export class DurabilityManager {
       return false;
     }
 
-    const currentDurability = this.getDurability(equipmentId);
     const maxDurability = equipment.durability.max;
     const finalTarget = targetDurability || maxDurability;
 
@@ -298,7 +297,6 @@ export class DurabilityManager {
    * @returns {Object} - Map of equipmentId -> durability info
    */
   static getAllDurability() {
-    const durabilityMap = SaveManager.get('equipmentDurability') || {};
     const inventory = SaveManager.get('inventory.equipment') || [];
     const result = {};
 
