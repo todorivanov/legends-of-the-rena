@@ -396,7 +396,7 @@ function startStoryMission(missionId) {
   });
 
   // Apply player's equipped items
-  EquipmentManager.applyEquipment(playerFighter);
+  EquipmentManager.applyEquipmentBonuses(playerFighter);
 
   // Create the enemy fighter from mission data
   let enemyFighter;
@@ -427,11 +427,69 @@ function startStoryMission(missionId) {
     return;
   }
 
-  // Show combat screen
-  showCombatScreen();
+  // Prepare battle setup
+  const root = document.getElementById('root');
+  root.innerHTML = '';
+
+  // Create combat arena component
+  const arena = document.createElement('combat-arena');
   
-  // Start the game with the mission ID
-  Game.startGame(playerFighter, enemyFighter, missionId);
+  arena.addEventListener('return-to-menu', () => {
+    Game.stopGame();
+    appState.reset();
+    showTitleScreen();
+  });
+
+  arena.addEventListener('auto-battle-toggle', (e) => {
+    Game.setAutoBattle(e.detail.enabled);
+  });
+
+  arena.addEventListener('auto-scroll-toggle', (e) => {
+    Logger.setAutoScroll(e.detail.enabled);
+  });
+
+  root.appendChild(arena);
+  appState.currentScreen = 'combat';
+
+  // Wait for arena to be fully rendered, then start game
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      // Initialize Logger with the combat arena's log element
+      const logElement = arena.shadowRoot?.querySelector('#log');
+      if (logElement) {
+        Logger.setLogHolder(logElement);
+        Logger.setAutoScroll(arena.autoScroll);
+        console.log('✅ Logger initialized for story mission combat');
+        
+        // Log mission start message
+        if (mission.dialogue?.before) {
+          const message = `
+            <div class="mission-dialogue" style="
+              background: linear-gradient(135deg, rgba(106, 66, 194, 0.3), rgba(42, 26, 71, 0.4));
+              border: 3px solid #b39ddb;
+              border-radius: 12px;
+              padding: 20px;
+              margin: 20px 0;
+              text-align: center;
+            ">
+              <div style="font-size: 24px; font-weight: bold; color: #ffa726; margin-bottom: 10px;">
+                📖 ${mission.name}
+              </div>
+              <div style="font-size: 16px; color: #e1bee7; font-style: italic;">
+                ${mission.dialogue.before}
+              </div>
+            </div>
+          `;
+          Logger.log(message);
+        }
+
+        // Start the game with the mission ID
+        Game.startGame(playerFighter, enemyFighter, missionId);
+      } else {
+        console.error('❌ Could not find log element in combat arena');
+      }
+    });
+  });
 }
 
 /**

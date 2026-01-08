@@ -23,6 +23,8 @@ const AI_TURN_DELAY = 1200;
 let gameState = null;
 let autoBattleEnabled = false;
 let currentStoryMission = null; // Track if we're in a story mission
+let currentPlayerFighter = null; // Track player fighter
+let currentEnemyFighter = null; // Track enemy fighter
 
 export default class Game {
   /**
@@ -52,6 +54,10 @@ export default class Game {
     this.stopGame();
     gameState = new GameStateManager();
     const turnManager = new TurnManager();
+    
+    // Store fighter references globally
+    currentPlayerFighter = firstFighter;
+    currentEnemyFighter = secondFighter;
     
     // Initialize story mission tracking if provided
     if (missionId) {
@@ -159,20 +165,40 @@ export default class Game {
       Referee.declareWinner(defender);
       hudManager.showWinner(defender);
       
-      // Track loss from surrender
-      SaveManager.increment('stats.totalLosses');
-      SaveManager.increment('stats.totalFightsPlayed');
-      SaveManager.update('stats.winStreak', 0); // Reset streak
-      
-      // Small XP for attempt
-      LevelingSystem.awardXP(25, 'Battle Participation');
+      // Handle story mission failure from surrender
+      if (currentStoryMission) {
+        const playerState = {
+          currentHP: currentPlayerFighter.health,
+          maxHP: currentPlayerFighter.maxHealth,
+        };
+        const missionResult = StoryMode.completeMission(false, playerState);
         
-      // Show victory screen for opponent
-      setTimeout(() => {
-        if (window.showVictoryScreen) {
-          window.showVictoryScreen(defender);
-        }
-      }, 2000);
+        setTimeout(() => {
+          if (window.showMissionResults) {
+            window.showMissionResults(missionResult);
+          }
+        }, 2000);
+        
+        // Clear story mission state
+        currentStoryMission = null;
+        currentPlayerFighter = null;
+        currentEnemyFighter = null;
+      } else {
+        // Track loss from surrender (normal combat)
+        SaveManager.increment('stats.totalLosses');
+        SaveManager.increment('stats.totalFightsPlayed');
+        SaveManager.update('stats.winStreak', 0); // Reset streak
+        
+        // Small XP for attempt
+        LevelingSystem.awardXP(25, 'Battle Participation');
+          
+        // Show victory screen for opponent
+        setTimeout(() => {
+          if (window.showVictoryScreen) {
+            window.showVictoryScreen(defender);
+          }
+        }, 2000);
+      }
       }, 1000);
       return;
     }
@@ -287,9 +313,10 @@ export default class Game {
       
       // Handle story mission completion
       if (currentStoryMission) {
+        // Get player's final state (use stored reference)
         const playerState = {
-          currentHP: result.winner.isPlayer ? result.winner.health : result.loser.health,
-          maxHP: result.winner.isPlayer ? result.winner.maxHealth : result.loser.maxHealth,
+          currentHP: currentPlayerFighter.health,
+          maxHP: currentPlayerFighter.maxHealth,
         };
         
         const missionResult = StoryMode.completeMission(playerWon, playerState);
@@ -306,7 +333,10 @@ export default class Game {
           }
         }, 2000);
         
+        // Clear story mission state
         currentStoryMission = null;
+        currentPlayerFighter = null;
+        currentEnemyFighter = null;
         return;
       }
       
@@ -325,7 +355,8 @@ export default class Game {
         
         // Award gold based on difficulty
         const difficulty = SaveManager.get('settings.difficulty') || 'normal';
-        const goldReward = EconomyManager.calculateBattleReward(difficulty, true, result.loser.level || 1);
+        const enemyLevel = currentEnemyFighter?.level || 1;
+        const goldReward = EconomyManager.calculateBattleReward(difficulty, true, enemyLevel);
         EconomyManager.addGold(goldReward, 'Battle Victory');
         
         // Apply durability loss to equipped items
@@ -350,6 +381,9 @@ export default class Game {
         if (window.showVictoryScreen) {
           window.showVictoryScreen(result.winner);
         }
+        // Clear fighter references
+        currentPlayerFighter = null;
+        currentEnemyFighter = null;
       }, 2000);
       return;
     }
@@ -585,6 +619,11 @@ export default class Game {
     }
     Referee.clearRoundNumber();
     hudManager.remove();
+    
+    // Clear fighter references
+    currentPlayerFighter = null;
+    currentEnemyFighter = null;
+    currentStoryMission = null;
     
     // Remove any Web Components
     document.querySelectorAll('action-selection').forEach(el => el.remove());
