@@ -443,6 +443,9 @@ export class CharacterCreation extends BaseComponent {
     const classOptions = this.shadowRoot.querySelectorAll('.class-option');
     const appearanceOptions = this.shadowRoot.querySelectorAll('.appearance-option');
 
+    // Set initial button state
+    this.updateCreateButton();
+
     // Name input
     nameInput.addEventListener('input', (e) => {
       this.characterName = e.target.value.trim();
@@ -502,6 +505,11 @@ export class CharacterCreation extends BaseComponent {
       TANK: { health: 600, strength: 4 },
       GLASS_CANNON: { health: 300, strength: 20 },
       BRUISER: { health: 500, strength: 6 },
+      MAGE: { health: 340, strength: 8 },
+      ASSASSIN: { health: 320, strength: 12 },
+      BERSERKER: { health: 440, strength: 11.5 },
+      PALADIN: { health: 480, strength: 10.5 },
+      NECROMANCER: { health: 360, strength: 8.5 },
     };
 
     const stats = classStats[this.selectedClass];

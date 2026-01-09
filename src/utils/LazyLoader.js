@@ -28,7 +28,7 @@ export class LazyLoader {
     }
 
     // Start loading
-    const loadPromise = import(modulePath)
+    const loadPromise = import(/* @vite-ignore */ modulePath)
       .then((module) => {
         this.cache.set(modulePath, module);
         this.loading.delete(modulePath);
