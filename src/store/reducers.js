@@ -361,6 +361,13 @@ export const settingsReducers = {
       autoScroll: !state.settings.autoScroll,
     },
   }),
+
+  [ActionTypes.TOGGLE_PERFORMANCE_MONITOR]: (state) => ({
+    settings: {
+      ...state.settings,
+      showPerformanceMonitor: !state.settings.showPerformanceMonitor,
+    },
+  }),
 };
 
 /**

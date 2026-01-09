@@ -48,6 +48,7 @@ export const ActionTypes = {
   TOGGLE_SOUND: 'TOGGLE_SOUND',
   TOGGLE_AUTO_BATTLE: 'TOGGLE_AUTO_BATTLE',
   TOGGLE_AUTO_SCROLL: 'TOGGLE_AUTO_SCROLL',
+  TOGGLE_PERFORMANCE_MONITOR: 'TOGGLE_PERFORMANCE_MONITOR',
 
   // Achievement Actions
   UNLOCK_ACHIEVEMENT: 'UNLOCK_ACHIEVEMENT',
@@ -228,6 +229,11 @@ export const toggleAutoBattle = () => ({
 
 export const toggleAutoScroll = () => ({
   type: ActionTypes.TOGGLE_AUTO_SCROLL,
+  payload: {},
+});
+
+export const togglePerformanceMonitor = () => ({
+  type: ActionTypes.TOGGLE_PERFORMANCE_MONITOR,
   payload: {},
 });
 

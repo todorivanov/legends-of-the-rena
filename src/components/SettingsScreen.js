@@ -2,6 +2,8 @@ import { BaseComponent } from './BaseComponent.js';
 import { DifficultyManager, DIFFICULTY_CONFIG } from '../game/DifficultyManager.js';
 import { router } from '../utils/Router.js';
 import { RoutePaths } from '../config/routes.js';
+import { gameStore } from '../store/gameStore.js';
+import { togglePerformanceMonitor } from '../store/actions.js';
 
 /**
  * SettingsScreen Web Component
@@ -252,6 +254,74 @@ export class SettingsScreen extends BaseComponent {
         border-color: #6a42c2;
       }
 
+      .toggle-settings {
+        background: rgba(26, 13, 46, 0.7);
+        backdrop-filter: blur(10px);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 30px;
+      }
+
+      .toggle-option {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .toggle-option:last-child {
+        border-bottom: none;
+      }
+
+      .toggle-info {
+        flex: 1;
+      }
+
+      .toggle-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: white;
+        margin-bottom: 5px;
+      }
+
+      .toggle-desc {
+        font-size: 14px;
+        color: #b39ddb;
+      }
+
+      .toggle-switch {
+        position: relative;
+        width: 60px;
+        height: 30px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 15px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+      }
+
+      .toggle-switch.active {
+        background: linear-gradient(135deg, #4caf50, #66bb6a);
+      }
+
+      .toggle-switch::after {
+        content: '';
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        width: 24px;
+        height: 24px;
+        background: white;
+        border-radius: 50%;
+        transition: transform 0.3s ease;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+      }
+
+      .toggle-switch.active::after {
+        transform: translateX(30px);
+      }
+
       @keyframes fadeIn {
         from { opacity: 0; }
         to { opacity: 1; }
@@ -284,6 +354,8 @@ export class SettingsScreen extends BaseComponent {
   template() {
     const currentDifficulty = DifficultyManager.getCurrentDifficulty();
     const difficulties = DifficultyManager.getAllDifficultiesInfo();
+    const state = gameStore.getState();
+    const showPerformanceMonitor = state.settings.showPerformanceMonitor;
 
     return `
       <div class="settings-container">
@@ -311,6 +383,17 @@ export class SettingsScreen extends BaseComponent {
           <button class="save-management-btn">
             💾 Manage Save Files
           </button>
+        </div>
+
+        <!-- Toggle Settings -->
+        <div class="toggle-settings">
+          <div class="toggle-option">
+            <div class="toggle-info">
+              <div class="toggle-title">⚡ Performance Monitor</div>
+              <div class="toggle-desc">Show FPS, frame time, and memory usage</div>
+            </div>
+            <div class="toggle-switch ${showPerformanceMonitor ? 'active' : ''}" data-toggle="performance-monitor"></div>
+          </div>
         </div>
 
         <!-- Difficulty Selection -->
@@ -371,6 +454,29 @@ export class SettingsScreen extends BaseComponent {
     if (saveManagementBtn) {
       saveManagementBtn.addEventListener('click', () => {
         router.navigate(RoutePaths.SAVE_MANAGEMENT);
+      });
+    }
+
+    // Performance monitor toggle
+    const perfMonitorToggle = this.shadowRoot.querySelector('[data-toggle="performance-monitor"]');
+    if (perfMonitorToggle) {
+      perfMonitorToggle.addEventListener('click', () => {
+        gameStore.dispatch(togglePerformanceMonitor());
+        this.render();
+        
+        // Update the UI immediately
+        const state = gameStore.getState();
+        const perfMonitor = document.querySelector('performance-monitor-ui');
+        if (state.settings.showPerformanceMonitor) {
+          if (!perfMonitor) {
+            const newPerfMonitor = document.createElement('performance-monitor-ui');
+            document.body.appendChild(newPerfMonitor);
+          }
+        } else {
+          if (perfMonitor) {
+            perfMonitor.remove();
+          }
+        }
       });
     }
 

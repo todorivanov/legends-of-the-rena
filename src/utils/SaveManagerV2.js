@@ -83,6 +83,7 @@ export class SaveManagerV2 {
       settings: {
         difficulty: 'normal',
         autoScroll: true,
+        showPerformanceMonitor: false,
         soundEnabled: true,
         soundVolume: 0.3,
         darkMode: false,

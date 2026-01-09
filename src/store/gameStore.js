@@ -109,6 +109,7 @@ function getInitialState() {
       autoBattle: saveData.settings?.autoBattle || false,
       autoScroll: saveData.settings?.autoScroll !== false,
       darkMode: saveData.settings?.darkMode !== false,
+      showPerformanceMonitor: saveData.settings?.showPerformanceMonitor || false,
     },
 
     // Unlocks

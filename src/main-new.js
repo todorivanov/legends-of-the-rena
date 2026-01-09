@@ -144,24 +144,31 @@ function initNavigationComponents() {
   const existingNav = document.querySelector('navigation-bar');
   const existingTheme = document.querySelector('theme-toggle');
   const existingSound = document.querySelector('sound-toggle');
+  const existingPerfMonitor = document.querySelector('performance-monitor-ui');
 
   if (existingNav) existingNav.remove();
   if (existingTheme) existingTheme.remove();
   if (existingSound) existingSound.remove();
+  if (existingPerfMonitor) existingPerfMonitor.remove();
 
   // Add new declarative components
   const navBar = document.createElement('navigation-bar');
   const themeToggle = document.createElement('theme-toggle');
   const soundToggle = document.createElement('sound-toggle');
-  const perfMonitor = document.createElement('performance-monitor-ui');
 
   document.body.appendChild(navBar);
   document.body.appendChild(themeToggle);
   document.body.appendChild(soundToggle);
-  document.body.appendChild(perfMonitor);
+
+  // Conditionally add performance monitor based on settings
+  const state = gameStore.getState();
+  if (state.settings.showPerformanceMonitor) {
+    const perfMonitor = document.createElement('performance-monitor-ui');
+    document.body.appendChild(perfMonitor);
+    console.log('⚡ Performance monitoring active');
+  }
 
   console.log('✅ Navigation components initialized');
-  console.log('⚡ Performance monitoring active');
 }
 
 /**
