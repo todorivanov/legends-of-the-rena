@@ -16,6 +16,7 @@ import { EconomyManager } from './EconomyManager.js';
 import { DurabilityManager } from './DurabilityManager.js';
 import { StoryMode } from './StoryMode.js';
 import { createAI, simpleFallbackAI } from '../ai/AIManager.js';
+import { comboSystem } from './ComboSystem.js';
 
 const ROUND_INTERVAL = 1500;
 const AI_TURN_DELAY = 1200;
@@ -55,6 +56,7 @@ export default class Game {
     // Initialize clean state
     this.stopGame();
     gameState = new GameStateManager();
+    comboSystem.reset(); // Reset combo tracking for new battle
     const turnManager = new TurnManager();
 
     // Store fighter references globally
@@ -141,9 +143,20 @@ export default class Game {
           const actionSelection = document.createElement('action-selection');
           actionSelection.fighter = firstFighter;
           actionSelection.addEventListener('action-selected', (e) => {
+            actionSelection.remove();
+            // Remove combo hints when action is selected
+            document.querySelectorAll('combo-hint').forEach((el) => el.remove());
             this.executeAction(firstFighter, secondFighter, e.detail, turnManager, processTurn);
           });
           document.body.appendChild(actionSelection);
+
+          // Show combo hints for player
+          const suggestions = comboSystem.getComboSuggestions(firstFighter);
+          if (suggestions.length > 0) {
+            const comboHint = document.createElement('combo-hint');
+            comboHint.suggestions = suggestions;
+            document.body.appendChild(comboHint);
+          }
         }
       } else {
         // Process status effects at turn start
@@ -221,9 +234,20 @@ export default class Game {
       return;
     }
 
+    // Record action for combo tracking
+    let skillName = null;
+    if (action === 'skill' && actionData.skillIndex !== undefined) {
+      skillName = attacker.skills[actionData.skillIndex]?.name;
+    }
+    comboSystem.recordAction(attacker, action, skillName);
+
     switch (action) {
       case 'attack': {
-        const attackResult = attacker.normalAttack();
+        let attackResult = attacker.normalAttack();
+        
+        // Apply combo effects to damage
+        attackResult.damage = comboSystem.applyComboEffects(attacker, defender, attackResult.damage);
+        
         const actualDmg = defender.takeDamage(attackResult.damage);
 
         // Track player stats
@@ -483,6 +507,7 @@ export default class Game {
     // Initialize clean state
     this.stopGame();
     gameState = new GameStateManager();
+    comboSystem.reset(); // Reset combo tracking for new battle
 
     Logger.clearLog();
 
@@ -662,6 +687,7 @@ export default class Game {
     document.querySelectorAll('action-selection').forEach((el) => el.remove());
     document.querySelectorAll('turn-indicator').forEach((el) => el.remove());
     document.querySelectorAll('combo-indicator').forEach((el) => el.remove());
+    document.querySelectorAll('combo-hint').forEach((el) => el.remove());
 
     // Reset views
     const selectionView = document.querySelector('.fighter-selection-view');

@@ -15,7 +15,7 @@
 - **4 action types** - Attack, Defend, Use Skill, Use Item
 - **Class-specific skills** - 2 unique abilities per class
 - **Status effects** - Buffs, debuffs, damage-over-time
-- **Combo system** - Chain attacks for bonus damage
+- **Advanced combo system** ⭐NEW⭐ - Chain actions for powerful effects
 - **Critical hits** - 15% chance for 1.5x damage
 
 ### 🎮 **Multiple Game Modes**
@@ -71,7 +71,15 @@
 - **Repair shop** - Restore durability of damaged items
 - **Consumables** - Purchase health and mana potions
 
-### 💾 **Advanced Save System** ⭐NEW⭐
+### ⚡ **Combo System** ⭐NEW⭐
+- **20+ unique combos** - Universal and class-specific chains
+- **Action sequences** - Trigger combos by performing specific moves
+- **Powerful bonuses** - Damage multipliers, healing, mana restore
+- **Status effects** - Apply buffs/debuffs through combos
+- **Visual feedback** - Stunning animations when combos trigger
+- **Combo hints** - Real-time suggestions for available combos
+
+### 💾 **Advanced Save System**
 - **Multiple save slots** - Manage up to 3 different characters
 - **Import/Export** - Download and share your save files
 - **Auto-backup** - Automatic backups protect your progress

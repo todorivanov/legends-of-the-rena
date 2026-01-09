@@ -513,10 +513,9 @@ export class SaveManagerV2 {
       migratedData = this.migrateTo410(migratedData);
     }
 
-    // Add new migrations here as versions increase
-    // if (this.compareVersions(version, '4.2.0') < 0) {
-    //   migratedData = this.migrateTo420(migratedData);
-    // }
+    if (this.compareVersions(version, '4.2.0') < 0) {
+      migratedData = this.migrateTo420(migratedData);
+    }
 
     return migratedData;
   }
@@ -534,17 +533,25 @@ export class SaveManagerV2 {
     // Migrate storyProgress to story if it exists
     const storyData = data.story || data.storyProgress || defaultData.story;
     
+    // Convert completedMissions from object to array if needed
+    let completedMissions = storyData.completedMissions || [];
+    if (!Array.isArray(completedMissions)) {
+      // Old format: completedMissions was an object, convert to array
+      completedMissions = Object.keys(completedMissions);
+      console.log('🔄 Converted completedMissions from object to array');
+    }
+    
     // Ensure story has the correct structure
     const migratedStory = {
       unlockedRegions: storyData.unlockedRegions || ['tutorial'],
       unlockedMissions: storyData.unlockedMissions || ['tutorial_1'],
-      completedMissions: storyData.completedMissions || [],
+      completedMissions: completedMissions,
       currentMission: storyData.currentMission || null,
+      missionStars: storyData.missionStars || {},
     };
     
-    // Handle old format where completedMissions might be an object with missionStars
+    // Handle old format where missionStars might be separate
     if (data.storyProgress?.missionStars) {
-      // Old format had missionStars as a separate field
       migratedStory.missionStars = data.storyProgress.missionStars;
     }
 
@@ -560,6 +567,31 @@ export class SaveManagerV2 {
       story: migratedStory,
       // Keep storyProgress as an alias for backward compatibility
       storyProgress: migratedStory,
+    };
+  }
+
+  /**
+   * Migrate save data to version 4.2.0
+   * @param {Object} data - Old save data
+   * @returns {Object} Migrated data
+   */
+  static migrateTo420(data) {
+    console.log(`🔄 Migrating save from ${data.version} to 4.2.0`);
+
+    // Ensure completedMissions is an array
+    if (data.story?.completedMissions && !Array.isArray(data.story.completedMissions)) {
+      data.story.completedMissions = Object.keys(data.story.completedMissions);
+      console.log('🔄 Converted story.completedMissions from object to array');
+    }
+    
+    if (data.storyProgress?.completedMissions && !Array.isArray(data.storyProgress.completedMissions)) {
+      data.storyProgress.completedMissions = Object.keys(data.storyProgress.completedMissions);
+      console.log('🔄 Converted storyProgress.completedMissions from object to array');
+    }
+
+    return {
+      ...data,
+      version: '4.2.0',
     };
   }
 

@@ -5,6 +5,56 @@ All notable changes to Legends of the Arena will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.2.0] - 2026-01-09
+
+### Added - Combo System ⚡
+- **20+ Unique Combos**: Universal combos available to all classes plus class-specific combos
+- **Action Tracking**: System remembers last 5 actions to detect combo patterns
+- **Combo Effects**: 
+  - Damage multipliers (1.3x to 2.2x)
+  - Extra flat damage bonuses
+  - Healing effects
+  - Mana restoration
+  - Status effect application
+  - Skill cooldown reduction
+- **Combo Types**:
+  - Universal: Offensive Surge, Berserker Rush, Tactical Retreat, Double Defense
+  - Tank: Iron Fortress, Unstoppable Force
+  - Balanced: Perfect Balance, Warrior's Resolve
+  - Agile: Rapid Assault, Shadow Dance
+  - Mage: Arcane Inferno, Elemental Barrage
+  - Hybrid: Adaptive Strike, Life Surge
+  - Assassin: Silent Death, Backstab
+  - Brawler: Knockout Punch, Relentless Assault
+- **Visual Feedback**: Stunning animated banners when combos trigger
+- **Combo Hints**: Real-time UI showing available combo opportunities
+- **Strategic Depth**: Plan action sequences for maximum effectiveness
+
+### Added - New Status Effects
+- **Defense Boost**: +15 Defense for 3 turns
+- **Burn**: Fire damage over time (12 HP/turn for 3 turns)
+- **Stun**: Skip enemy turn for 1 turn
+
+### Added - New Files
+- `src/game/ComboSystem.js`: Core combo tracking and effect application
+- `src/data/comboDefinitions.js`: All combo patterns and bonuses
+- `src/components/ComboHint.js`: UI component for combo suggestions
+- `docs/COMBO_SYSTEM.md`: Comprehensive combo system documentation
+
+### Changed
+- Updated `src/game/game.js` to integrate combo system
+- Enhanced `src/game/StatusEffect.js` with new status effects
+- Updated `src/components/index.js` to register ComboHint component
+- Version bumped from 4.1.0 to 4.2.0
+
+### Technical
+- Combo system uses singleton pattern for global state
+- Action history limited to 5 most recent actions
+- Combo matching supports exact sequence patterns
+- Class restrictions enforced for specialized combos
+- Pending combo effects stored on fighter object
+- Auto-cleanup of combo hints on action selection
+
 ## [4.1.0] - 2026-01-09
 
 ### Added - Save System V2

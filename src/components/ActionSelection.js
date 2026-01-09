@@ -38,7 +38,7 @@ export class ActionSelection extends BaseComponent {
       .action-selection-ui {
         background: linear-gradient(145deg, rgba(42, 26, 71, 0.98) 0%, rgba(26, 13, 46, 0.98) 100%);
         border-top: 3px solid rgba(255, 167, 38, 0.8);
-        padding: 25px;
+        padding: 12px 15px;
         box-shadow: 0 -5px 30px rgba(0, 0, 0, 0.7);
         animation: slideInFromBottom 0.4s ease;
         backdrop-filter: blur(15px);
@@ -57,45 +57,45 @@ export class ActionSelection extends BaseComponent {
 
       .action-prompt {
         text-align: center;
-        margin-bottom: 20px;
+        margin-bottom: 8px;
       }
 
       .action-prompt h3 {
-        margin: 0 0 5px 0;
+        margin: 0 0 3px 0;
         color: #ffa726;
-        font-size: 24px;
+        font-size: 16px;
         text-shadow: 0 0 10px rgba(255, 167, 38, 0.5);
       }
 
       .action-prompt p {
         margin: 0;
-        font-size: 14px;
+        font-size: 11px;
         color: #b39ddb;
       }
 
       .action-buttons {
         display: flex;
-        gap: 15px;
+        gap: 8px;
         justify-content: center;
         flex-wrap: wrap;
-        max-width: 900px;
+        max-width: 800px;
         margin: 0 auto;
       }
 
       .action-btn {
         flex: 1;
-        min-width: 180px;
-        max-width: 220px;
-        padding: 20px;
+        min-width: 120px;
+        max-width: 160px;
+        padding: 10px 12px;
         background: linear-gradient(145deg, rgba(42, 26, 71, 0.6) 0%, rgba(26, 13, 46, 0.8) 100%);
         border: 2px solid rgba(106, 66, 194, 0.5);
-        border-radius: 12px;
+        border-radius: 8px;
         cursor: pointer;
         transition: all 0.3s ease;
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 8px;
+        gap: 4px;
         position: relative;
         overflow: hidden;
         backdrop-filter: blur(10px);
@@ -118,14 +118,14 @@ export class ActionSelection extends BaseComponent {
       }
 
       .action-btn:hover:not(:disabled) {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 30px rgba(255, 167, 38, 0.4);
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(255, 167, 38, 0.4);
         border-color: #ffa726;
         background: linear-gradient(145deg, rgba(255, 167, 38, 0.2) 0%, rgba(106, 66, 194, 0.3) 100%);
       }
 
       .action-btn:active:not(:disabled) {
-        transform: translateY(-2px);
+        transform: translateY(-1px);
       }
 
       .action-btn:disabled {
@@ -142,12 +142,12 @@ export class ActionSelection extends BaseComponent {
       }
 
       .action-icon {
-        font-size: 36px;
+        font-size: 24px;
         line-height: 1;
       }
 
       .action-name {
-        font-size: 18px;
+        font-size: 14px;
         font-weight: 600;
         color: #ffffff;
       }
@@ -157,9 +157,10 @@ export class ActionSelection extends BaseComponent {
       }
 
       .action-desc {
-        font-size: 12px;
+        font-size: 10px;
         color: #b39ddb;
         text-align: center;
+        line-height: 1.2;
       }
 
       .action-btn.selected .action-desc {
@@ -186,34 +187,34 @@ export class ActionSelection extends BaseComponent {
       /* Surrender Container */
       .surrender-container {
         text-align: center;
-        margin-top: 20px;
-        padding-top: 15px;
+        margin-top: 8px;
+        padding-top: 8px;
         border-top: 1px solid rgba(255, 255, 255, 0.1);
       }
 
       .surrender-btn {
-        padding: 10px 30px;
-        font-size: 14px;
+        padding: 6px 20px;
+        font-size: 11px;
         font-weight: 600;
         text-transform: uppercase;
-        letter-spacing: 1px;
+        letter-spacing: 0.5px;
         color: rgba(255, 255, 255, 0.6);
         background: transparent;
-        border: 2px solid rgba(255, 23, 68, 0.4);
-        border-radius: 8px;
+        border: 1px solid rgba(255, 23, 68, 0.4);
+        border-radius: 6px;
         cursor: pointer;
         transition: all 0.3s ease;
         display: inline-flex;
         align-items: center;
-        gap: 8px;
+        gap: 6px;
       }
 
       .surrender-btn:hover {
         background: rgba(255, 23, 68, 0.2);
         border-color: #ff1744;
         color: #ff1744;
-        box-shadow: 0 0 20px rgba(255, 23, 68, 0.4);
-        transform: translateY(-2px);
+        box-shadow: 0 0 15px rgba(255, 23, 68, 0.4);
+        transform: translateY(-1px);
       }
 
       .surrender-btn:active {
@@ -221,11 +222,11 @@ export class ActionSelection extends BaseComponent {
       }
 
       .surrender-icon {
-        font-size: 18px;
+        font-size: 14px;
       }
 
       .surrender-text {
-        font-size: 13px;
+        font-size: 11px;
       }
     `;
   }
