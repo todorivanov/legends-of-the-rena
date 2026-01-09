@@ -19,6 +19,11 @@
 ## 🧪 Testing
 <!-- Describe the tests you ran and how to reproduce them -->
 
+### Required Checks:
+- [ ] ✅ All unit tests pass (`npm run test:unit`)
+- [ ] ✅ Added tests for new functionality
+- [ ] ✅ Manually tested the changes
+
 ### Test Environment:
 - **Browser(s)**: 
 - **OS**: 
@@ -97,6 +102,11 @@
 <!-- What should reviewers focus on? Any specific areas needing feedback? -->
 
 ---
+
+**⚠️ Merge Requirements:**
+- All unit tests must pass (enforced by GitHub Actions)
+- The `Required Tests (PR Gate)` workflow must complete successfully
+- At least one approval from a maintainer required
 
 **By submitting this PR, I confirm that:**
 - [ ] I have read and agree to follow the [Code of Conduct](../CODE_OF_CONDUCT.md)
