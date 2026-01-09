@@ -34,7 +34,7 @@ export default defineConfig({
     
     // Test file patterns
     include: ['tests/**/*.{test,spec}.js', 'src/**/*.{test,spec}.js'],
-    exclude: ['node_modules', 'dist', 'build'],
+    exclude: ['node_modules', 'dist', 'build', 'tests/e2e/**'],
     
     // Test timeout
     testTimeout: 10000,

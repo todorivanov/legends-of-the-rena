@@ -11,7 +11,21 @@ tests/
 │   └── testHelpers.js   # Reusable functions for tests
 ├── unit/                 # Unit tests (test individual functions/classes)
 │   ├── Fighter.test.js
-│   └── ComboSystem.test.js
+│   ├── ComboSystem.test.js
+│   ├── StatusEffect.test.js
+│   ├── EconomyManager.test.js
+│   ├── LevelingSystem.test.js
+│   ├── AchievementManager.test.js
+│   ├── DifficultyManager.test.js
+│   ├── Team.test.js
+│   ├── Helpers.test.js
+│   ├── ActionQueue.test.js
+│   ├── EventManager.test.js
+│   ├── GameEvent.test.js
+│   ├── ObjectPool.test.js
+│   ├── compression.test.js
+│   ├── BaseEntity.test.js
+│   └── Referee.test.js
 ├── integration/          # Integration tests (test systems working together)
 │   └── CombatFlow.test.js
 └── e2e/                  # End-to-end tests (test full user flows)
