@@ -281,6 +281,10 @@ export class GridCombatUI extends BaseComponent {
         }
 
         @media (max-width: 768px) {
+          .grid-container {
+            padding: 12px;
+          }
+
           .grid {
             gap: 2px;
             padding: 4px;
@@ -296,6 +300,14 @@ export class GridCombatUI extends BaseComponent {
 
           .terrain-icon {
             font-size: 14px;
+          }
+
+          .grid-title {
+            font-size: 18px;
+          }
+
+          .grid-mode {
+            font-size: 12px;
           }
         }
       </style>

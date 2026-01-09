@@ -28,29 +28,27 @@ export class ActionSelection extends BaseComponent {
   styles() {
     return `
       :host {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        z-index: 1000;
+        display: block;
+        width: 100%;
       }
 
       .action-selection-ui {
         background: linear-gradient(145deg, rgba(42, 26, 71, 0.98) 0%, rgba(26, 13, 46, 0.98) 100%);
-        border-top: 3px solid rgba(255, 167, 38, 0.8);
-        padding: 12px 15px;
-        box-shadow: 0 -5px 30px rgba(0, 0, 0, 0.7);
-        animation: slideInFromBottom 0.4s ease;
+        border: 3px solid rgba(255, 167, 38, 0.8);
+        border-radius: 16px;
+        padding: 15px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
+        animation: slideInFromRight 0.4s ease;
         backdrop-filter: blur(15px);
       }
 
-      @keyframes slideInFromBottom {
+      @keyframes slideInFromRight {
         from {
-          transform: translateY(100%);
+          transform: translateX(50px);
           opacity: 0;
         }
         to {
-          transform: translateY(0);
+          transform: translateX(0);
           opacity: 1;
         }
       }
@@ -227,6 +225,71 @@ export class ActionSelection extends BaseComponent {
 
       .surrender-text {
         font-size: 11px;
+      }
+
+      @media (max-width: 768px) {
+        :host {
+          margin: 10px auto;
+        }
+
+        .action-selection-ui {
+          padding: 10px 12px;
+        }
+
+        .action-prompt h3 {
+          font-size: 14px;
+        }
+
+        .action-prompt p {
+          font-size: 10px;
+        }
+
+        .action-buttons {
+          gap: 6px;
+        }
+
+        .action-btn {
+          min-width: 100px;
+          max-width: 140px;
+          padding: 8px 10px;
+          font-size: 11px;
+        }
+
+        .action-icon {
+          font-size: 20px;
+        }
+
+        .action-name {
+          font-size: 11px;
+        }
+
+        .action-cost, .action-cooldown {
+          font-size: 9px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .action-selection-ui {
+          padding: 8px 10px;
+        }
+
+        .action-buttons {
+          gap: 4px;
+        }
+
+        .action-btn {
+          min-width: 80px;
+          max-width: 120px;
+          padding: 6px 8px;
+        }
+
+        .action-icon {
+          font-size: 18px;
+        }
+
+        .action-name {
+          font-size: 10px;
+        }
       }
     `;
   }

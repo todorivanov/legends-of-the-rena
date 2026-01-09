@@ -183,7 +183,15 @@ export default class Game {
             processTurn
           );
         });
-        document.body.appendChild(actionSelection);
+        
+        // Append to action-area in combat arena if available, otherwise body
+        const arena = document.querySelector('combat-arena');
+        const actionArea = arena?.shadowRoot?.querySelector('#action-area');
+        if (actionArea) {
+          actionArea.appendChild(actionSelection);
+        } else {
+          document.body.appendChild(actionSelection);
+        }
 
         // Show combo hints for player
         const suggestions = comboSystem.getComboSuggestions(firstFighter);
