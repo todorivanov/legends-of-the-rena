@@ -142,7 +142,7 @@ export const gameStore = createStore(getInitialState(), reducers);
  * Middleware: Auto-save to localStorage on state changes
  */
 gameStore.use({
-  after: (state, action, prevState) => {
+  after: (state, action, _prevState) => {
     // Skip UI-only actions
     const uiOnlyActions = [
       'SET_LOADING',
@@ -192,7 +192,7 @@ if (import.meta.env.DEV) {
       console.log('Payload:', action.payload);
       console.log('State before:', state);
     },
-    after: (state, action, prevState) => {
+    after: (state, _action, _prevState) => {
       console.log('State after:', state);
       console.groupEnd();
     },

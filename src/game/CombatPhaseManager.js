@@ -72,29 +72,29 @@ export const CombatEvent = {
   // Battle lifecycle
   BATTLE_STARTED: 'combat:battle_started',
   BATTLE_ENDED: 'combat:battle_ended',
-  
+
   // Turn lifecycle
   TURN_STARTED: 'combat:turn_started',
   TURN_ENDED: 'combat:turn_ended',
-  
+
   // Action lifecycle
   ACTION_SELECTED: 'combat:action_selected',
   ACTION_QUEUED: 'combat:action_queued',
   ACTION_EXECUTING: 'combat:action_executing',
   ACTION_EXECUTED: 'combat:action_executed',
   ACTION_RESOLVED: 'combat:action_resolved',
-  
+
   // Combat results
   DAMAGE_DEALT: 'combat:damage_dealt',
   HEALING_APPLIED: 'combat:healing_applied',
   STATUS_APPLIED: 'combat:status_applied',
   STATUS_REMOVED: 'combat:status_removed',
-  
+
   // Fighter state
   FIGHTER_DEFEATED: 'combat:fighter_defeated',
   HEALTH_CHANGED: 'combat:health_changed',
   MANA_CHANGED: 'combat:mana_changed',
-  
+
   // Combo system
   COMBO_TRIGGERED: 'combat:combo_triggered',
   COMBO_BROKEN: 'combat:combo_broken',
@@ -137,15 +137,15 @@ export class CombatPhaseManager {
    */
   async startBattle() {
     this.setPhase(CombatPhase.BATTLE_START);
-    
+
     const eventData = {
       fighters: this.combatData.fighters,
       timestamp: Date.now(),
     };
-    
+
     await this.executePhaseHooks(CombatPhase.BATTLE_START, eventData);
     this.emit(CombatEvent.BATTLE_STARTED, eventData);
-    
+
     console.log('⚔️ Battle Started');
   }
 
@@ -156,16 +156,16 @@ export class CombatPhaseManager {
   async startTurn(activeFighter) {
     this.turnCount++;
     this.setPhase(CombatPhase.TURN_START);
-    
+
     const eventData = {
       fighter: activeFighter,
       turnNumber: this.turnCount,
       timestamp: Date.now(),
     };
-    
+
     await this.executePhaseHooks(CombatPhase.TURN_START, eventData);
     this.emit(CombatEvent.TURN_STARTED, eventData);
-    
+
     console.log(`🎯 Turn ${this.turnCount}: ${activeFighter.name}'s turn`);
   }
 
@@ -175,13 +175,13 @@ export class CombatPhaseManager {
    */
   async endTurn(activeFighter) {
     this.setPhase(CombatPhase.TURN_END);
-    
+
     const eventData = {
       fighter: activeFighter,
       turnNumber: this.turnCount,
       timestamp: Date.now(),
     };
-    
+
     await this.executePhaseHooks(CombatPhase.TURN_END, eventData);
     this.emit(CombatEvent.TURN_ENDED, eventData);
   }
@@ -197,10 +197,10 @@ export class CombatPhaseManager {
       queuedAt: Date.now(),
       status: 'queued',
     };
-    
+
     this.actionQueue.push(queuedAction);
     this.emit(CombatEvent.ACTION_QUEUED, { action: queuedAction });
-    
+
     console.log(`📋 Action queued: ${action.type}`, queuedAction);
     return queuedAction;
   }
@@ -226,18 +226,15 @@ export class CombatPhaseManager {
    */
   async executeAction(action) {
     this.setPhase(CombatPhase.ACTION_EXECUTION);
-    
+
     action.status = 'executing';
     action.executedAt = Date.now();
-    
+
     this.emit(CombatEvent.ACTION_EXECUTING, { action });
-    
+
     // Execute phase hooks
-    const hookResult = await this.executePhaseHooks(
-      CombatPhase.ACTION_EXECUTION,
-      { action }
-    );
-    
+    const hookResult = await this.executePhaseHooks(CombatPhase.ACTION_EXECUTION, { action });
+
     // Action execution result
     const result = {
       action,
@@ -245,13 +242,13 @@ export class CombatPhaseManager {
       effects: [],
       ...hookResult,
     };
-    
+
     action.status = 'executed';
     this.emit(CombatEvent.ACTION_EXECUTED, { action, result });
-    
+
     // Resolve action effects
     await this.resolveAction(action, result);
-    
+
     return result;
   }
 
@@ -262,12 +259,12 @@ export class CombatPhaseManager {
    */
   async resolveAction(action, result) {
     this.setPhase(CombatPhase.ACTION_RESOLUTION);
-    
+
     const eventData = { action, result };
-    
+
     await this.executePhaseHooks(CombatPhase.ACTION_RESOLUTION, eventData);
     this.emit(CombatEvent.ACTION_RESOLVED, eventData);
-    
+
     action.status = 'resolved';
   }
 
@@ -278,19 +275,19 @@ export class CombatPhaseManager {
    */
   async endBattle(winner, loser) {
     this.setPhase(CombatPhase.BATTLE_END);
-    
+
     const eventData = {
       winner,
       loser,
       turnCount: this.turnCount,
       timestamp: Date.now(),
     };
-    
+
     await this.executePhaseHooks(CombatPhase.BATTLE_END, eventData);
     this.emit(CombatEvent.BATTLE_ENDED, eventData);
-    
+
     console.log(`🏆 Battle Ended: ${winner.name} wins!`);
-    
+
     this.setPhase(CombatPhase.IDLE);
   }
 
@@ -305,19 +302,19 @@ export class CombatPhaseManager {
     if (!this.hooks.has(phase)) {
       this.hooks.set(phase, []);
     }
-    
+
     const hookId = this.generateHookId();
     const hook = {
       id: hookId,
       callback,
       priority,
     };
-    
+
     this.hooks.get(phase).push(hook);
-    
+
     // Sort by priority (descending)
     this.hooks.get(phase).sort((a, b) => b.priority - a.priority);
-    
+
     console.log(`🪝 Registered hook for ${phase} (priority: ${priority})`);
     return hookId;
   }
@@ -347,7 +344,7 @@ export class CombatPhaseManager {
   async executePhaseHooks(phase, data) {
     const hooks = this.hooks.get(phase) || [];
     const results = {};
-    
+
     for (const hook of hooks) {
       try {
         const result = await hook.callback(data);
@@ -358,7 +355,7 @@ export class CombatPhaseManager {
         console.error(`❌ Hook error in ${phase}:`, error);
       }
     }
-    
+
     return results;
   }
 
@@ -396,12 +393,12 @@ export class CombatPhaseManager {
   setPhase(phase) {
     const previousPhase = this.currentPhase;
     this.currentPhase = phase;
-    
+
     this.phaseHistory.push({
       phase,
       timestamp: Date.now(),
     });
-    
+
     console.log(`📍 Phase: ${previousPhase} → ${phase}`);
   }
 
@@ -469,7 +466,7 @@ export class CombatPhaseManager {
       turnManager: null,
     };
     this.hooks.clear();
-    
+
     console.log('🔄 Phase manager reset');
   }
 

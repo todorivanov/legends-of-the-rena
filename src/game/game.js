@@ -15,9 +15,9 @@ import { DifficultyManager } from './DifficultyManager.js';
 import { EconomyManager } from './EconomyManager.js';
 import { DurabilityManager } from './DurabilityManager.js';
 import { StoryMode } from './StoryMode.js';
-import { createAI, simpleFallbackAI } from '../ai/AIManager.js';
+import { createAI } from '../ai/AIManager.js';
 import { comboSystem } from './ComboSystem.js';
-import { combatPhaseManager, CombatPhase, CombatEvent } from './CombatPhaseManager.js';
+import { combatPhaseManager, CombatPhase } from './CombatPhaseManager.js';
 
 const ROUND_INTERVAL = 1500;
 const AI_TURN_DELAY = 1200;
@@ -59,7 +59,7 @@ export default class Game {
     gameState = new GameStateManager();
     comboSystem.reset(); // Reset combo tracking for new battle
     const turnManager = new TurnManager();
-    
+
     // Initialize combat phase manager
     combatPhaseManager.reset();
     combatPhaseManager.initialize(firstFighter, secondFighter, turnManager);
@@ -82,12 +82,12 @@ export default class Game {
 
     // Initialize AI managers for fighters
     const difficulty = SaveManager.get('settings.difficulty') || 'normal';
-    
+
     // Create AI for player (only used in auto-battle)
     if (!firstFighter.isPlayer || autoBattleEnabled) {
       aiManagers[firstFighter.id] = createAI(firstFighter, difficulty);
     }
-    
+
     // Create AI for opponent
     if (!secondFighter.isPlayer) {
       aiManagers[secondFighter.id] = createAI(secondFighter, difficulty);
@@ -154,7 +154,13 @@ export default class Game {
           actionSelection.remove();
           // Remove combo hints when action is selected
           document.querySelectorAll('combo-hint').forEach((el) => el.remove());
-          await this.executeActionPhased(firstFighter, secondFighter, e.detail, turnManager, processTurn);
+          await this.executeActionPhased(
+            firstFighter,
+            secondFighter,
+            e.detail,
+            turnManager,
+            processTurn
+          );
         });
         document.body.appendChild(actionSelection);
 
@@ -169,7 +175,13 @@ export default class Game {
         // Auto-battle or AI turn
         setTimeout(async () => {
           const aiActionData = this.chooseAIAction(activeFighter, targetFighter);
-          await this.executeActionPhased(activeFighter, targetFighter, aiActionData, turnManager, processTurn);
+          await this.executeActionPhased(
+            activeFighter,
+            targetFighter,
+            aiActionData,
+            turnManager,
+            processTurn
+          );
         }, AI_TURN_DELAY);
       }
     };
@@ -245,11 +257,15 @@ export default class Game {
 
     switch (action) {
       case 'attack': {
-        let attackResult = attacker.normalAttack();
-        
+        const attackResult = attacker.normalAttack();
+
         // Apply combo effects to damage
-        attackResult.damage = comboSystem.applyComboEffects(attacker, defender, attackResult.damage);
-        
+        attackResult.damage = comboSystem.applyComboEffects(
+          attacker,
+          defender,
+          attackResult.damage
+        );
+
         const actualDmg = defender.takeDamage(attackResult.damage);
 
         // Track player stats
@@ -518,7 +534,7 @@ export default class Game {
     combatPhaseManager.queueAction(queuedAction);
 
     // Execute action through phase system
-    const result = await combatPhaseManager.executeNextAction();
+    await combatPhaseManager.executeNextAction();
 
     // Update HUD after action
     hudManager.update();
@@ -526,8 +542,11 @@ export default class Game {
     // Check victory condition
     const victoryResult = CombatEngine.checkVictoryCondition(attacker, defender, false);
     if (victoryResult) {
-      await combatPhaseManager.endBattle(victoryResult.winner, victoryResult.winner === attacker ? defender : attacker);
-      
+      await combatPhaseManager.endBattle(
+        victoryResult.winner,
+        victoryResult.winner === attacker ? defender : attacker
+      );
+
       Referee.declareWinner(victoryResult.winner);
       hudManager.showWinner(victoryResult.winner);
       document.querySelectorAll('action-selection').forEach((el) => el.remove());
@@ -617,7 +636,7 @@ export default class Game {
       CombatPhase.ACTION_EXECUTION,
       (data) => {
         const { action } = data;
-        
+
         // Record action for combo tracking
         let skillName = null;
         if (action.type === 'skill' && action.skillIndex !== undefined) {
@@ -635,9 +654,13 @@ export default class Game {
       CombatPhase.ACTION_RESOLUTION,
       (data) => {
         const { action, result } = data;
-        
+
         if (action.type === 'attack' && result.damage) {
-          result.damage = comboSystem.applyComboEffects(action.attacker, action.target, result.damage);
+          result.damage = comboSystem.applyComboEffects(
+            action.attacker,
+            action.target,
+            result.damage
+          );
         }
 
         return { comboEffectsApplied: true };
@@ -654,7 +677,7 @@ export default class Game {
 
         switch (action.type) {
           case 'attack': {
-            let attackResult = action.attacker.normalAttack();
+            const attackResult = action.attacker.normalAttack();
             result.damage = attackResult.damage;
             result.isCritical = attackResult.isCritical;
 
@@ -714,7 +737,7 @@ export default class Game {
               const skill = action.attacker.skills[skillIndex];
               const success = skill.use(action.attacker, action.target);
               result.success = success;
-              
+
               if (success) {
                 if (action.attacker.isPlayer) {
                   SaveManager.increment('stats.skillsUsed');
@@ -732,7 +755,7 @@ export default class Game {
           case 'item': {
             const previousHealth = action.attacker.health;
             action.attacker.useItem();
-            
+
             if (action.attacker.isPlayer) {
               SaveManager.increment('stats.itemsUsed');
 
@@ -998,10 +1021,10 @@ export default class Game {
     currentPlayerFighter = null;
     currentEnemyFighter = null;
     currentStoryMission = null;
-    
+
     // Clear AI managers
     aiManagers = {};
-    
+
     // Reset phase manager
     combatPhaseManager.reset();
 

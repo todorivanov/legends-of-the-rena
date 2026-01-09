@@ -18,10 +18,7 @@ export const COMBO_DEFINITIONS = [
     name: 'Offensive Surge',
     description: 'Two consecutive attacks build momentum',
     icon: '⚔️',
-    sequence: [
-      { type: 'attack' },
-      { type: 'attack' },
-    ],
+    sequence: [{ type: 'attack' }, { type: 'attack' }],
     bonus: {
       damageMultiplier: 1.3,
       extraDamage: 10,
@@ -32,11 +29,7 @@ export const COMBO_DEFINITIONS = [
     name: 'Berserker Rush',
     description: 'Three attacks in a row unleash fury',
     icon: '🔥',
-    sequence: [
-      { type: 'attack' },
-      { type: 'attack' },
-      { type: 'attack' },
-    ],
+    sequence: [{ type: 'attack' }, { type: 'attack' }, { type: 'attack' }],
     bonus: {
       damageMultiplier: 1.5,
       extraDamage: 25,
@@ -48,10 +41,7 @@ export const COMBO_DEFINITIONS = [
     name: 'Tactical Retreat',
     description: 'Defend then strike for calculated damage',
     icon: '🛡️',
-    sequence: [
-      { type: 'defend' },
-      { type: 'attack' },
-    ],
+    sequence: [{ type: 'defend' }, { type: 'attack' }],
     bonus: {
       damageMultiplier: 1.4,
       heal: 15,
@@ -62,10 +52,7 @@ export const COMBO_DEFINITIONS = [
     name: 'Double Defense',
     description: 'Consecutive defenses build resilience',
     icon: '🏰',
-    sequence: [
-      { type: 'defend' },
-      { type: 'defend' },
-    ],
+    sequence: [{ type: 'defend' }, { type: 'defend' }],
     bonus: {
       heal: 30,
       statusEffect: 'DEFENSE_BOOST',
@@ -78,10 +65,7 @@ export const COMBO_DEFINITIONS = [
     description: 'Defensive stance followed by devastating counter',
     icon: '🛡️⚔️',
     requiredClass: 'TANK',
-    sequence: [
-      { type: 'skill', skill: 'Iron Wall' },
-      { type: 'attack' },
-    ],
+    sequence: [{ type: 'skill', skill: 'Iron Wall' }, { type: 'attack' }],
     bonus: {
       damageMultiplier: 1.6,
       extraDamage: 30,
@@ -94,10 +78,7 @@ export const COMBO_DEFINITIONS = [
     description: 'Taunt followed by powerful strike',
     icon: '💪',
     requiredClass: 'TANK',
-    sequence: [
-      { type: 'skill', skill: 'Taunt Strike' },
-      { type: 'attack' },
-    ],
+    sequence: [{ type: 'skill', skill: 'Taunt Strike' }, { type: 'attack' }],
     bonus: {
       damageMultiplier: 1.5,
       cooldownReduce: 1,
@@ -122,14 +103,11 @@ export const COMBO_DEFINITIONS = [
   },
 
   {
-    name: 'Warrior\'s Resolve',
+    name: "Warrior's Resolve",
     description: 'Heal then unleash power',
     icon: '💚⚔️',
     requiredClass: 'BALANCED',
-    sequence: [
-      { type: 'skill', skill: 'Second Wind' },
-      { type: 'attack' },
-    ],
+    sequence: [{ type: 'skill', skill: 'Second Wind' }, { type: 'attack' }],
     bonus: {
       damageMultiplier: 1.4,
       extraDamage: 20,
@@ -158,11 +136,7 @@ export const COMBO_DEFINITIONS = [
     description: 'Multiple swift strikes in succession',
     icon: '🌪️',
     requiredClass: 'AGILE',
-    sequence: [
-      { type: 'skill', skill: 'Swift Strike' },
-      { type: 'attack' },
-      { type: 'attack' },
-    ],
+    sequence: [{ type: 'skill', skill: 'Swift Strike' }, { type: 'attack' }, { type: 'attack' }],
     bonus: {
       damageMultiplier: 1.6,
       extraDamage: 25,
@@ -192,10 +166,7 @@ export const COMBO_DEFINITIONS = [
     description: 'Chain cast for overwhelming power',
     icon: '⚡🔥',
     requiredClass: 'MAGE',
-    sequence: [
-      { type: 'skill', skill: 'Fireball' },
-      { type: 'attack' },
-    ],
+    sequence: [{ type: 'skill', skill: 'Fireball' }, { type: 'attack' }],
     bonus: {
       damageMultiplier: 1.5,
       statusEffect: 'BURN',
@@ -208,10 +179,7 @@ export const COMBO_DEFINITIONS = [
     description: 'Versatility creates unexpected opportunities',
     icon: '🌟',
     requiredClass: 'HYBRID',
-    sequence: [
-      { type: 'skill', skill: 'Versatile Strike' },
-      { type: 'attack' },
-    ],
+    sequence: [{ type: 'skill', skill: 'Versatile Strike' }, { type: 'attack' }],
     bonus: {
       damageMultiplier: 1.4,
       heal: 20,
@@ -224,10 +192,7 @@ export const COMBO_DEFINITIONS = [
     description: 'Regeneration amplifies all actions',
     icon: '💫',
     requiredClass: 'HYBRID',
-    sequence: [
-      { type: 'skill', skill: 'Rejuvenate' },
-      { type: 'attack' },
-    ],
+    sequence: [{ type: 'skill', skill: 'Rejuvenate' }, { type: 'attack' }],
     bonus: {
       damageMultiplier: 1.3,
       heal: 30,
@@ -256,10 +221,7 @@ export const COMBO_DEFINITIONS = [
     description: 'Defend to hide, then strike from shadows',
     icon: '🌑',
     requiredClass: 'ASSASSIN',
-    sequence: [
-      { type: 'defend' },
-      { type: 'skill', skill: 'Shadow Strike' },
-    ],
+    sequence: [{ type: 'defend' }, { type: 'skill', skill: 'Shadow Strike' }],
     bonus: {
       damageMultiplier: 1.8,
       extraDamage: 40,
@@ -289,11 +251,7 @@ export const COMBO_DEFINITIONS = [
     description: 'Continuous aggression breaks defenses',
     icon: '💥',
     requiredClass: 'BRAWLER',
-    sequence: [
-      { type: 'skill', skill: 'Haymaker' },
-      { type: 'attack' },
-      { type: 'attack' },
-    ],
+    sequence: [{ type: 'skill', skill: 'Haymaker' }, { type: 'attack' }, { type: 'attack' }],
     bonus: {
       damageMultiplier: 1.7,
       extraDamage: 35,
@@ -306,11 +264,7 @@ export const COMBO_DEFINITIONS = [
     name: 'Calculated Strike',
     description: 'Defend, attack, then finish with skill',
     icon: '🎯',
-    sequence: [
-      { type: 'defend' },
-      { type: 'attack' },
-      { type: 'skill' },
-    ],
+    sequence: [{ type: 'defend' }, { type: 'attack' }, { type: 'skill' }],
     bonus: {
       damageMultiplier: 1.7,
       extraDamage: 30,
@@ -323,11 +277,7 @@ export const COMBO_DEFINITIONS = [
     name: 'Overwhelming Force',
     description: 'Skill, attack, skill - unstoppable momentum',
     icon: '⚡💥',
-    sequence: [
-      { type: 'skill' },
-      { type: 'attack' },
-      { type: 'skill' },
-    ],
+    sequence: [{ type: 'skill' }, { type: 'attack' }, { type: 'skill' }],
     bonus: {
       damageMultiplier: 1.8,
       extraDamage: 40,

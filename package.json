@@ -1,6 +1,6 @@
 {
   "name": "legends-of-the-arena",
-  "version": "4.4.0",
+  "version": "4.5.0",
   "description": "An epic browser-based RPG fighting game with story mode, turn-based tactical combat, character progression, equipment systems, and marketplace economy",
   "type": "module",
   "main": "src/main-new.js",
@@ -50,7 +50,16 @@
     "clean:dist": "rm -rf dist",
     "prebuild": "npm run clean:dist",
     "check": "npm run lint && npm run format:check",
-    "prepare": "npm run check"
+    "prepare": "npm run check",
+    "test": "vitest",
+    "test:unit": "vitest run --coverage",
+    "test:watch": "vitest watch",
+    "test:ui": "vitest --ui",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:debug": "playwright test --debug",
+    "test:all": "npm run test:unit && npm run test:e2e",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "bootstrap": "5.3.8",
@@ -58,10 +67,15 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.15.0",
+    "@playwright/test": "^1.48.0",
+    "@vitest/coverage-v8": "^2.1.0",
+    "@vitest/ui": "^2.1.0",
     "eslint": "^9.15.0",
     "globals": "^15.12.0",
+    "happy-dom": "^15.7.4",
     "prettier": "^3.3.3",
-    "vite": "^5.4.11"
+    "vite": "^5.4.11",
+    "vitest": "^2.1.0"
   },
   "browserslist": [
     ">0.5%",

@@ -84,7 +84,7 @@ export class ComboSystem {
 
     // Check if last N actions match the sequence
     const recentActions = actions.slice(-sequence.length);
-    
+
     for (let i = 0; i < sequence.length; i++) {
       const required = sequence[i];
       const actual = recentActions[i];
@@ -110,7 +110,7 @@ export class ComboSystem {
    */
   triggerCombo(combo, fighter) {
     this.activeCombo = combo;
-    
+
     Logger.log(`
       <div class="combo-trigger" style="
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -131,11 +131,15 @@ export class ComboSystem {
         <div style="font-size: 16px; color: #fff; margin-top: 8px;">
           ${combo.description}
         </div>
-        ${combo.bonus ? `
+        ${
+          combo.bonus
+            ? `
           <div style="font-size: 14px; color: #4caf50; margin-top: 8px; font-weight: 600;">
             ${this.formatBonus(combo.bonus)}
           </div>
-        ` : ''}
+        `
+            : ''
+        }
       </div>
     `);
 
@@ -213,7 +217,9 @@ export class ComboSystem {
     // Restore mana
     if (bonus.manaRestore) {
       fighter.mana = Math.min(fighter.maxMana, fighter.mana + bonus.manaRestore);
-      Logger.log(`<div class="text-center" style="color: #2196f3;">💧 ${fighter.name} restored ${bonus.manaRestore} mana!</div>`);
+      Logger.log(
+        `<div class="text-center" style="color: #2196f3;">💧 ${fighter.name} restored ${bonus.manaRestore} mana!</div>`
+      );
     }
 
     // Apply status effect
@@ -221,7 +227,9 @@ export class ComboSystem {
       const effect = createStatusEffect(bonus.statusEffect);
       if (effect) {
         target.statusEffects.push(effect);
-        Logger.log(`<div class="text-center" style="color: #ff9800;">${effect.icon} ${target.name} was afflicted with ${effect.name}!</div>`);
+        Logger.log(
+          `<div class="text-center" style="color: #ff9800;">${effect.icon} ${target.name} was afflicted with ${effect.name}!</div>`
+        );
       }
     }
 
@@ -230,7 +238,9 @@ export class ComboSystem {
       fighter.skills.forEach((skill) => {
         skill.currentCooldown = Math.max(0, skill.currentCooldown - bonus.cooldownReduce);
       });
-      Logger.log(`<div class="text-center" style="color: #9c27b0;">⏱️ ${fighter.name}'s skill cooldowns reduced!</div>`);
+      Logger.log(
+        `<div class="text-center" style="color: #9c27b0;">⏱️ ${fighter.name}'s skill cooldowns reduced!</div>`
+      );
     }
 
     // Execute special effect function if provided
@@ -265,16 +275,18 @@ export class ComboSystem {
       }
 
       const sequence = combo.sequence;
-      
+
       // Check if current actions are a partial match
       if (fighterActions.length < sequence.length) {
         let isPartialMatch = true;
         for (let i = 0; i < fighterActions.length; i++) {
           const required = sequence[i];
           const actual = fighterActions[i];
-          
-          if (required.type !== actual.type || 
-              (required.skill && required.skill !== actual.skill)) {
+
+          if (
+            required.type !== actual.type ||
+            (required.skill && required.skill !== actual.skill)
+          ) {
             isPartialMatch = false;
             break;
           }

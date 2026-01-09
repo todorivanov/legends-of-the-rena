@@ -211,7 +211,7 @@ export class ComboHint extends BaseComponent {
     };
 
     let text = typeMap[action.type] || action.type;
-    
+
     if (action.skill) {
       text += ` (${action.skill})`;
     }

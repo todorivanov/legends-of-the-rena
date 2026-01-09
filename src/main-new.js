@@ -74,7 +74,9 @@ function initApp() {
     console.log(`✅ Loaded ${fighters.length} fighters`);
 
     // Navigate to initial route
-    const initialPath = saveData.profile.characterCreated ? RoutePaths.HOME : RoutePaths.CHARACTER_CREATION;
+    const initialPath = saveData.profile.characterCreated
+      ? RoutePaths.HOME
+      : RoutePaths.CHARACTER_CREATION;
     router.navigate(initialPath, {}, true); // true = replace (don't add to history)
   });
 
@@ -496,25 +498,25 @@ function showMissionResults(missionResult) {
       </div>
     `);
 
-  // Add event listener to the button
-  setTimeout(() => {
-    // Find the combat arena to access its shadow root
-    const arena = document.querySelector('combat-arena');
-    const returnBtn = arena?.shadowRoot?.querySelector('#return-to-map-btn-failed');
-    if (returnBtn) {
-      returnBtn.addEventListener('click', () => {
-        router.navigate(RoutePaths.STORY_MODE);
-      });
-      returnBtn.addEventListener('mouseover', () => {
-        returnBtn.style.transform = 'translateY(-3px)';
-        returnBtn.style.boxShadow = '0 10px 30px rgba(244, 67, 54, 0.5)';
-      });
-      returnBtn.addEventListener('mouseout', () => {
-        returnBtn.style.transform = 'translateY(0)';
-        returnBtn.style.boxShadow = 'none';
-      });
-    }
-  }, 100);
+    // Add event listener to the button
+    setTimeout(() => {
+      // Find the combat arena to access its shadow root
+      const arena = document.querySelector('combat-arena');
+      const returnBtn = arena?.shadowRoot?.querySelector('#return-to-map-btn-failed');
+      if (returnBtn) {
+        returnBtn.addEventListener('click', () => {
+          router.navigate(RoutePaths.STORY_MODE);
+        });
+        returnBtn.addEventListener('mouseover', () => {
+          returnBtn.style.transform = 'translateY(-3px)';
+          returnBtn.style.boxShadow = '0 10px 30px rgba(244, 67, 54, 0.5)';
+        });
+        returnBtn.addEventListener('mouseout', () => {
+          returnBtn.style.transform = 'translateY(0)';
+          returnBtn.style.boxShadow = 'none';
+        });
+      }
+    }, 100);
     return;
   }
 

@@ -29,7 +29,7 @@ export class ThemeToggle extends BaseComponent {
     this.darkMode = !this.darkMode;
     document.body.classList.toggle('dark-mode');
     localStorage.setItem('darkMode', this.darkMode);
-    
+
     // Update button icon
     const button = this.shadowRoot.querySelector('#theme-toggle-btn');
     button.textContent = this.darkMode ? '☀️' : '🌙';

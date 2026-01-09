@@ -23,7 +23,7 @@ export class SoundToggle extends BaseComponent {
 
   toggleSound() {
     this.soundEnabled = soundManager.toggle();
-    
+
     // Update button icon
     const button = this.shadowRoot.querySelector('#sound-toggle-btn');
     button.textContent = this.soundEnabled ? '🔊' : '🔇';

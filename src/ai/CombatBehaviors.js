@@ -2,13 +2,7 @@
  * CombatBehaviors - Combat-specific behavior tree nodes
  */
 
-import {
-  Selector,
-  Sequence,
-  Condition,
-  Action,
-  WeightedSelector,
-} from './BehaviorTree.js';
+import { Selector, Sequence, Condition, Action } from './BehaviorTree.js';
 import { PersonalityTraits } from './AIPersonality.js';
 
 /**

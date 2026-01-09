@@ -4,7 +4,6 @@
  */
 
 import { SaveManagerV2 as SaveManager } from '../utils/SaveManagerV2.js';
-import { StoryMode } from '../game/StoryMode.js';
 
 /**
  * Route Guards - Access control functions

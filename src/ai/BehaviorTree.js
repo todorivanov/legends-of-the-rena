@@ -1,6 +1,6 @@
 /**
  * BehaviorTree - AI decision-making using behavior trees
- * 
+ *
  * Behavior trees provide hierarchical, modular AI decision-making
  * More flexible and maintainable than simple if/else chains
  */
@@ -28,7 +28,7 @@ export class BehaviorNode {
    * @param {Object} context - AI context (fighter, opponent, etc.)
    * @returns {string} NodeStatus
    */
-  execute(context) {
+  execute(_context) {
     throw new Error('execute() must be implemented by subclass');
   }
 
@@ -342,7 +342,7 @@ export class BehaviorTree {
     }
 
     const status = this.rootNode.execute(context);
-    
+
     console.log(`🤖 AI Decision (${this.name}):`, {
       status,
       action: context.chosenAction,

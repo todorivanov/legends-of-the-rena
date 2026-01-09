@@ -24,10 +24,7 @@ export class AIManager {
 
     // Create behavior tree
     const behaviorRoot = getBehaviorForPersonality(this.personality);
-    this.behaviorTree = new BehaviorTree(
-      `${fighter.name}_AI`,
-      behaviorRoot
-    );
+    this.behaviorTree = new BehaviorTree(`${fighter.name}_AI`, behaviorRoot);
 
     console.log(
       `🤖 AI Created for ${fighter.name}: ${this.personality.archetype.name} (${difficulty})`
@@ -150,7 +147,7 @@ export function createRandomAI(fighter, difficulty = 'normal') {
  * Legacy compatibility: Simple AI decision (fallback)
  * Used if behavior tree system fails
  */
-export function simpleFallbackAI(fighter, opponent) {
+export function simpleFallbackAI(fighter, _opponent) {
   console.warn('⚠️ Using fallback AI - behavior tree failed');
 
   // Simple decision logic

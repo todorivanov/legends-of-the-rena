@@ -5,6 +5,94 @@ All notable changes to Legends of the Arena will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.5.0] - 2026-01-09
+
+### Added - Comprehensive Testing Framework 🧪
+- **Vitest** for unit and integration tests
+  - Fast, Vite-native test runner
+  - Coverage reporting with v8
+  - Interactive UI mode
+  - Watch mode for continuous testing
+- **Playwright** for E2E tests
+  - Cross-browser testing (Chromium, Firefox, WebKit)
+  - Mobile viewport testing
+  - Screenshot and video on failure
+  - Trace recording for debugging
+- **Test Infrastructure**:
+  - Global test setup with mocks
+  - Reusable test helpers and utilities
+  - Mock localStorage, sessionStorage, requestAnimationFrame
+  - Custom test fighter factories
+- **Test Suites**:
+  - Unit tests for Fighter class
+  - Unit tests for ComboSystem
+  - Integration tests for Combat Flow
+  - E2E tests for game flow
+  - Accessibility tests
+  - Responsive design tests
+
+### Added - New Files
+- `vitest.config.js`: Vitest configuration
+- `playwright.config.js`: Playwright configuration
+- `tests/setup.js`: Global test setup
+- `tests/utils/testHelpers.js`: Reusable test utilities
+- `tests/unit/Fighter.test.js`: Fighter unit tests
+- `tests/unit/ComboSystem.test.js`: Combo system tests
+- `tests/integration/CombatFlow.test.js`: Combat integration tests
+- `tests/e2e/gameFlow.spec.js`: E2E game flow tests
+- `docs/TESTING.md`: Comprehensive testing guide
+- `.gitignore`: Test artifacts exclusions
+
+### Added - NPM Scripts
+- `npm test`: Run tests in watch mode
+- `npm run test:unit`: Run unit tests with coverage
+- `npm run test:watch`: Watch mode
+- `npm run test:ui`: Interactive Vitest UI
+- `npm run test:e2e`: Run E2E tests
+- `npm run test:e2e:ui`: Playwright UI mode
+- `npm run test:e2e:debug`: Debug E2E tests
+- `npm run test:all`: Run all test types
+- `npm run test:coverage`: Generate coverage report
+
+### Added - Dev Dependencies
+- `vitest@^2.1.0`
+- `@vitest/ui@^2.1.0`
+- `@vitest/coverage-v8@^2.1.0`
+- `@playwright/test@^1.48.0`
+- `happy-dom@^15.7.4`
+
+### Technical Features
+- **Coverage Thresholds**: 70% for lines, functions, branches, statements
+- **Test Isolation**: Each test runs in clean environment
+- **Mock Utilities**: localStorage, sessionStorage, timers, etc.
+- **Shadow DOM Testing**: Helpers for Web Component testing
+- **Async Testing**: Full support for promises and async/await
+- **Event Testing**: Mock and verify event emissions
+- **Cross-Browser**: E2E tests run on all major browsers
+
+### Testing Coverage
+- ✅ Fighter combat mechanics
+- ✅ Combo system logic
+- ✅ Phase manager integration
+- ✅ Turn management
+- ✅ Action queuing and execution
+- ✅ Event emission and handling
+- ✅ Game flow (E2E)
+- ✅ Character creation (E2E)
+- ✅ Navigation (E2E)
+- ✅ Responsive design (E2E)
+
+### Documentation
+- Comprehensive testing guide
+- Unit test examples
+- Integration test patterns
+- E2E test best practices
+- Debugging tips
+- CI/CD integration guide
+
+### Version
+- Version bumped from 4.4.0 to 4.5.0
+
 ## [4.4.0] - 2026-01-09
 
 ### Changed - Full Combat Phase System Migration 🎯

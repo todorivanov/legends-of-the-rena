@@ -2,7 +2,7 @@
  * SaveManagerV2 - Enhanced save system with import/export, versioning, compression, and backups
  */
 
-import { compress, decompress, compressJSON, decompressJSON, getSizeKB } from './compression.js';
+import { compress, decompress, getSizeKB } from './compression.js';
 
 // Save keys
 const SAVE_KEY_PREFIX = 'legends_arena_save';
@@ -532,7 +532,7 @@ export class SaveManagerV2 {
 
     // Migrate storyProgress to story if it exists
     const storyData = data.story || data.storyProgress || defaultData.story;
-    
+
     // Convert completedMissions from object to array if needed
     let completedMissions = storyData.completedMissions || [];
     if (!Array.isArray(completedMissions)) {
@@ -540,7 +540,7 @@ export class SaveManagerV2 {
       completedMissions = Object.keys(completedMissions);
       console.log('🔄 Converted completedMissions from object to array');
     }
-    
+
     // Ensure story has the correct structure
     const migratedStory = {
       unlockedRegions: storyData.unlockedRegions || ['tutorial'],
@@ -549,7 +549,7 @@ export class SaveManagerV2 {
       currentMission: storyData.currentMission || null,
       missionStars: storyData.missionStars || {},
     };
-    
+
     // Handle old format where missionStars might be separate
     if (data.storyProgress?.missionStars) {
       migratedStory.missionStars = data.storyProgress.missionStars;
@@ -583,8 +583,11 @@ export class SaveManagerV2 {
       data.story.completedMissions = Object.keys(data.story.completedMissions);
       console.log('🔄 Converted story.completedMissions from object to array');
     }
-    
-    if (data.storyProgress?.completedMissions && !Array.isArray(data.storyProgress.completedMissions)) {
+
+    if (
+      data.storyProgress?.completedMissions &&
+      !Array.isArray(data.storyProgress.completedMissions)
+    ) {
       data.storyProgress.completedMissions = Object.keys(data.storyProgress.completedMissions);
       console.log('🔄 Converted storyProgress.completedMissions from object to array');
     }
@@ -681,7 +684,7 @@ export class SaveManagerV2 {
     const data = this.load();
     const keys = path.split('.');
     const lastKey = keys.pop();
-    
+
     // Navigate to nested object, creating intermediate objects if needed
     let target = data;
     for (const key of keys) {
@@ -690,7 +693,7 @@ export class SaveManagerV2 {
       }
       target = target[key];
     }
-    
+
     target[lastKey] = value;
     this.save(data);
   }

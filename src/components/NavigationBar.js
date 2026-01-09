@@ -148,7 +148,7 @@ export class NavigationBar extends BaseComponent {
         ${buttonsHTML}
       </div>
     `;
-    
+
     // Attach event listeners after rendering
     this.buttons.forEach((button) => {
       const btn = this.shadowRoot.querySelector(`#${button.id}-btn`);

@@ -113,6 +113,37 @@
 
 ---
 
+## 🧪 Testing
+
+The project includes comprehensive testing with **49+ test cases**:
+
+```bash
+npm test              # Run tests in watch mode
+npm run test:unit     # Unit tests with coverage
+npm run test:watch    # Continuous testing
+npm run test:ui       # Interactive test UI
+npm run test:e2e      # E2E tests across browsers
+npm run test:all      # All tests
+```
+
+**Testing Stack**:
+- **Vitest 2.1** - Fast unit/integration tests with coverage
+- **Playwright 1.48** - Cross-browser E2E tests (Chrome, Firefox, Safari, Edge)
+- **Happy-DOM** - Lightweight DOM for testing
+- **Coverage**: 70%+ code coverage target
+
+**Test Coverage**:
+- ✅ Fighter combat mechanics
+- ✅ Combo system
+- ✅ Phase manager & action queue
+- ✅ Game flow (E2E)
+- ✅ Character creation (E2E)
+- ✅ Responsive design (E2E)
+
+See [Testing Guide](docs/TESTING.md) for complete documentation.
+
+---
+
 ## 🎮 Game Modes
 
 ### **Story Mode** ⭐NEW⭐

@@ -213,7 +213,7 @@ export const storyReducers = {
     },
   }),
 
-  [ActionTypes.COMPLETE_MISSION]: (state, { missionId, stars, rewards }) => {
+  [ActionTypes.COMPLETE_MISSION]: (state, { missionId, stars, rewards: _rewards }) => {
     const completedMissions = state.story.completedMissions || {};
     const currentStars = completedMissions[missionId]?.stars || 0;
 

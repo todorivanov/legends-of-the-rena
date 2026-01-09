@@ -4,8 +4,6 @@
 
 import { BaseComponent } from './BaseComponent.js';
 import SaveManagerV2 from '../utils/SaveManagerV2.js';
-import { router } from '../utils/Router.js';
-import { RoutePaths } from '../config/routes.js';
 
 export class SaveManagementScreen extends BaseComponent {
   constructor() {

@@ -3,7 +3,7 @@
  * Uses History API for proper browser navigation
  */
 
-import { SaveManagerV2 as SaveManager } from './SaveManagerV2.js';
+// SaveManager imported but not used - kept for future route guards
 
 export class Router {
   constructor() {

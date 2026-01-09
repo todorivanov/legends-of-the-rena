@@ -16,12 +16,12 @@ export class ProfileScreen extends BaseComponent {
   constructor() {
     super();
     this.profileData = SaveManager.load();
-    
+
     // Ensure storyProgress exists for backward compatibility
     if (!this.profileData.storyProgress && this.profileData.story) {
       this.profileData.storyProgress = this.profileData.story;
     }
-    
+
     this.currentTab = 'profile'; // 'profile' or 'equipment'
   }
 
