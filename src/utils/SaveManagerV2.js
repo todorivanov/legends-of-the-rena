@@ -7,7 +7,7 @@ import { compress, decompress, getSizeKB } from './compression.js';
 // Save keys
 const SAVE_KEY_PREFIX = 'legends_arena_save';
 const BACKUP_KEY_PREFIX = 'legends_arena_backup';
-const CURRENT_VERSION = '4.1.0';
+const CURRENT_VERSION = '4.2.0';
 const MAX_BACKUPS = 5;
 const MAX_SAVE_SLOTS = 3;
 
@@ -271,7 +271,7 @@ export class SaveManagerV2 {
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
       if (key && key.startsWith(prefix)) {
-        const timestamp = parseInt(key.split('_')[3]);
+        const timestamp = parseInt(key.split('_')[4]); // Fixed: was [3], should be [4]
         const data = localStorage.getItem(key);
 
         try {
@@ -537,7 +537,10 @@ export class SaveManagerV2 {
     let completedMissions = storyData.completedMissions || [];
     if (!Array.isArray(completedMissions)) {
       // Old format: completedMissions was an object, convert to array
-      completedMissions = Object.keys(completedMissions);
+      // Only include missions where the value is true
+      completedMissions = Object.keys(completedMissions).filter(
+        (key) => completedMissions[key] === true
+      );
       console.log('🔄 Converted completedMissions from object to array');
     }
 
