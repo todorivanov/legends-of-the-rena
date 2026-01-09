@@ -663,7 +663,7 @@ export class ProfileScreen extends BaseComponent {
             </div>
             
             <div class="reset-section">
-              <button class="reset-btn">🗑️ Reset Progress</button>
+              <button class="reset-btn" id="reset-progress-btn">🗑️ Reset Progress</button>
             </div>
           </div>
         </div>
@@ -850,8 +850,8 @@ export class ProfileScreen extends BaseComponent {
       });
     });
 
-    // Reset progress button (only the one WITHOUT data attributes)
-    const resetBtn = this.shadowRoot.querySelector('.reset-btn:not([data-unequip]):not([data-equip])');
+    // Reset progress button
+    const resetBtn = this.shadowRoot.querySelector('#reset-progress-btn');
     if (resetBtn) {
       resetBtn.addEventListener('click', () => {
         if (confirm('⚠️ Are you sure you want to reset ALL progress? This cannot be undone!')) {
