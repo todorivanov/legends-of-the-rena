@@ -2,38 +2,25 @@
   box-sizing: border-box;
 }
 
+/* Theme variables are now defined in src/styles/theme.css */
+/* Keeping only legacy variables for backward compatibility */
 :root {
-  /* Light Mode Colors */
-  --bg-gradient-start: #667eea;
-  --bg-gradient-end: #764ba2;
-  --container-bg: #ffffff;
-  --text-color: #212529;
-  --text-muted: #6c757d;
-  --border-color: #dee2e6;
-  --hover-shadow: rgba(0, 0, 0, 0.2);
-  --card-bg: #ffffff;
-  --log-bg: #f8f9fa;
-  --intro-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --intro-text: #ffffff;
-
   /* Animation durations */
   --transition-speed: 0.3s;
   --animation-speed: 0.6s;
-}
 
-body.dark-mode {
-  /* Dark Mode Colors */
-  --bg-gradient-start: #1a1a2e;
-  --bg-gradient-end: #16213e;
-  --container-bg: #0f3460;
-  --text-color: #e8e8e8;
-  --text-muted: #a8a8a8;
-  --border-color: #2d4059;
-  --hover-shadow: rgba(255, 255, 255, 0.1);
-  --card-bg: #16213e;
-  --log-bg: #1a1a2e;
-  --intro-bg: linear-gradient(135deg, #e94560 0%, #533483 100%);
-  --intro-text: #ffffff;
+  /* Legacy variables mapped to new theme system */
+  --bg-gradient-start: var(--primary-base);
+  --bg-gradient-end: var(--primary-bright);
+  --container-bg: var(--bg-dark);
+  --text-color: var(--text-primary);
+  --text-muted: var(--text-muted);
+  --border-color: var(--glass-border);
+  --hover-shadow: var(--glass-shadow);
+  --card-bg: var(--bg-medium);
+  --log-bg: var(--bg-darkest);
+  --intro-bg: var(--gradient-primary);
+  --intro-text: var(--text-primary);
 }
 
 html,
@@ -58,34 +45,7 @@ body {
     color var(--transition-speed) ease;
 }
 
-/* Dark Mode Toggle */
-.dark-mode-toggle {
-  position: fixed;
-  top: 15px;
-  right: 15px;
-  z-index: 10000;
-  background: var(--card-bg);
-  border: 2px solid var(--border-color);
-  border-radius: 50px;
-  padding: 8px 16px;
-  cursor: pointer;
-  box-shadow: 0 4px 10px var(--hover-shadow);
-  transition: all var(--transition-speed) ease;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: 600;
-  font-size: 14px;
-}
-
-.dark-mode-toggle:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 15px var(--hover-shadow);
-}
-
-.dark-mode-toggle:active {
-  transform: translateY(0);
-}
+/* Dark Mode Toggle - Now handled by ThemeToggle web component */
 
 .container {
   width: 100%;
@@ -492,10 +452,7 @@ body {
   }
 }
 
-.dark-mode .normal-attack {
-  background-color: #4a4a00;
-  border-left-color: #ffc107;
-}
+/* Removed - now handled by theme.css */
 
 .special-attack {
   background-color: #f8d7da;
@@ -506,10 +463,7 @@ body {
     shakeAttack 0.5s ease;
 }
 
-.dark-mode .special-attack {
-  background-color: #5a0000;
-  border-left-color: #dc3545;
-}
+/* Removed - now handled by theme.css */
 
 .missed-attack {
   background-color: #d1ecf1;
@@ -520,10 +474,7 @@ body {
   opacity: 0.7;
 }
 
-.dark-mode .missed-attack {
-  background-color: #003d4a;
-  border-left-color: #17a2b8;
-}
+/* Removed - now handled by theme.css */
 
 .consumable {
   background-color: #d4edda;
@@ -536,10 +487,7 @@ body {
     glowGreen 1s ease;
 }
 
-.dark-mode .consumable {
-  background-color: #004a00;
-  border-left-color: #28a745;
-}
+/* Removed - now handled by theme.css */
 
 .event-announcement {
   animation:

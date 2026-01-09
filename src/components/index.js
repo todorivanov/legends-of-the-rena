@@ -25,7 +25,6 @@ export { CampaignMap } from './CampaignMap.js'; // v4.0 - Story Mode
 export { MissionBriefing } from './MissionBriefing.js'; // v4.0 - Story Mode
 export { MarketplaceScreen } from './MarketplaceScreen.js'; // v4.0 - Marketplace
 export { NavigationBar } from './NavigationBar.js'; // v4.0 - Refactor
-export { ThemeToggle } from './ThemeToggle.js'; // v4.0 - Refactor
 export { SoundToggle } from './SoundToggle.js'; // v4.0 - Refactor
 export { AppLayout } from './AppLayout.js'; // v4.0 - Refactor
 export { SaveManagementScreen } from './SaveManagementScreen.js'; // v4.1 - Save System

@@ -142,22 +142,18 @@ function initializeRouter() {
 function initNavigationComponents() {
   // Remove any existing navigation components
   const existingNav = document.querySelector('navigation-bar');
-  const existingTheme = document.querySelector('theme-toggle');
   const existingSound = document.querySelector('sound-toggle');
   const existingPerfMonitor = document.querySelector('performance-monitor-ui');
 
   if (existingNav) existingNav.remove();
-  if (existingTheme) existingTheme.remove();
   if (existingSound) existingSound.remove();
   if (existingPerfMonitor) existingPerfMonitor.remove();
 
   // Add new declarative components
   const navBar = document.createElement('navigation-bar');
-  const themeToggle = document.createElement('theme-toggle');
   const soundToggle = document.createElement('sound-toggle');
 
   document.body.appendChild(navBar);
-  document.body.appendChild(themeToggle);
   document.body.appendChild(soundToggle);
 
   // Conditionally add performance monitor based on settings

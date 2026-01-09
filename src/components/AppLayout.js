@@ -4,7 +4,6 @@
 
 import { BaseComponent } from './BaseComponent.js';
 import './NavigationBar.js';
-import './ThemeToggle.js';
 import './SoundToggle.js';
 
 export class AppLayout extends BaseComponent {
@@ -49,7 +48,6 @@ export class AppLayout extends BaseComponent {
       <div class="layout-container">
         <div class="nav-overlay">
           <navigation-bar></navigation-bar>
-          <theme-toggle></theme-toggle>
           <sound-toggle></sound-toggle>
         </div>
         <div class="content-area">
