@@ -31,6 +31,7 @@ export { AppLayout } from './AppLayout.js'; // v4.0 - Refactor
 export { SaveManagementScreen } from './SaveManagementScreen.js'; // v4.1 - Save System
 export { ComboHint } from './ComboHint.js'; // v4.2 - Combo System
 export { PerformanceMonitorUI } from './PerformanceMonitorUI.js'; // v4.6 - Performance
+export { GridCombatUI } from './GridCombatUI.js'; // v4.7 - Grid Combat
 
 // Auto-register all components by importing this file
 console.log('✅ All Web Components registered');

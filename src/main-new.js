@@ -349,6 +349,7 @@ function startStoryMission(missionId) {
   // Create the player fighter
   const playerData = SaveManager.load();
   const playerFighter = new Fighter({
+    id: 'player',
     name: playerData.profile.name,
     class: playerData.profile.class,
     level: playerData.profile.level,
@@ -366,6 +367,7 @@ function startStoryMission(missionId) {
     // For survival missions, start with the first wave
     const firstWave = mission.waves[0];
     enemyFighter = new Fighter({
+      id: `enemy_${firstWave.name}`,
       name: firstWave.name,
       class: firstWave.class,
       level: firstWave.level,
@@ -376,6 +378,7 @@ function startStoryMission(missionId) {
   } else if (mission.enemy) {
     // Standard or boss mission
     enemyFighter = new Fighter({
+      id: `enemy_${mission.enemy.name}`,
       name: mission.enemy.name,
       class: mission.enemy.class,
       level: mission.enemy.level,
@@ -798,7 +801,7 @@ function showOpponentSelection() {
 function createPlayerFighter(characterData) {
   // Create base fighter
   const fighter = new Fighter({
-    id: 0, // Player ID
+    id: 'player', // Player ID
     name: characterData.name,
     health: characterData.health,
     strength: characterData.strength,

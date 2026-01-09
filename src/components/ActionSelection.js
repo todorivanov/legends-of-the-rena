@@ -302,6 +302,13 @@ export class ActionSelection extends BaseComponent {
   attachEventListeners() {
     const buttons = this.shadowRoot.querySelectorAll('.action-btn');
 
+    // Check if opponent is out of range and update attack button
+    const inRange = this.dataset.inRange === 'true';
+    const attackBtn = this.shadowRoot.querySelector('.attack-btn');
+    if (attackBtn && !inRange) {
+      attackBtn.classList.add('out-of-range');
+    }
+
     buttons.forEach((btn) => {
       btn.addEventListener('click', (e) => {
         if (!e.currentTarget.disabled) {

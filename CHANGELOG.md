@@ -5,6 +5,213 @@ All notable changes to Legends of the Arena will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.9.0] - 2026-01-09
+
+### Added - Weapon Range & Attack Distance System 🎯
+
+**Attack Range Mechanics:**
+- **Class-Based Ranges** - Melee (1), Ranged (3), Magic (3)
+- **Weapon Ranges** - Swords/axes (1), Staves (3), Legendary (2)
+- **Range Validation** - Can't attack enemies out of range
+- **Visual Indicators** - Attack button shows "OUT OF RANGE" warning
+- **Combat Log Messages** - Helpful hints to move closer
+
+**Range System:**
+- **Manhattan Distance** - Grid-based distance calculation
+- **Dynamic Range** - Combines class base + weapon bonus
+- **Mages are Ranged** - Mage and Necromancer have 3-cell attack range
+- **Melee Classes** - All other classes default to 1-cell melee range
+- **Strategic Positioning** - Must use movement skills to get in range
+
+**Class Attack Ranges:**
+| Class | Base Range | Type |
+|-------|------------|------|
+| Warrior, Tank, Balanced, Assassin, Berserker, Paladin, Brawler | 1 | Melee |
+| Mage, Necromancer | 3 | Ranged/Magic |
+
+**Technical Implementation:**
+- `Fighter.getAttackRange()` - Calculate combined range
+- `GridManager.getDistance()` - Manhattan distance
+- `GridManager.isInAttackRange()` - Range validation
+- `GridCombatIntegration.isTargetInRange()` - Combat range check
+
+### Changed
+- Attack button now disabled/grayed when target out of range
+- Combat flow validates range before executing attacks
+- Out-of-range attacks show warning message instead of executing
+
+---
+
+## [4.8.1] - 2026-01-09
+
+### Added - Interactive Grid Movement 🏃
+
+**Movement Skills System:**
+- **Movement as Skills** - Each class has a unique movement skill
+- **Mana-Based Movement** - Movement costs 10-15 mana
+- **Cooldown System** - Movement skills have 0-2 turn cooldowns
+- **Class-Specific Names**: Shadow Step, Quick Step, Arcane Step, etc.
+- **Strategic Depth** - Must choose between moving, attacking, or defending
+
+**Interactive Controls:**
+- **Click-to-Move** - Click highlighted cells to move fighters
+- **Cell Highlighting** - Valid moves shown in blue during selection
+- **Real-time Feedback** - Instant visual updates and combat log messages
+- **Invalid Move Warnings** - User-friendly error messages for invalid selections
+
+**Grid UI Enhancements:**
+- `highlightCells()` method for showing valid moves
+- `clearHighlights()` method for resetting highlights
+- `cell-clicked` event emission for external listeners
+- Support for interactive modes (view/move/attack)
+
+**Movement Logic:**
+- `handleGridMovement()` in Game class
+- Event-driven cell selection system
+- Automatic terrain effect application after moving
+- Turn management integration
+
+**Documentation:**
+- Created `INTERACTIVE_MOVEMENT_GUIDE.md` with comprehensive instructions
+- Updated `GRID_COMBAT_SYSTEM.md` with movement controls
+- Updated `README.md` with interactive movement features
+
+### Changed
+- Grid UI now supports multiple interaction modes
+- Enhanced GridCombatUI component with new methods
+- Updated ActionSelection component with move button
+- Improved game loop to handle grid-based movement actions
+
+---
+
+## [4.8.0] - 2026-01-09
+
+### Added - Tactical 5x5 Grid Combat System 🗺️
+
+**Core Grid System:**
+- **5x5 Tactical Grid** - 25-cell battlefield with positioning
+- **GridManager** - Complete grid management with pathfinding
+- **GridCell** - Individual cell with terrain and occupancy tracking
+- **Position-based combat** - Fighters occupy specific grid positions
+
+**Terrain System (10 Types):**
+- **Normal Terrain**:
+  - ⬜ Normal Ground (standard)
+  - 🟩 Grassland (open field)
+- **Defensive Terrain**:
+  - 🌲 Forest (+15% def, -10% atk, blocks LOS)
+  - 🪨 Rock (+10% def, +5% atk)
+- **Difficult Terrain**:
+  - 🌊 Water (3 movement cost, -10% def, -15% atk)
+  - 🟫 Mud (2 movement cost, -5% def, -10% atk)
+- **Elevation Terrain**:
+  - ⛰️ High Ground (+20% def, +25% atk) ✨ Best advantage!
+  - 🕳️ Low Ground (-15% def, -10% atk)
+- **Impassable Terrain**:
+  - 🧱 Wall (blocks movement and LOS)
+  - 🕳️ Pit (blocks movement)
+
+**Movement System:**
+- **Pathfinding** - BFS algorithm for valid moves
+- **Movement Range** - Base 2 spaces, class-modified
+  - Assassin/Agile: 3 spaces
+  - Tank: 1 space
+- **Terrain Costs** - Different movement costs per terrain
+- **Visual Indicators** - Green pulse for valid moves
+
+**Attack System:**
+- **Range-based Attacks** - Melee (1), Extended (2), Ranged (3)
+- **Line of Sight** - Bresenham's algorithm
+- **Terrain Modifiers** - Attack/defense bonuses from terrain
+- **Flanking Mechanic** - +25% damage when flanked
+- **Visual Indicators** - Red pulse for valid targets
+
+**Battlefield Layouts (6 Predefined):**
+1. **Open Field** - Wide open, minimal cover
+2. **Forest Clearing** - Dense forest with central clearing
+3. **Ancient Ruins** - Rocky terrain with walls
+4. **Treacherous Swamp** - Mud and water obstacles
+5. **Mountain Pass** - Elevated terrain with high/low ground
+6. **Combat Arena** - Walled perimeter with rock cover
+
+**Grid Combat UI Component:**
+- **Interactive 5x5 Grid** - Click to select cells
+- **Real-time Visualization** - Terrain colors and fighter icons
+- **Mode System** - View, Move, Attack modes
+- **Tooltips** - Terrain info, fighter stats, bonuses
+- **Legend** - Always-visible terrain reference
+- **Stats Display** - Fighter counts and positioning
+- **Animations** - Pulse effects, hover states, bouncing fighters
+
+**Combat Integration:**
+- **GridCombatIntegration** - Bridges grid with existing combat
+- **Action System** - Move, Attack, Skill, Defend, Wait
+- **Terrain Damage Calculation** - Applies bonuses to combat
+- **Flanking Detection** - Automatic flanking bonus
+- **Combat Info API** - Get positioning data for UI
+
+**Strategic Features:**
+- **High Ground Advantage** - Up to 45% total swing
+- **Defensive Positioning** - Forest cover, rock stability
+- **Mobility Tactics** - Kiting, rushing, zoning
+- **Flanking Prevention** - Corner positioning
+- **Terrain Control** - Key position dominance
+
+**Technical Implementation:**
+- **Efficient Pathfinding** - BFS with movement costs
+- **Line-of-Sight Caching** - Optimized LOS checks
+- **Grid State Management** - Serializable grid state
+- **Fighter Position Tracking** - Bidirectional references
+- **Terrain Effect Processor** - Centralized bonus calculation
+
+**API Additions:**
+```javascript
+// GridManager
+gridManager.placeFighter(fighter, x, y)
+gridManager.getValidMoves(fighter, range)
+gridManager.hasLineOfSight(x1, y1, x2, y2)
+gridManager.getEnemiesInRange(fighter, range)
+gridManager.isFlanked(fighter)
+
+// TerrainSystem
+TerrainGenerator.generateRandom()
+TerrainGenerator.generateByName('MOUNTAIN_PASS')
+TerrainEffectProcessor.calculateTerrainModifiedDamage(damage, attackerCell, defenderCell)
+
+// GridCombatIntegration
+gridCombatIntegration.initializeBattle(player, enemy, 'ARENA')
+gridCombatIntegration.getAvailableActions(fighter)
+gridCombatIntegration.executeMove(fighter, x, y)
+gridCombatIntegration.executeAttack(attacker, x, y)
+gridCombatIntegration.getCombatInfo(fighter)
+```
+
+**Files Added:**
+- `src/game/GridManager.js` - Core grid management (500+ lines)
+- `src/game/TerrainSystem.js` - Terrain types and effects (400+ lines)
+- `src/game/GridCombatIntegration.js` - Combat integration (300+ lines)
+- `src/components/GridCombatUI.js` - Visual grid component (400+ lines)
+- `docs/GRID_COMBAT_SYSTEM.md` - Complete documentation (600+ lines)
+
+**Documentation:**
+- Complete terrain type catalog
+- Movement and attack mechanics
+- Strategic positioning guide
+- Battlefield layout descriptions
+- API reference with examples
+- Tips for each class
+- Future enhancement roadmap
+
+**Game Balance:**
+- High ground provides significant advantage
+- Terrain variety creates strategic choices
+- Movement costs balance mobility
+- Flanking adds tactical depth
+- Line-of-sight creates positioning importance
+
+**Version:**
+- Version bumped from 4.7.0 to 4.8.0
+
 ## [4.7.0] - 2026-01-09
 
 ### Removed - Team Battle Mode 🔄

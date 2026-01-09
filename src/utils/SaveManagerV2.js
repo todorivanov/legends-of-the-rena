@@ -184,7 +184,6 @@ export class SaveManagerV2 {
       // Validate and migrate if needed
       saveData = this.validateAndMigrate(saveData);
 
-      console.log(`✅ Save loaded from slot ${slot} (v${saveData.version})`);
       return saveData;
     } catch (error) {
       console.error('❌ Load failed:', error);
@@ -576,8 +575,6 @@ export class SaveManagerV2 {
    * @returns {Object} Migrated data
    */
   static migrateTo420(data) {
-    console.log(`🔄 Migrating save from ${data.version} to 4.2.0`);
-
     // Ensure completedMissions is an array
     if (data.story?.completedMissions && !Array.isArray(data.story.completedMissions)) {
       data.story.completedMissions = Object.keys(data.story.completedMissions);

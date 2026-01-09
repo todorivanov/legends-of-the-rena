@@ -17,6 +17,8 @@ import { StoryMode } from './StoryMode.js';
 import { createAI } from '../ai/AIManager.js';
 import { comboSystem } from './ComboSystem.js';
 import { combatPhaseManager, CombatPhase } from './CombatPhaseManager.js';
+import { gridManager } from './GridManager.js';
+import { gridCombatIntegration } from './GridCombatIntegration.js';
 
 // ROUND_INTERVAL removed - no longer needed after Team Battle removal
 const AI_TURN_DELAY = 1200;
@@ -96,6 +98,10 @@ export default class Game {
     Logger.clearLog();
     Referee.introduceFighters(firstFighter, secondFighter);
 
+    // Initialize grid combat
+    gridCombatIntegration.initializeBattle(firstFighter, secondFighter);
+    this.initializeGridUI();
+
     // Initialize HUD
     hudManager.initSingleFight(firstFighter, secondFighter);
 
@@ -146,9 +152,25 @@ export default class Game {
       hudManager.update();
 
       if (turnManager.isPlayerTurn() && !autoBattleEnabled) {
+        // Check if opponent is in attack range
+        const inRange = gridCombatIntegration.isTargetInRange(firstFighter.id, secondFighter.id);
+        const attackRange = gridCombatIntegration.getAttackRangeForFighter(firstFighter);
+
+        if (!inRange) {
+          Logger.log(
+            `<div class="system-message" style="background: rgba(255, 193, 7, 0.2); border-left: 3px solid #ffc107;">⚠️ <strong>Enemy out of range!</strong> (Need range ${attackRange})</div>`
+          );
+          Logger.log(
+            `<div class="system-message">💡 Use your <strong>movement skill</strong> to get closer before attacking!</div>`
+          );
+        }
+
         // Manual: Player's turn - wait for input using Web Component
         const actionSelection = document.createElement('action-selection');
         actionSelection.fighter = firstFighter;
+        actionSelection.dataset.opponentId = secondFighter.id;
+        actionSelection.dataset.attackRange = attackRange;
+        actionSelection.dataset.inRange = inRange;
         actionSelection.addEventListener('action-selected', async (e) => {
           actionSelection.remove();
           // Remove combo hints when action is selected
@@ -458,6 +480,152 @@ export default class Game {
   }
 
   /**
+   * Handle grid-based movement
+   */
+  static async handleGridMovement(attacker, defender, _turnManager) {
+    return new Promise((resolve) => {
+      Logger.log(
+        `<div class="system-message">🏃 ${attacker.name} is choosing where to move...</div>`
+      );
+
+      // Get the grid UI
+      const arena = document.querySelector('combat-arena');
+      if (!arena || !arena.shadowRoot) {
+        Logger.log(`<div class="system-message">❌ Grid not available!</div>`);
+        resolve();
+        return;
+      }
+
+      const gridArea = arena.shadowRoot.querySelector('#grid-area');
+      const gridUI = gridArea?.querySelector('grid-combat-ui');
+
+      if (!gridUI) {
+        Logger.log(`<div class="system-message">❌ Grid UI not found!</div>`);
+        resolve();
+        return;
+      }
+
+      // Get valid moves for the attacker
+      const validMoves = gridCombatIntegration.getValidMoves(attacker.id);
+
+      if (validMoves.length === 0) {
+        Logger.log(`<div class="system-message">⚠️ ${attacker.name} has no valid moves!</div>`);
+        resolve();
+        return;
+      }
+
+      // AI auto-moves toward opponent
+      if (!attacker.isPlayer) {
+        // AI chooses move closest to opponent
+        const opponentPos = defender.gridPosition;
+        if (!opponentPos) {
+          resolve();
+          return;
+        }
+
+        // Find move closest to opponent
+        let bestMove = validMoves[0];
+        let bestDistance = gridManager.getDistance(
+          bestMove.x,
+          bestMove.y,
+          opponentPos.x,
+          opponentPos.y
+        );
+
+        for (const move of validMoves) {
+          const distance = gridManager.getDistance(move.x, move.y, opponentPos.x, opponentPos.y);
+          if (distance < bestDistance) {
+            bestDistance = distance;
+            bestMove = move;
+          }
+        }
+
+        // Execute AI movement
+        const success = gridCombatIntegration.moveFighter(attacker.id, bestMove.x, bestMove.y);
+
+        if (success) {
+          Logger.log(
+            `<div class="system-message">✅ ${attacker.name} moved to position (${bestMove.x}, ${bestMove.y})</div>`
+          );
+
+          // Apply terrain effects
+          const terrainEffects = gridCombatIntegration.applyTerrainEffects(attacker.id);
+          if (terrainEffects && terrainEffects.length > 0) {
+            terrainEffects.forEach((effect) => {
+              Logger.log(`<div class="system-message">🌍 Terrain effect: ${effect}</div>`);
+            });
+          }
+
+          hudManager.update();
+        }
+
+        // Update grid UI
+        gridUI.render();
+        resolve();
+        return;
+      }
+
+      // Player movement - wait for click
+      gridUI.setMode('move', { validMoves });
+      gridUI.highlightCells(validMoves);
+
+      // Wait for the player to click on a valid move
+      const handleCellClick = async (e) => {
+        const { x, y } = e.detail;
+
+        // Check if it's a valid move
+        const isValidMove = validMoves.some((cell) => cell.x === x && cell.y === y);
+
+        if (isValidMove) {
+          // Remove event listener
+          gridUI.removeEventListener('cell-clicked', handleCellClick);
+
+          // Execute the movement
+          const success = gridCombatIntegration.moveFighter(attacker.id, x, y);
+
+          if (success) {
+            Logger.log(
+              `<div class="system-message">✅ ${attacker.name} moved to position (${x}, ${y})</div>`
+            );
+
+            // Update grid UI
+            gridUI.setMode('view');
+            gridUI.clearHighlights();
+            gridUI.render();
+
+            // Apply terrain effects after moving
+            const terrainEffects = gridCombatIntegration.applyTerrainEffects(attacker.id);
+            if (terrainEffects && terrainEffects.length > 0) {
+              terrainEffects.forEach((effect) => {
+                Logger.log(`<div class="system-message">🌍 Terrain effect: ${effect}</div>`);
+              });
+            }
+
+            // Update HUD
+            hudManager.update();
+
+            // Resolve promise - turn will be advanced by caller
+            resolve();
+          } else {
+            Logger.log(`<div class="system-message">❌ Movement failed!</div>`);
+            gridUI.setMode('view');
+            gridUI.clearHighlights();
+            resolve();
+          }
+        } else {
+          // Invalid move - show message but keep waiting
+          Logger.log(
+            `<div class="system-message">⚠️ Invalid move! Choose a highlighted cell.</div>`
+          );
+        }
+      };
+
+      // Add event listener for cell clicks
+      gridUI.addEventListener('cell-clicked', handleCellClick);
+    });
+  }
+
+  /**
    * Execute an action using the phase system
    * @param {Object} attacker - Attacking fighter
    * @param {Object} defender - Defending fighter
@@ -467,6 +635,46 @@ export default class Game {
    */
   static async executeActionPhased(attacker, defender, actionData, turnManager, callback) {
     const action = actionData.action || actionData;
+
+    // Handle movement skill
+    if (action === 'skill' && actionData.skillIndex !== undefined) {
+      const skill = attacker.skills[actionData.skillIndex];
+      if (skill && skill.type === 'movement') {
+        // Check if skill is ready and fighter has mana
+        if (!skill.isReady()) {
+          Logger.log(
+            `<div class="attack-div missed-attack text-center">⏱️ ${skill.name} is on cooldown! (${skill.currentCooldown} turns)</div>`
+          );
+          turnManager.nextTurn();
+          setTimeout(callback, 800);
+          return;
+        }
+
+        if (attacker.mana < skill.manaCost) {
+          Logger.log(
+            `<div class="attack-div missed-attack text-center">💧 Not enough mana for ${skill.name}!</div>`
+          );
+          turnManager.nextTurn();
+          setTimeout(callback, 800);
+          return;
+        }
+
+        // Deduct mana and set cooldown
+        attacker.mana -= skill.manaCost;
+        skill.currentCooldown = skill.maxCooldown;
+
+        // Execute movement
+        await this.handleGridMovement(attacker, defender, turnManager);
+
+        // Update HUD to show mana/cooldown changes
+        hudManager.update();
+
+        // After movement completes, advance turn
+        turnManager.nextTurn();
+        setTimeout(callback, 800);
+        return;
+      }
+    }
 
     // Handle surrender
     if (action === 'surrender') {
@@ -519,6 +727,20 @@ export default class Game {
         }
       }, 1000);
       return;
+    }
+
+    // Check attack range before executing attack
+    if (action === 'attack') {
+      if (!gridCombatIntegration.isTargetInRange(attacker.id, defender.id)) {
+        const attackRange = gridCombatIntegration.getAttackRangeForFighter(attacker);
+        Logger.log(
+          `<div class="attack-div missed-attack text-center">⚠️ <strong>${attacker.name}</strong> is out of range! (Need range ${attackRange})</div>`
+        );
+        Logger.log(`<div class="system-message">💡 Use your movement skill to get closer!</div>`);
+        turnManager.nextTurn();
+        setTimeout(callback, 1200);
+        return;
+      }
     }
 
     // Queue action in phase manager
@@ -784,9 +1006,36 @@ export default class Game {
   /**
    * AI decision making
    */
-  static chooseAIAction(fighter) {
+  static chooseAIAction(fighter, opponent) {
     const healthPercent = (fighter.health / fighter.maxHealth) * 100;
     const manaPercent = (fighter.mana / fighter.maxMana) * 100;
+
+    // Check if opponent is in attack range
+    const inRange = gridCombatIntegration.isTargetInRange(fighter.id, opponent.id);
+
+    // If out of range, prioritize movement
+    if (!inRange) {
+      // Find movement skill (usually first skill)
+      const movementSkill = fighter.skills.find((skill) => skill.type === 'movement');
+      if (movementSkill) {
+        const movementIndex = fighter.skills.indexOf(movementSkill);
+        const canUseMovement = movementSkill.isReady() && fighter.mana >= movementSkill.manaCost;
+
+        if (canUseMovement) {
+          // Use movement to get closer
+          return { action: 'skill', skillIndex: movementIndex };
+        }
+      }
+
+      // Can't move (no skill, on cooldown, or no mana)
+      // Defend or heal instead
+      if (healthPercent < 50 && fighter.health < fighter.maxHealth) {
+        return { action: 'item' };
+      }
+      return { action: 'defend' };
+    }
+
+    // In range - make normal combat decisions
 
     // Low health - heal or defend
     if (healthPercent < 30) {
@@ -796,10 +1045,13 @@ export default class Game {
       return { action: 'defend' };
     }
 
-    // Try to use a ready skill
+    // Try to use a ready skill (excluding movement)
     const readySkills = fighter.skills
       .map((skill, index) => ({ skill, index }))
-      .filter(({ skill }) => skill.isReady() && fighter.mana >= skill.manaCost);
+      .filter(
+        ({ skill }) =>
+          skill.isReady() && fighter.mana >= skill.manaCost && skill.type !== 'movement' // Don't use movement when already in range
+      );
 
     if (readySkills.length > 0 && manaPercent > 30 && Math.random() < 0.5) {
       const chosen = readySkills[Math.floor(Math.random() * readySkills.length)];
@@ -847,6 +1099,34 @@ export default class Game {
   // Team Battle mode removed - keeping only Story, Single Combat, and Tournament modes
 
   /**
+   * Initialize grid UI
+   */
+  static initializeGridUI() {
+    const arena = document.querySelector('combat-arena');
+    if (!arena || !arena.shadowRoot) {
+      console.warn('Combat arena not found for grid UI');
+      return;
+    }
+
+    const gridArea = arena.shadowRoot.querySelector('#grid-area');
+    if (!gridArea) {
+      console.warn('Grid area not found in combat arena');
+      return;
+    }
+
+    // Create grid UI component
+    const gridUI = document.createElement('grid-combat-ui');
+    gridUI.setGridManager(gridManager);
+    gridUI.setMode('view');
+
+    // Clear existing grid UI
+    gridArea.innerHTML = '';
+    gridArea.appendChild(gridUI);
+
+    console.log('🗺️ Grid UI initialized');
+  }
+
+  /**
    * Stop the current game and clean up resources
    */
   static stopGame() {
@@ -867,11 +1147,15 @@ export default class Game {
     // Reset phase manager
     combatPhaseManager.reset();
 
+    // Clean up grid combat
+    gridCombatIntegration.cleanup();
+
     // Remove any Web Components
     document.querySelectorAll('action-selection').forEach((el) => el.remove());
     document.querySelectorAll('turn-indicator').forEach((el) => el.remove());
     document.querySelectorAll('combo-indicator').forEach((el) => el.remove());
     document.querySelectorAll('combo-hint').forEach((el) => el.remove());
+    document.querySelectorAll('grid-combat-ui').forEach((el) => el.remove());
 
     // Reset views
     const selectionView = document.querySelector('.fighter-selection-view');

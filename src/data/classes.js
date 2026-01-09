@@ -19,6 +19,7 @@ export const CHARACTER_CLASSES = {
       manaRegen: 5, // Mana per turn
       critChance: 0.15, // 15% crit chance
       critDamage: 1.5, // 150% crit damage
+      attackRange: 1, // Melee range
     },
 
     // Passive Abilities
@@ -52,6 +53,7 @@ export const CHARACTER_CLASSES = {
       manaRegen: 4, // Lower mana regen
       critChance: 0.2, // 20% crit chance (higher)
       critDamage: 1.75, // 175% crit damage (higher)
+      attackRange: 1, // Melee range
     },
 
     passive: {
@@ -83,6 +85,7 @@ export const CHARACTER_CLASSES = {
       manaRegen: 6, // Higher mana regen
       critChance: 0.1, // 10% crit chance (lower)
       critDamage: 1.25, // 125% crit damage (lower)
+      attackRange: 1, // Melee range
     },
 
     passive: {
@@ -114,6 +117,7 @@ export const CHARACTER_CLASSES = {
       manaRegen: 3, // Low mana regen
       critChance: 0.25, // 25% crit chance (very high)
       critDamage: 2.0, // 200% crit damage (massive)
+      attackRange: 1, // Melee range
     },
 
     passive: {
@@ -144,6 +148,7 @@ export const CHARACTER_CLASSES = {
       manaRegen: 5, // Normal mana regen
       critChance: 0.12, // 12% crit chance
       critDamage: 1.4, // 140% crit damage
+      attackRange: 1, // Melee range
     },
 
     passive: {
@@ -174,6 +179,7 @@ export const CHARACTER_CLASSES = {
       manaRegen: 10, // Very high mana regen
       critChance: 0.1, // 10% crit chance
       critDamage: 2.5, // 250% crit damage (massive crits but rare)
+      attackRange: 3, // Ranged magic attacks
     },
 
     passive: {
@@ -205,6 +211,7 @@ export const CHARACTER_CLASSES = {
       manaRegen: 6, // Above average mana regen
       critChance: 0.3, // 30% crit chance (highest)
       critDamage: 2.2, // 220% crit damage
+      attackRange: 1, // Melee range (daggers)
     },
 
     passive: {
@@ -236,6 +243,7 @@ export const CHARACTER_CLASSES = {
       manaRegen: 4, // Low mana regen
       critChance: 0.18, // 18% crit chance
       critDamage: 1.8, // 180% crit damage
+      attackRange: 1, // Melee range (axes)
     },
 
     passive: {
@@ -267,6 +275,7 @@ export const CHARACTER_CLASSES = {
       manaRegen: 7, // High mana regen
       critChance: 0.15, // 15% crit chance
       critDamage: 1.6, // 160% crit damage
+      attackRange: 1, // Melee range (holy weapons)
     },
 
     passive: {
@@ -297,6 +306,7 @@ export const CHARACTER_CLASSES = {
       manaRegen: 8, // Very high mana regen
       critChance: 0.12, // 12% crit chance
       critDamage: 1.7, // 170% crit damage
+      attackRange: 3, // Ranged dark magic
     },
 
     passive: {

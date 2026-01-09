@@ -91,26 +91,24 @@ export class CombatArena extends BaseComponent {
         animation: fadeInDown 0.8s ease;
       }
 
-      /* Combat Center */
-      .combat-center {
+      /* Main Content Area - Side by Side Layout */
+      .combat-content {
         flex: 1;
+        display: flex;
+        gap: 20px;
+        padding: 20px;
+        min-height: 0;
         position: relative;
         z-index: 5;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-        min-height: 0; /* Important for proper flex scrolling */
-        animation: fadeIn 1s ease;
       }
 
-      /* Combat Log */
+      /* Combat Log - Left Side */
       .combat-log-container {
-        max-width: 1000px;
-        width: 100%;
-        flex: 1;
-        min-height: 0; /* Important for proper flex scrolling */
+        width: 400px;
+        min-width: 350px;
+        max-width: 500px;
+        display: flex;
+        flex-direction: column;
         background: linear-gradient(145deg, rgba(42, 26, 71, 0.7) 0%, rgba(26, 13, 46, 0.85) 100%);
         border: 2px solid rgba(106, 66, 194, 0.4);
         border-radius: 20px;
@@ -122,8 +120,29 @@ export class CombatArena extends BaseComponent {
           0 8px 32px rgba(0, 0, 0, 0.5),
           inset 0 0 40px rgba(255, 167, 38, 0.05);
         position: relative;
+        animation: slideInLeft 0.8s ease;
+      }
+
+      @keyframes slideInLeft {
+        from {
+          transform: translateX(-50px);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      /* Grid Combat Area - Right Side */
+      .grid-area {
+        flex: 1;
         display: flex;
         flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        animation: fadeIn 0.8s ease;
       }
 
       .combat-log-container::before {
@@ -419,8 +438,9 @@ export class CombatArena extends BaseComponent {
         <!-- HUD Area (fighter-hud will be inserted here by game) -->
         <div class="hud-area" id="hud-area"></div>
 
-        <!-- Combat Center with Log -->
-        <div class="combat-center">
+        <!-- Main Content - Side by Side Layout -->
+        <div class="combat-content">
+          <!-- Combat Log - Left Side -->
           <div class="combat-log-container">
             <button class="auto-scroll-toggle ${this.autoScroll ? 'active' : ''}" id="auto-scroll-toggle" title="Toggle auto-scroll">
               ${this.autoScroll ? '📜 Auto-Scroll: ON' : '📜 Auto-Scroll: OFF'}
@@ -430,6 +450,9 @@ export class CombatArena extends BaseComponent {
             </div>
             <div id="log"></div>
           </div>
+
+          <!-- Grid Combat Area - Right Side -->
+          <div class="grid-area" id="grid-area"></div>
         </div>
 
         <!-- Action Area (action-selection will appear here) -->

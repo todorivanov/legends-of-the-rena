@@ -12,6 +12,8 @@ export const EQUIPMENT_DATABASE = {
     name: 'Wooden Sword',
     type: 'weapon',
     rarity: 'common',
+    range: 1, // Melee range
+    weaponType: 'sword',
     stats: {
       strength: 5,
     },

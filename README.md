@@ -112,6 +112,58 @@
 
 ---
 
+## 🗺️ Tactical Grid Combat System
+
+**5x5 grid-based positioning** adds strategic depth to every battle:
+
+**Grid Features**:
+- **25-cell battlefield** with unique positioning
+- **10 terrain types** with different effects
+- **6 predefined layouts** (Open Field, Forest, Ruins, Swamp, Mountain, Arena)
+- **Real-time visualization** with interactive UI
+
+**Terrain Types**:
+- **⬜ Normal** - Standard ground
+- **🌲 Forest** - +15% defense, blocks line of sight
+- **⛰️ High Ground** - +25% attack, +20% defense (best advantage!)
+- **🌊 Water** - Slows movement, -15% attack
+- **🧱 Wall** - Impassable obstacle
+- And 5 more terrain types!
+
+**Tactical Mechanics**:
+- **Movement System** - 1-3 spaces per turn (class-dependent)
+- **Line of Sight** - Terrain blocks vision and attacks
+- **Flanking Bonus** - +25% damage when surrounded
+- **Terrain Bonuses** - Attack/defense modifiers
+- **Strategic Positioning** - Control high ground for advantage
+
+**Combat Actions**:
+```
+⚔️ Attack → Basic attack (range-dependent!)
+🛡️ Defend → Reduce damage by 50%
+💫 Skills → Class abilities (including movement!)
+🧪 Item → Heal +20 HP
+```
+
+**Attack Range System** (NEW!):
+- **Melee classes** (Warrior, Tank, etc.): Range 1
+- **Mages** (Mage, Necromancer): Range 3 (ranged magic!)
+- **Weapons** add range bonuses (staves = 3, swords = 1)
+- **Must be in range** to attack - out of range attacks are blocked
+- Use **movement skills** to close distance to enemies
+
+**Movement Skills**:
+- Each class has a **unique movement skill**
+- Examples: "Shadow Step" (Assassin), "Quick Step" (Agile)
+- Costs **mana** (10-15) and has **cooldown** (0-2 turns)
+- Click the skill → Click highlighted cells to move
+- Terrain effects apply automatically
+- **Strategic choice**: Move closer OR attack?
+
+See [Grid Combat Guide](docs/GRID_COMBAT_SYSTEM.md) for complete documentation.
+
+---
+
 ## 🎯 Status Effect System
 
 Advanced status effect system with **17 effects** and **interaction matrix**:
