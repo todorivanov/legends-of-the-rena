@@ -320,6 +320,41 @@ export class ProfileScreen extends BaseComponent {
         box-shadow: 0 0 15px rgba(255, 23, 68, 0.6);
       }
 
+      .equip-btn, .unequip-btn {
+        padding: 12px 24px;
+        font-size: 14px;
+        font-weight: 600;
+        color: white;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: none;
+      }
+
+      .equip-btn {
+        background: linear-gradient(135deg, #00e676 0%, #00c853 100%);
+      }
+
+      .equip-btn:hover:not(:disabled) {
+        box-shadow: 0 0 15px rgba(0, 230, 118, 0.6);
+        transform: translateY(-2px);
+      }
+
+      .equip-btn:disabled {
+        background: rgba(0, 0, 0, 0.3);
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .unequip-btn {
+        background: linear-gradient(135deg, #ff6f00 0%, #ff8f00 100%);
+      }
+
+      .unequip-btn:hover {
+        box-shadow: 0 0 15px rgba(255, 111, 0, 0.6);
+        transform: translateY(-2px);
+      }
+
       @keyframes fadeIn {
         from { opacity: 0; }
         to { opacity: 1; }
@@ -736,7 +771,7 @@ export class ProfileScreen extends BaseComponent {
             ${RARITY_NAMES[item.rarity]}
           </div>
           <div style="margin-top: 10px;">${statsHtml}</div>
-          <button class="reset-btn" data-unequip="${slotType}" style="margin-top: 10px; width: 100%;">Unequip</button>
+          <button class="unequip-btn" data-unequip="${slotType}" style="margin-top: 10px; width: 100%;">Unequip</button>
         </div>
       </div>
     `;
@@ -791,7 +826,7 @@ export class ProfileScreen extends BaseComponent {
               : ''
           }
         </div>
-        <button class="reset-btn" data-equip="${item.id}" ${!canEquip ? 'disabled' : ''} style="width: 100%; background: ${canEquip ? 'linear-gradient(135deg, #00e676 0%, #00c853 100%)' : 'rgba(0, 0, 0, 0.3)'}; opacity: ${canEquip ? '1' : '0.5'};">
+        <button class="equip-btn" data-equip="${item.id}" ${!canEquip ? 'disabled' : ''} style="width: 100%;">
           Equip
         </button>
       </div>
@@ -815,7 +850,8 @@ export class ProfileScreen extends BaseComponent {
       });
     });
 
-    const resetBtn = this.shadowRoot.querySelector('.reset-btn[data-unequip]');
+    // Reset progress button (only the one WITHOUT data attributes)
+    const resetBtn = this.shadowRoot.querySelector('.reset-btn:not([data-unequip]):not([data-equip])');
     if (resetBtn) {
       resetBtn.addEventListener('click', () => {
         if (confirm('⚠️ Are you sure you want to reset ALL progress? This cannot be undone!')) {
