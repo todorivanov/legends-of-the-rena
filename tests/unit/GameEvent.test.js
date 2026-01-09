@@ -2,7 +2,7 @@
  * GameEvent Unit Tests
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import GameEvent from '../../src/game/GameEvent.js';
 
 // Mock Logger

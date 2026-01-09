@@ -4,7 +4,6 @@
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { EconomyManager } from '../../src/game/EconomyManager.js';
-import { mockLocalStorage } from '../utils/testHelpers.js';
 
 // Mock SaveManager
 vi.mock('../../src/utils/SaveManagerV2.js', () => {

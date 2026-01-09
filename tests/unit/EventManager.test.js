@@ -4,7 +4,6 @@
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { EventManager } from '../../src/game/EventManager.js';
-import GameEvent from '../../src/game/GameEvent.js';
 
 // Mock Logger
 vi.mock('../../src/utils/logger.js', () => ({
