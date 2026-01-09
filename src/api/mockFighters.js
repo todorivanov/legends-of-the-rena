@@ -230,8 +230,7 @@ export function getFighters() {
           health: 220,
           strength: 11,
           image: getAvatarUrl('ragnar-skullsplitter'),
-          description:
-            'Fury incarnate who grows deadlier as he bleeds. Unstoppable when enraged.',
+          description: 'Fury incarnate who grows deadlier as he bleeds. Unstoppable when enraged.',
           class: 'BERSERKER',
         }),
         new Fighter({

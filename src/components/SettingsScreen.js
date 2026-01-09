@@ -463,7 +463,7 @@ export class SettingsScreen extends BaseComponent {
       perfMonitorToggle.addEventListener('click', () => {
         gameStore.dispatch(togglePerformanceMonitor());
         this.render();
-        
+
         // Update the UI immediately
         const state = gameStore.getState();
         const perfMonitor = document.querySelector('performance-monitor-ui');
