@@ -3,7 +3,7 @@
  * Manages wear and tear, repairs, and effectiveness calculations
  */
 
-import { SaveManager } from '../utils/saveManager.js';
+import { SaveManagerV2 as SaveManager } from '../utils/SaveManagerV2.js';
 import { getEquipmentById } from '../data/equipment.js';
 import { Logger } from '../utils/logger.js';
 import { EconomyManager } from './EconomyManager.js';

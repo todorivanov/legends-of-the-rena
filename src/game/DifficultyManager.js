@@ -2,7 +2,7 @@
  * DifficultyManager - Manages game difficulty settings and scaling
  */
 
-import { SaveManager } from '../utils/saveManager.js';
+import { SaveManagerV2 as SaveManager } from '../utils/SaveManagerV2.js';
 
 export const DIFFICULTY_LEVELS = {
   EASY: 'easy',

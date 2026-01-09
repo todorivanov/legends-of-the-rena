@@ -11,24 +11,28 @@ import './components/index.js';
 
 // Import game modules
 import Game from './game/game.js';
-import { Team } from './entities/team.js';
+// Team Battle removed - keeping only Story, Single Combat, and Tournament modes
 import { Fighter } from './entities/fighter.js';
 import { soundManager } from './utils/soundManager.js';
 import { getFighters } from './api/mockFighters.js';
 import { Logger } from './utils/logger.js';
-import { SaveManager } from './utils/saveManager.js';
+import { SaveManagerV2 as SaveManager } from './utils/SaveManagerV2.js';
 import { LevelingSystem } from './game/LevelingSystem.js';
 import { EquipmentManager } from './game/EquipmentManager.js';
 import { tournamentMode } from './game/TournamentMode.js';
 import { AchievementManager } from './game/AchievementManager.js';
 import { DifficultyManager } from './game/DifficultyManager.js';
 import { getMissionById } from './data/storyMissions.js';
+import { router } from './utils/Router.js';
+import { getRouteConfig, RouteGuards, RoutePaths } from './config/routes.js';
+import { gameStore, setGameMode, setScreen } from './store/index.js';
 
 // Make bootstrap available globally if needed
 window.bootstrap = bootstrap;
 
 /**
- * Application State
+ * Application State (Legacy - migrating to Store)
+ * TODO: Gradually migrate all state to gameStore
  */
 const appState = {
   currentScreen: 'title', // 'title' | 'gallery' | 'combat' | 'tournament'
@@ -42,6 +46,9 @@ const appState = {
     this.gameMode = null;
     this.selectedFighters = [];
     this.tournamentActive = false;
+    // Also reset store state
+    gameStore.dispatch(setGameMode(null));
+    gameStore.dispatch(setScreen('title'));
   },
 };
 
@@ -49,34 +56,112 @@ const appState = {
  * Initialize the application
  */
 function initApp() {
-  console.log('🎮 Object Fighter v3.0.0 - Initializing...');
+  console.log('🎮 Legends of the Arena v4.0.0 - Initializing...');
+
+  // Initialize store
+  console.log('📦 Store initialized with state:', gameStore.inspect());
+
+  // Initialize router
+  initializeRouter();
 
   // Initialize save system
   const saveData = SaveManager.load();
   console.log(`💾 Save data loaded. Player Level: ${saveData.profile.level}`);
-
-  // Check if character has been created
-  if (!saveData.profile.characterCreated) {
-    console.log('🆕 New player detected - showing character creation');
-    showCharacterCreation();
-    // Initialize toggles after character creation
-    initDarkModeToggle();
-    initSoundToggle();
-    return;
-  }
 
   // Load fighters data
   getFighters().then((fighters) => {
     appState.fighters = fighters;
     console.log(`✅ Loaded ${fighters.length} fighters`);
 
-    // Show title screen
-    showTitleScreen();
+    // Navigate to initial route
+    const initialPath = saveData.profile.characterCreated
+      ? RoutePaths.HOME
+      : RoutePaths.CHARACTER_CREATION;
+    router.navigate(initialPath, {}, true); // true = replace (don't add to history)
   });
 
-  // Initialize dark mode and sound toggles
-  initDarkModeToggle();
-  initSoundToggle();
+  // Initialize navigation components (declarative)
+  initNavigationComponents();
+}
+
+/**
+ * Initialize router with all routes and guards
+ */
+function initializeRouter() {
+  // Initialize router
+  router.init();
+
+  // Register route guards
+  Object.entries(RouteGuards).forEach(([name, guard]) => {
+    router.registerGuard(name, guard);
+  });
+
+  // Create route handlers object
+  const handlers = {
+    showTitleScreen,
+    showCharacterCreation,
+    showProfileScreen,
+    showAchievementsScreen,
+    showSettingsScreen,
+    showWikiScreen,
+    showOpponentSelection,
+    showCombat: () => {
+      // Combat is handled separately as it needs more context
+      console.log('Combat route accessed - needs battle setup first');
+    },
+    showTournamentBracketScreen,
+    showCampaignMapScreen,
+    showMissionBriefing: (data) => {
+      if (data.missionId) {
+        showMissionBriefing(data.missionId);
+      }
+    },
+    showMarketplaceScreen,
+    showEquipmentScreen: () => {
+      // Equipment screen to be implemented
+      console.log('Equipment screen - to be implemented');
+    },
+    showSaveManagementScreen,
+  };
+
+  // Register all routes
+  const routes = getRouteConfig(handlers);
+  routes.forEach((route) => {
+    router.register(route.path, route.handler, {
+      title: route.title,
+      guard: route.guard,
+    });
+  });
+
+  console.log('🧭 Router initialized with', routes.length, 'routes');
+}
+
+/**
+ * Initialize navigation components (declarative Web Components)
+ */
+function initNavigationComponents() {
+  // Remove any existing navigation components
+  const existingNav = document.querySelector('navigation-bar');
+  const existingTheme = document.querySelector('theme-toggle');
+  const existingSound = document.querySelector('sound-toggle');
+
+  if (existingNav) existingNav.remove();
+  if (existingTheme) existingTheme.remove();
+  if (existingSound) existingSound.remove();
+
+  // Add new declarative components
+  const navBar = document.createElement('navigation-bar');
+  const themeToggle = document.createElement('theme-toggle');
+  const soundToggle = document.createElement('sound-toggle');
+  const perfMonitor = document.createElement('performance-monitor-ui');
+
+  document.body.appendChild(navBar);
+  document.body.appendChild(themeToggle);
+  document.body.appendChild(soundToggle);
+  document.body.appendChild(perfMonitor);
+
+  console.log('✅ Navigation components initialized');
+  console.log('⚡ Performance monitoring active');
 }
 
 /**
@@ -94,7 +179,7 @@ function showCharacterCreation() {
     // Reload app after character creation
     getFighters().then((fighters) => {
       appState.fighters = fighters;
-      showTitleScreen();
+      router.navigate(RoutePaths.HOME);
     });
   });
 
@@ -114,40 +199,37 @@ function showTitleScreen() {
     soundManager.init();
     appState.gameMode = e.detail.mode;
     appState.currentScreen = 'gallery';
-    showOpponentSelection();
+    router.navigate(RoutePaths.OPPONENT_SELECTION);
   });
 
   titleScreen.addEventListener('tournament-selected', () => {
     soundManager.init();
     soundManager.play('event');
-    showTournamentBracketScreen();
+    router.navigate(RoutePaths.TOURNAMENT_BRACKET);
   });
 
   titleScreen.addEventListener('wiki-selected', () => {
     soundManager.init();
     soundManager.play('event');
-    showWikiScreen();
+    router.navigate(RoutePaths.WIKI);
   });
 
   titleScreen.addEventListener('story-selected', () => {
     soundManager.init();
     soundManager.play('event');
-    showCampaignMapScreen();
+    router.navigate(RoutePaths.STORY_MODE);
   });
 
   titleScreen.addEventListener('marketplace-selected', () => {
     soundManager.init();
     soundManager.play('event');
-    showMarketplaceScreen();
+    router.navigate(RoutePaths.MARKETPLACE);
   });
 
   root.appendChild(titleScreen);
   appState.currentScreen = 'title';
 
-  // Add Profile, Achievements, and Settings buttons to title screen
-  addProfileButton();
-  addAchievementsButton();
-  addSettingsButton();
+  // Navigation bar is now persistent across all screens (declarative components)
 }
 
 /**
@@ -160,63 +242,11 @@ function showProfileScreen() {
   const profileScreen = document.createElement('profile-screen');
   profileScreen.addEventListener('back-to-menu', () => {
     appState.reset();
-    showTitleScreen();
+    router.navigate(RoutePaths.HOME);
   });
 
   root.appendChild(profileScreen);
   appState.currentScreen = 'profile';
-}
-
-/**
- * Add profile button overlay
- */
-function addProfileButton() {
-  // Remove existing profile button if any
-  const existingBtn = document.getElementById('profile-overlay-btn');
-  if (existingBtn) {
-    existingBtn.remove();
-  }
-
-  const profileBtn = document.createElement('button');
-  profileBtn.id = 'profile-overlay-btn';
-  profileBtn.innerHTML = '👤 Profile';
-  profileBtn.style.cssText = `
-    position: fixed;
-    top: 20px;
-    right: 550px;
-    width: auto;
-    padding: 12px 24px;
-    border-radius: 8px;
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    background: rgba(26, 13, 46, 0.8);
-    color: white;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    z-index: 10000;
-    backdrop-filter: blur(10px);
-    transition: all 0.3s ease;
-    font-family: 'Press Start 2P', cursive;
-  `;
-
-  profileBtn.addEventListener('click', () => {
-    soundManager.play('event');
-    showProfileScreen();
-  });
-
-  profileBtn.addEventListener('mouseenter', () => {
-    profileBtn.style.background = 'rgba(255, 167, 38, 0.3)';
-    profileBtn.style.borderColor = '#ffa726';
-    profileBtn.style.transform = 'translateY(-2px)';
-  });
-
-  profileBtn.addEventListener('mouseleave', () => {
-    profileBtn.style.background = 'rgba(26, 13, 46, 0.8)';
-    profileBtn.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-    profileBtn.style.transform = 'translateY(0)';
-  });
-
-  document.body.appendChild(profileBtn);
 }
 
 /**
@@ -236,7 +266,7 @@ function showTournamentBracketScreen() {
 
   bracket.addEventListener('back-to-menu', () => {
     appState.reset();
-    showTitleScreen();
+    router.navigate(RoutePaths.HOME);
   });
 
   root.appendChild(bracket);
@@ -253,7 +283,7 @@ function showWikiScreen() {
   const wiki = document.createElement('wiki-screen');
 
   wiki.addEventListener('back', () => {
-    showTitleScreen();
+    router.navigate(RoutePaths.HOME);
   });
 
   root.appendChild(wiki);
@@ -270,12 +300,12 @@ function showCampaignMapScreen() {
   const campaignMap = document.createElement('campaign-map');
 
   campaignMap.addEventListener('close', () => {
-    showTitleScreen();
+    router.navigate(RoutePaths.HOME);
   });
 
   campaignMap.addEventListener('mission-selected', (e) => {
     const { missionId } = e.detail;
-    showMissionBriefing(missionId);
+    router.navigate(RoutePaths.STORY_MISSION, { missionId });
   });
 
   root.appendChild(campaignMap);
@@ -293,7 +323,7 @@ function showMissionBriefing(missionId) {
   briefing.mission = missionId;
 
   briefing.addEventListener('cancel', () => {
-    showCampaignMapScreen();
+    router.navigate(RoutePaths.STORY_MODE);
   });
 
   briefing.addEventListener('start-mission', (e) => {
@@ -319,6 +349,7 @@ function startStoryMission(missionId) {
   // Create the player fighter
   const playerData = SaveManager.load();
   const playerFighter = new Fighter({
+    id: 'player',
     name: playerData.profile.name,
     class: playerData.profile.class,
     level: playerData.profile.level,
@@ -336,6 +367,7 @@ function startStoryMission(missionId) {
     // For survival missions, start with the first wave
     const firstWave = mission.waves[0];
     enemyFighter = new Fighter({
+      id: `enemy_${firstWave.name}`,
       name: firstWave.name,
       class: firstWave.class,
       level: firstWave.level,
@@ -346,6 +378,7 @@ function startStoryMission(missionId) {
   } else if (mission.enemy) {
     // Standard or boss mission
     enemyFighter = new Fighter({
+      id: `enemy_${mission.enemy.name}`,
       name: mission.enemy.name,
       class: mission.enemy.class,
       level: mission.enemy.level,
@@ -473,10 +506,12 @@ function showMissionResults(missionResult) {
 
     // Add event listener to the button
     setTimeout(() => {
-      const returnBtn = document.querySelector('#return-to-map-btn-failed');
+      // Find the combat arena to access its shadow root
+      const arena = document.querySelector('combat-arena');
+      const returnBtn = arena?.shadowRoot?.querySelector('#return-to-map-btn-failed');
       if (returnBtn) {
         returnBtn.addEventListener('click', () => {
-          showCampaignMapScreen();
+          router.navigate(RoutePaths.STORY_MODE);
         });
         returnBtn.addEventListener('mouseover', () => {
           returnBtn.style.transform = 'translateY(-3px)';
@@ -555,10 +590,12 @@ function showMissionResults(missionResult) {
 
   // Add event listener to the button
   setTimeout(() => {
-    const returnBtn = document.querySelector('#return-to-map-btn');
+    // Find the combat arena to access its shadow root
+    const arena = document.querySelector('combat-arena');
+    const returnBtn = arena?.shadowRoot?.querySelector('#return-to-map-btn');
     if (returnBtn) {
       returnBtn.addEventListener('click', () => {
-        showCampaignMapScreen();
+        router.navigate(RoutePaths.STORY_MODE);
       });
       returnBtn.addEventListener('mouseover', () => {
         returnBtn.style.transform = 'translateY(-3px)';
@@ -582,7 +619,7 @@ function showMarketplaceScreen() {
   const marketplace = document.createElement('marketplace-screen');
 
   marketplace.addEventListener('close', () => {
-    showTitleScreen();
+    router.navigate(RoutePaths.HOME);
   });
 
   root.appendChild(marketplace);
@@ -599,63 +636,11 @@ function showAchievementsScreen() {
   const achievementsScreen = document.createElement('achievements-screen');
   achievementsScreen.addEventListener('back-to-menu', () => {
     appState.reset();
-    showTitleScreen();
+    router.navigate(RoutePaths.HOME);
   });
 
   root.appendChild(achievementsScreen);
   appState.currentScreen = 'achievements';
-}
-
-/**
- * Add achievements button overlay
- */
-function addAchievementsButton() {
-  // Remove existing achievements button if any
-  const existingBtn = document.getElementById('achievements-overlay-btn');
-  if (existingBtn) {
-    existingBtn.remove();
-  }
-
-  const achievementsBtn = document.createElement('button');
-  achievementsBtn.id = 'achievements-overlay-btn';
-  achievementsBtn.innerHTML = '🏅 Achievements';
-  achievementsBtn.style.cssText = `
-    position: fixed;
-    top: 20px;
-    right: 310px;
-    width: auto;
-    padding: 12px 24px;
-    border-radius: 8px;
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    background: rgba(26, 13, 46, 0.8);
-    color: white;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    z-index: 10000;
-    backdrop-filter: blur(10px);
-    transition: all 0.3s ease;
-    font-family: 'Press Start 2P', cursive;
-  `;
-
-  achievementsBtn.addEventListener('click', () => {
-    soundManager.play('event');
-    showAchievementsScreen();
-  });
-
-  achievementsBtn.addEventListener('mouseenter', () => {
-    achievementsBtn.style.background = 'rgba(255, 215, 0, 0.3)';
-    achievementsBtn.style.borderColor = 'gold';
-    achievementsBtn.style.transform = 'translateY(-2px)';
-  });
-
-  achievementsBtn.addEventListener('mouseleave', () => {
-    achievementsBtn.style.background = 'rgba(26, 13, 46, 0.8)';
-    achievementsBtn.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-    achievementsBtn.style.transform = 'translateY(0)';
-  });
-
-  document.body.appendChild(achievementsBtn);
 }
 
 /**
@@ -668,7 +653,7 @@ function showSettingsScreen() {
   const settingsScreen = document.createElement('settings-screen');
   settingsScreen.addEventListener('back-to-menu', () => {
     appState.reset();
-    showTitleScreen();
+    router.navigate(RoutePaths.HOME);
   });
 
   root.appendChild(settingsScreen);
@@ -676,56 +661,19 @@ function showSettingsScreen() {
 }
 
 /**
- * Add settings button overlay (gear icon next to theme toggle)
+ * Show save management screen
  */
-function addSettingsButton() {
-  // Remove existing settings button if any
-  const existingBtn = document.getElementById('settings-overlay-btn');
-  if (existingBtn) {
-    existingBtn.remove();
-  }
+function showSaveManagementScreen() {
+  const root = document.getElementById('root');
+  root.innerHTML = '';
 
-  const settingsBtn = document.createElement('button');
-  settingsBtn.id = 'settings-overlay-btn';
-  settingsBtn.innerHTML = '⚙️';
-  settingsBtn.style.cssText = `
-    position: fixed;
-    top: 20px;
-    right: 140px;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    background: rgba(26, 13, 46, 0.8);
-    color: white;
-    font-size: 24px;
-    cursor: pointer;
-    z-index: 10000;
-    backdrop-filter: blur(10px);
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  `;
-
-  settingsBtn.addEventListener('click', () => {
-    soundManager.play('event');
-    showSettingsScreen();
+  const saveManagementScreen = document.createElement('save-management-screen');
+  saveManagementScreen.addEventListener('back', () => {
+    router.navigate(RoutePaths.SETTINGS);
   });
 
-  settingsBtn.addEventListener('mouseenter', () => {
-    settingsBtn.style.background = 'rgba(255, 167, 38, 0.3)';
-    settingsBtn.style.borderColor = '#ffa726';
-    settingsBtn.style.transform = 'translateY(-2px) rotate(90deg)';
-  });
-
-  settingsBtn.addEventListener('mouseleave', () => {
-    settingsBtn.style.background = 'rgba(26, 13, 46, 0.8)';
-    settingsBtn.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-    settingsBtn.style.transform = 'translateY(0) rotate(0deg)';
-  });
-
-  document.body.appendChild(settingsBtn);
+  root.appendChild(saveManagementScreen);
+  appState.currentScreen = 'save-management';
 }
 
 /**
@@ -840,7 +788,7 @@ function showOpponentSelection() {
 
   gallery.addEventListener('back-to-menu', () => {
     appState.reset();
-    showTitleScreen();
+    router.navigate(RoutePaths.HOME);
   });
 
   root.appendChild(gallery);
@@ -853,7 +801,7 @@ function showOpponentSelection() {
 function createPlayerFighter(characterData) {
   // Create base fighter
   const fighter = new Fighter({
-    id: 0, // Player ID
+    id: 'player', // Player ID
     name: characterData.name,
     health: characterData.health,
     strength: characterData.strength,
@@ -960,14 +908,6 @@ function startBattle(fighters, tournamentInfo = null) {
       ) {
         console.log('🎮 Starting single fight:', fighters[0].name, 'vs', fighters[1].name);
         Game.startGame(fighters[0], fighters[1]);
-      } else if (appState.gameMode === 'team') {
-        // Team match logic
-        const team1 = new Team('Team One', fighters.slice(0, Math.floor(fighters.length / 2)));
-        const team2 = new Team('Team Two', fighters.slice(Math.floor(fighters.length / 2)));
-        console.log('🎮 Starting team match:', team1.name, 'vs', team2.name);
-        console.log('Team 1 fighters:', team1.fighters.map((f) => f.name).join(', '));
-        console.log('Team 2 fighters:', team2.fighters.map((f) => f.name).join(', '));
-        Game.startTeamMatch(team1, team2);
       }
     });
   });
@@ -1064,14 +1004,14 @@ function showTournamentVictoryScreen() {
   victoryScreen.addEventListener('play-again', () => {
     victoryScreen.remove();
     appState.reset();
-    showTournamentBracketScreen();
+    router.navigate(RoutePaths.TOURNAMENT_BRACKET);
   });
 
   victoryScreen.addEventListener('main-menu', () => {
     victoryScreen.remove();
     Game.stopGame();
     appState.reset();
-    showTitleScreen();
+    router.navigate(RoutePaths.HOME);
   });
 
   victoryScreen.addEventListener('close', () => {
@@ -1081,79 +1021,6 @@ function showTournamentVictoryScreen() {
   });
 
   document.body.appendChild(victoryScreen);
-}
-
-/**
- * Initialize dark mode toggle
- */
-function initDarkModeToggle() {
-  const darkMode = localStorage.getItem('darkMode') === 'true';
-  if (darkMode) {
-    document.body.classList.add('dark-mode');
-  }
-
-  const toggle = document.createElement('button');
-  toggle.className = 'toggle-btn theme-toggle';
-  toggle.innerHTML = darkMode ? '☀️' : '🌙';
-  toggle.style.cssText = `
-    position: fixed;
-    top: 20px;
-    right: 80px;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    background: rgba(26, 13, 46, 0.8);
-    color: white;
-    font-size: 24px;
-    cursor: pointer;
-    z-index: 10000;
-    backdrop-filter: blur(10px);
-    transition: all 0.3s ease;
-  `;
-
-  toggle.addEventListener('click', () => {
-    document.body.classList.toggle('dark-mode');
-    const isDark = document.body.classList.contains('dark-mode');
-    localStorage.setItem('darkMode', isDark);
-    toggle.innerHTML = isDark ? '☀️' : '🌙';
-  });
-
-  document.body.appendChild(toggle);
-}
-
-/**
- * Initialize sound toggle
- */
-function initSoundToggle() {
-  const soundEnabled = localStorage.getItem('soundEnabled') !== 'false';
-
-  const toggle = document.createElement('button');
-  toggle.className = 'toggle-btn sound-toggle';
-  toggle.innerHTML = soundEnabled ? '🔊' : '🔇';
-  toggle.style.cssText = `
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    background: rgba(26, 13, 46, 0.8);
-    color: white;
-    font-size: 24px;
-    cursor: pointer;
-    z-index: 10000;
-    backdrop-filter: blur(10px);
-    transition: all 0.3s ease;
-  `;
-
-  toggle.addEventListener('click', () => {
-    const enabled = soundManager.toggle();
-    toggle.innerHTML = enabled ? '🔊' : '🔇';
-  });
-
-  document.body.appendChild(toggle);
 }
 
 // Start the app when DOM is ready

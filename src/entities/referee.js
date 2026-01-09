@@ -18,16 +18,7 @@ export class Referee {
     Logger.logFighter(second);
   }
 
-  static introduceTeams(first, second) {
-    const msg = `
-      <div class="intro-div text-center">
-        <h2>🛡️ TEAM BATTLE 🛡️</h2>
-        <p class="mb-0">Two teams clash in an epic showdown!</p>
-      </div>`;
-    Logger.log(msg);
-    Logger.logTeam(first);
-    Logger.logTeam(second);
-  }
+  // Team Battle mode removed - keeping only Story, Single Combat, and Tournament modes
 
   static showRoundNumber() {
     roundCounter++;
@@ -72,27 +63,7 @@ export class Referee {
     Logger.log(msg);
   }
 
-  static matchRoundSummary(first, second) {
-    let msg = '<div class="round-summary text-center my-2">';
-    msg += '<div class="row">';
-    msg += '<div class="col-6 first-team">';
-    msg += `<h6>${first.name}</h6>`;
-    first.fighters.forEach((f) => {
-      const health = Math.max(0, f.health);
-      msg += `<div class="mb-1"><small><strong>${f.name}:</strong> ${health} HP</small></div>`;
-    });
-    msg += '</div>';
-    msg += '<div class="col-6 second-team">';
-    msg += `<h6>${second.name}</h6>`;
-    second.fighters.forEach((f) => {
-      const health = Math.max(0, f.health);
-      msg += `<div class="mb-1"><small><strong>${f.name}:</strong> ${health} HP</small></div>`;
-    });
-    msg += '</div>';
-    msg += '</div></div>';
-
-    Logger.log(msg);
-  }
+  // Team Battle mode removed
 
   static declareWinner(fighter) {
     const msg = `
@@ -105,16 +76,7 @@ export class Referee {
     soundManager.play('victory');
   }
 
-  static declareWinningTeam(team) {
-    const msg = `
-      <div class="winner-div text-center">
-        <h2>🏆 VICTORY! 🏆</h2>
-        <p class="lead">${team.name} has dominated the battlefield!</p>
-      </div>`;
-    Logger.log(msg);
-    Logger.logTeam(team);
-    soundManager.play('victory');
-  }
+  // Team Battle mode removed
 
   /**
    * Generate health bar HTML

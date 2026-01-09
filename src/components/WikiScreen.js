@@ -3,7 +3,7 @@ import { BaseComponent } from './BaseComponent.js';
 export class WikiScreen extends BaseComponent {
   constructor() {
     super();
-    this._activeTab = 'achievements';
+    this._activeTab = 'grid-combat';
   }
 
   template() {
@@ -298,6 +298,117 @@ export class WikiScreen extends BaseComponent {
         .rarity-epic { color: #a855f7; }
         .rarity-legendary { color: #f97316; }
 
+        /* Grid Combat Styles */
+        .terrain-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+          gap: 15px;
+          margin: 20px 0;
+        }
+
+        .terrain-card {
+          background: rgba(255, 255, 255, 0.05);
+          border: 2px solid rgba(255, 255, 255, 0.1);
+          border-radius: 12px;
+          padding: 15px;
+          text-align: center;
+          transition: all 0.3s ease;
+        }
+
+        .terrain-card:hover {
+          transform: translateY(-3px);
+          border-color: rgba(255, 215, 0, 0.5);
+          background: rgba(255, 255, 255, 0.08);
+        }
+
+        .terrain-card.highlight {
+          border-color: rgba(76, 175, 80, 0.6);
+          background: rgba(76, 175, 80, 0.1);
+        }
+
+        .terrain-card.danger {
+          border-color: rgba(244, 67, 54, 0.6);
+          background: rgba(244, 67, 54, 0.1);
+        }
+
+        .terrain-card.impassable {
+          border-color: rgba(158, 158, 158, 0.6);
+          background: rgba(0, 0, 0, 0.3);
+        }
+
+        .terrain-icon {
+          font-size: 48px;
+          margin-bottom: 10px;
+        }
+
+        .terrain-card h4 {
+          margin: 10px 0;
+          color: #FFD700;
+          font-size: 16px;
+        }
+
+        .terrain-card p {
+          font-size: 13px;
+          color: rgba(255, 255, 255, 0.8);
+          margin: 10px 0;
+          min-height: 40px;
+        }
+
+        .terrain-stats {
+          display: flex;
+          justify-content: space-around;
+          margin-top: 10px;
+          font-size: 12px;
+          color: rgba(255, 255, 255, 0.7);
+        }
+
+        .terrain-stats span {
+          background: rgba(0, 0, 0, 0.3);
+          padding: 4px 8px;
+          border-radius: 4px;
+        }
+
+        .mechanic-card {
+          background: rgba(106, 66, 194, 0.1);
+          border-left: 4px solid #6a42c2;
+          border-radius: 8px;
+          padding: 20px;
+          margin: 15px 0;
+        }
+
+        .mechanic-card h3 {
+          margin-top: 0;
+          color: #FFD700;
+        }
+
+        .mechanic-card ul {
+          margin: 10px 0;
+          padding-left: 20px;
+        }
+
+        .mechanic-card li {
+          margin: 8px 0;
+        }
+
+        .tips {
+          display: grid;
+          gap: 15px;
+          margin: 20px 0;
+        }
+
+        .tip {
+          background: rgba(255, 215, 0, 0.1);
+          border-left: 4px solid #FFD700;
+          padding: 15px;
+          border-radius: 8px;
+        }
+
+        .tip strong {
+          color: #FFD700;
+          display: block;
+          margin-bottom: 5px;
+        }
+
         @media (max-width: 768px) {
           .wiki-container {
             padding: 20px;
@@ -314,6 +425,10 @@ export class WikiScreen extends BaseComponent {
           h1 { font-size: 28px; }
           h2 { font-size: 22px; }
           h3 { font-size: 18px; }
+
+          .terrain-grid {
+            grid-template-columns: 1fr;
+          }
         }
       </style>
 
@@ -326,8 +441,14 @@ export class WikiScreen extends BaseComponent {
         </div>
 
         <div class="tab-navigation">
+          <button class="tab-button ${this._activeTab === 'grid-combat' ? 'active' : ''}" data-tab="grid-combat">
+            🗺️ Grid Combat
+          </button>
           <button class="tab-button ${this._activeTab === 'story' ? 'active' : ''}" data-tab="story">
             📖 Story Mode
+          </button>
+          <button class="tab-button ${this._activeTab === 'status-effects' ? 'active' : ''}" data-tab="status-effects">
+            🎯 Status Effects
           </button>
           <button class="tab-button ${this._activeTab === 'marketplace' ? 'active' : ''}" data-tab="marketplace">
             🏪 Marketplace
@@ -353,7 +474,9 @@ export class WikiScreen extends BaseComponent {
         </div>
 
         <div class="wiki-content">
+          ${this.renderGridCombatContent()}
           ${this.renderStoryContent()}
+          ${this.renderStatusEffectsContent()}
           ${this.renderMarketplaceContent()}
           ${this.renderEconomyContent()}
           ${this.renderClassesContent()}
@@ -361,6 +484,241 @@ export class WikiScreen extends BaseComponent {
           ${this.renderEquipmentContent()}
           ${this.renderTournamentContent()}
           ${this.renderDifficultyContent()}
+        </div>
+      </div>
+    `;
+  }
+
+  renderGridCombatContent() {
+    return `
+      <div class="content-section ${this._activeTab === 'grid-combat' ? 'active' : ''}" id="grid-combat-content">
+        <h1>🗺️ Tactical Grid Combat System</h1>
+        
+        <div class="info-box">
+          <strong>5x5 Tactical Grid | 10 Terrain Types | Strategic Positioning | Weapon Ranges</strong><br>
+          Master positioning and terrain to dominate every battle!
+        </div>
+
+        <h2>🎯 Core Mechanics</h2>
+        <p>All combat takes place on a <strong>5x5 tactical grid</strong> where positioning matters! Fighters occupy grid cells, and you must strategically move, position, and attack to win.</p>
+
+        <div class="mechanic-card">
+          <h3>📍 Grid Positioning</h3>
+          <ul>
+            <li><strong>Cell-Based Movement</strong> - Fighters occupy single cells</li>
+            <li><strong>Starting Positions</strong> - Player starts bottom-left, enemy top-right</li>
+            <li><strong>Line of Sight</strong> - Some terrain blocks vision and ranged attacks</li>
+            <li><strong>Distance Matters</strong> - Must be in range to attack</li>
+          </ul>
+        </div>
+
+        <div class="mechanic-card">
+          <h3>🏃 Movement System</h3>
+          <ul>
+            <li><strong>Movement Skills</strong> - Each class has a unique movement ability</li>
+            <li><strong>Mana Cost</strong> - Movement requires 10-15 mana</li>
+            <li><strong>Cooldowns</strong> - Skills have 0-2 turn cooldowns</li>
+            <li><strong>Interactive</strong> - Click highlighted cells to move</li>
+            <li><strong>Strategic Choice</strong> - Must choose between moving, attacking, or defending</li>
+          </ul>
+          <p><strong>Class Movement Skills:</strong></p>
+          <ul>
+            <li>⚔️ Warrior: <em>Reposition</em> (15 mana, 1 cooldown)</li>
+            <li>🛡️ Tank: <em>Steady Advance</em> (10 mana, 2 cooldown)</li>
+            <li>⚖️ Balanced: <em>Tactical Move</em> (10 mana, 1 cooldown)</li>
+            <li>🗡️ Assassin: <em>Shadow Step</em> (12 mana, 0 cooldown)</li>
+            <li>🪄 Mage: <em>Arcane Step</em> (15 mana, 1 cooldown)</li>
+            <li>⚡ Berserker: <em>Rage Rush</em> (10 mana, 1 cooldown)</li>
+            <li>✝️ Paladin: <em>Divine Stride</em> (12 mana, 1 cooldown)</li>
+            <li>💀 Necromancer: <em>Death Walk</em> (15 mana, 2 cooldown)</li>
+            <li>👊 Brawler: <em>Quick Step</em> (10 mana, 0 cooldown)</li>
+          </ul>
+        </div>
+
+        <div class="mechanic-card">
+          <h3>🎯 Weapon Range System</h3>
+          <ul>
+            <li><strong>Melee Weapons</strong> - Range 1 (swords, axes, hammers)</li>
+            <li><strong>Ranged Weapons</strong> - Range 2-4 (staves, wands)</li>
+            <li><strong>Class Ranges</strong> - Mages have 3-cell base range, others have 1</li>
+            <li><strong>Out of Range</strong> - Attack button disabled when too far</li>
+            <li><strong>Must Move</strong> - Use movement skills to get closer</li>
+          </ul>
+        </div>
+
+        <h2>🌍 Terrain Types (10 Total)</h2>
+
+        <div class="terrain-grid">
+          <div class="terrain-card">
+            <div class="terrain-icon">◻️</div>
+            <h4>Normal Ground</h4>
+            <p>Standard battlefield terrain with no bonuses or penalties.</p>
+            <div class="terrain-stats">
+              <span>Move: 1</span>
+              <span>Def: +0%</span>
+              <span>Atk: +0%</span>
+            </div>
+          </div>
+
+          <div class="terrain-card">
+            <div class="terrain-icon">🌱</div>
+            <h4>Grassland</h4>
+            <p>Open grassland, easy to traverse.</p>
+            <div class="terrain-stats">
+              <span>Move: 1</span>
+              <span>Def: +0%</span>
+              <span>Atk: +0%</span>
+            </div>
+          </div>
+
+          <div class="terrain-card">
+            <div class="terrain-icon">🌳</div>
+            <h4>Dense Forest</h4>
+            <p>Provides cover but hinders attacks. Blocks line of sight!</p>
+            <div class="terrain-stats">
+              <span>Move: 2</span>
+              <span>Def: +15%</span>
+              <span>Atk: -10%</span>
+            </div>
+          </div>
+
+          <div class="terrain-card">
+            <div class="terrain-icon">💧</div>
+            <h4>Shallow Water</h4>
+            <p>Difficult to move through, reduces combat effectiveness.</p>
+            <div class="terrain-stats">
+              <span>Move: 3</span>
+              <span>Def: -10%</span>
+              <span>Atk: -15%</span>
+            </div>
+          </div>
+
+          <div class="terrain-card">
+            <div class="terrain-icon">🟤</div>
+            <h4>Muddy Ground</h4>
+            <p>Slows movement and reduces stability.</p>
+            <div class="terrain-stats">
+              <span>Move: 2</span>
+              <span>Def: -5%</span>
+              <span>Atk: -10%</span>
+            </div>
+          </div>
+
+          <div class="terrain-card">
+            <div class="terrain-icon">⬜</div>
+            <h4>Rocky Terrain</h4>
+            <p>Stable ground provides slight defensive advantage.</p>
+            <div class="terrain-stats">
+              <span>Move: 1</span>
+              <span>Def: +10%</span>
+              <span>Atk: +5%</span>
+            </div>
+          </div>
+
+          <div class="terrain-card highlight">
+            <div class="terrain-icon">🏔️</div>
+            <h4>High Ground</h4>
+            <p><strong>BEST POSITION!</strong> Elevated position grants huge combat advantage.</p>
+            <div class="terrain-stats">
+              <span>Move: 1</span>
+              <span>Def: +20%</span>
+              <span>Atk: +25%</span>
+            </div>
+          </div>
+
+          <div class="terrain-card danger">
+            <div class="terrain-icon">⬛</div>
+            <h4>Low Ground</h4>
+            <p><strong>AVOID!</strong> Depression in terrain, disadvantageous position.</p>
+            <div class="terrain-stats">
+              <span>Move: 1</span>
+              <span>Def: -15%</span>
+              <span>Atk: -10%</span>
+            </div>
+          </div>
+
+          <div class="terrain-card impassable">
+            <div class="terrain-icon">🧱</div>
+            <h4>Stone Wall</h4>
+            <p><strong>IMPASSABLE!</strong> Cannot move through. Blocks line of sight.</p>
+            <div class="terrain-stats">
+              <span>Move: ∞</span>
+              <span>Def: —</span>
+              <span>Atk: —</span>
+            </div>
+          </div>
+
+          <div class="terrain-card impassable">
+            <div class="terrain-icon">⚫</div>
+            <h4>Deep Pit</h4>
+            <p><strong>IMPASSABLE!</strong> Dangerous pit, cannot be crossed.</p>
+            <div class="terrain-stats">
+              <span>Move: ∞</span>
+              <span>Def: —</span>
+              <span>Atk: —</span>
+            </div>
+          </div>
+        </div>
+
+        <h2>🎯 Tactical Mechanics</h2>
+
+        <div class="mechanic-card">
+          <h3>⚔️ Flanking</h3>
+          <p>Attack enemies from behind or sides for bonus damage!</p>
+          <ul>
+            <li><strong>+15% Damage</strong> when attacking from flanking position</li>
+            <li>Flanking detected automatically</li>
+            <li>Position yourself strategically to flank</li>
+          </ul>
+        </div>
+
+        <div class="mechanic-card">
+          <h3>👁️ Line of Sight</h3>
+          <p>Some terrain blocks vision and ranged attacks:</p>
+          <ul>
+            <li>🌳 <strong>Forest</strong> blocks line of sight</li>
+            <li>🧱 <strong>Walls</strong> block line of sight</li>
+            <li>Cannot attack targets you can't see!</li>
+          </ul>
+        </div>
+
+        <div class="mechanic-card">
+          <h3>🏰 Predefined Battlefields</h3>
+          <p>Story missions use unique battlefield layouts:</p>
+          <ul>
+            <li><strong>Training Grounds</strong> - Balanced mix of terrain</li>
+            <li><strong>Forest Clearing</strong> - Dense forest with central opening</li>
+            <li><strong>Desert Ruins</strong> - Rocky terrain with walls</li>
+            <li><strong>Treacherous Swamp</strong> - Mud and water obstacles</li>
+            <li><strong>Mountain Pass</strong> - High and low ground</li>
+            <li><strong>Combat Arena</strong> - Walled perimeter with rock cover</li>
+          </ul>
+        </div>
+
+        <h2>💡 Pro Tips</h2>
+        <div class="tips">
+          <div class="tip">
+            <strong>🏔️ Secure High Ground</strong> - The +25% attack bonus is massive! Rush for elevated positions early.
+          </div>
+          <div class="tip">
+            <strong>🌳 Use Cover</strong> - Forest provides +15% defense and blocks enemy line of sight.
+          </div>
+          <div class="tip">
+            <strong>💧 Avoid Water & Mud</strong> - These terrains reduce your combat effectiveness significantly.
+          </div>
+          <div class="tip">
+            <strong>⚡ Assassins Excel</strong> - Shadow Step has 0 cooldown for maximum mobility!
+          </div>
+          <div class="tip">
+            <strong>🎯 Range Matters</strong> - Mages can attack from 3 cells away, melee must close in.
+          </div>
+          <div class="tip">
+            <strong>⚔️ Flank Enemies</strong> - Position yourself behind enemies for +15% damage bonus.
+          </div>
+        </div>
+
+        <div class="info-box">
+          <strong>📚 For Technical Details:</strong> See <code>docs/GRID_COMBAT_SYSTEM.md</code> and <code>docs/WEAPON_RANGE_SYSTEM.md</code>
         </div>
       </div>
     `;
@@ -450,6 +808,384 @@ export class WikiScreen extends BaseComponent {
 
         <p style="text-align: center; margin-top: 30px;">
           <strong>📚 For detailed mission list and strategies, see STORY_MODE_GUIDE.md</strong>
+        </p>
+      </div>
+    `;
+  }
+
+  renderStatusEffectsContent() {
+    return `
+      <div class="content-section ${this._activeTab === 'status-effects' ? 'active' : ''}" id="status-effects-content">
+        <h1>🎯 Status Effects System</h1>
+        
+        <div class="info-box">
+          <strong>17 Unique Effects | 11 Interactions | Strategic Depth</strong><br>
+          Master status effects to dominate combat with powerful combos!
+        </div>
+
+        <h2>🔴 Damage Over Time (DOT)</h2>
+        <table>
+          <tr>
+            <th>Effect</th>
+            <th>Duration</th>
+            <th>Damage/Turn</th>
+            <th>Special</th>
+          </tr>
+          <tr>
+            <td>☠️ Poison</td>
+            <td>4 turns</td>
+            <td>10 HP</td>
+            <td>Stackable (max 5)</td>
+          </tr>
+          <tr>
+            <td>🔥 Burn</td>
+            <td>3 turns</td>
+            <td>12 HP</td>
+            <td>Stackable (max 3), Fire element</td>
+          </tr>
+          <tr>
+            <td>🩸 Bleed</td>
+            <td>4 turns</td>
+            <td>8 HP</td>
+            <td>Stackable (max 5), Increases with actions</td>
+          </tr>
+          <tr>
+            <td>⚡ Shock</td>
+            <td>2 turns</td>
+            <td>15 HP</td>
+            <td>Chains, Amplified when Wet (x2)</td>
+          </tr>
+        </table>
+
+        <h2>💚 Healing & Buffs</h2>
+        <table>
+          <tr>
+            <th>Effect</th>
+            <th>Duration</th>
+            <th>Bonus</th>
+            <th>Special</th>
+          </tr>
+          <tr>
+            <td>💚 Regeneration</td>
+            <td>5 turns</td>
+            <td>+15 HP/turn</td>
+            <td>Stackable (max 3)</td>
+          </tr>
+          <tr>
+            <td>💪 Strength Boost</td>
+            <td>3 turns</td>
+            <td>+20 Strength</td>
+            <td>Flat bonus</td>
+          </tr>
+          <tr>
+            <td>🛡️ Defense Boost</td>
+            <td>3 turns</td>
+            <td>+15 Defense</td>
+            <td>Flat bonus</td>
+          </tr>
+          <tr>
+            <td>✨ Bless</td>
+            <td>3 turns</td>
+            <td>+25% damage</td>
+            <td>Cancels Curse</td>
+          </tr>
+          <tr>
+            <td>💨 Haste</td>
+            <td>3 turns</td>
+            <td>+40% speed</td>
+            <td>Cancels Slow</td>
+          </tr>
+          <tr>
+            <td>⛰️ Fortify</td>
+            <td>3 turns</td>
+            <td>-30% damage taken</td>
+            <td>Stackable (max 2)</td>
+          </tr>
+          <tr>
+            <td>😡 Enrage</td>
+            <td>2 turns</td>
+            <td>+40% dmg, -20% def</td>
+            <td>High risk, high reward</td>
+          </tr>
+          <tr>
+            <td>🧠 Clarity</td>
+            <td>3 turns</td>
+            <td>-50% mana costs</td>
+            <td>Great for casters</td>
+          </tr>
+        </table>
+
+        <h2>😰 Debuffs</h2>
+        <table>
+          <tr>
+            <th>Effect</th>
+            <th>Duration</th>
+            <th>Penalty</th>
+            <th>Special</th>
+          </tr>
+          <tr>
+            <td>😰 Weakness</td>
+            <td>3 turns</td>
+            <td>-15 all stats</td>
+            <td>General debuff</td>
+          </tr>
+          <tr>
+            <td>🌑 Curse</td>
+            <td>4 turns</td>
+            <td>-50% healing</td>
+            <td>Cancels Bless, reduces heals</td>
+          </tr>
+          <tr>
+            <td>🐌 Slow</td>
+            <td>3 turns</td>
+            <td>-30% speed</td>
+            <td>Cancels Haste</td>
+          </tr>
+          <tr>
+            <td>💔 Vulnerable</td>
+            <td>2 turns</td>
+            <td>+50% damage taken</td>
+            <td>Very dangerous!</td>
+          </tr>
+        </table>
+
+        <h2>🛡️ Protection Effects</h2>
+        <table>
+          <tr>
+            <th>Effect</th>
+            <th>Duration</th>
+            <th>Protection</th>
+            <th>Special</th>
+          </tr>
+          <tr>
+            <td>🔰 Shield</td>
+            <td>3 turns</td>
+            <td>Absorbs 50 damage</td>
+            <td>Tracks absorbed damage</td>
+          </tr>
+          <tr>
+            <td>🪞 Reflect</td>
+            <td>2 turns</td>
+            <td>Reflects 30% damage</td>
+            <td>Returns damage to attacker</td>
+          </tr>
+          <tr>
+            <td>🌹 Thorns</td>
+            <td>4 turns</td>
+            <td>Returns 15 damage</td>
+            <td>Stackable (max 3)</td>
+          </tr>
+        </table>
+
+        <h2>🎯 Crowd Control</h2>
+        <table>
+          <tr>
+            <th>Effect</th>
+            <th>Duration</th>
+            <th>Effect</th>
+            <th>Special</th>
+          </tr>
+          <tr>
+            <td>💫 Stun</td>
+            <td>1 turn</td>
+            <td>Cannot act</td>
+            <td>Complete disable</td>
+          </tr>
+          <tr>
+            <td>❄️ Frozen</td>
+            <td>2 turns</td>
+            <td>-30% speed</td>
+            <td>Shatterable! Vulnerable to heavy damage</td>
+          </tr>
+          <tr>
+            <td>🔇 Silence</td>
+            <td>2 turns</td>
+            <td>Cannot use skills</td>
+            <td>Blocks all abilities</td>
+          </tr>
+        </table>
+
+        <h2>⚡ Effect Interactions</h2>
+        <p>Status effects can interact with each other strategically:</p>
+
+        <h3>🔥 Fire vs Ice ❄️</h3>
+        <ul>
+          <li><strong>Burn removes Frozen</strong> - Fire melts ice</li>
+          <li><strong>Frozen removes Burn</strong> - Ice extinguishes fire</li>
+        </ul>
+
+        <h3>💥 Combo Interactions</h3>
+        <table>
+          <tr>
+            <th>Trigger</th>
+            <th>Result</th>
+            <th>Effect</th>
+          </tr>
+          <tr>
+            <td>❄️ Frozen + Heavy Damage</td>
+            <td>💥 SHATTER</td>
+            <td>+30 bonus damage!</td>
+          </tr>
+          <tr>
+            <td>⚡ Shock + 💧 Wet</td>
+            <td>Amplify</td>
+            <td>Double shock damage (x2)</td>
+          </tr>
+          <tr>
+            <td>☠️ Poison + 💚 Regeneration</td>
+            <td>Reduce Both</td>
+            <td>Effects partially cancel (50%)</td>
+          </tr>
+          <tr>
+            <td>🌑 Curse + ✨ Bless</td>
+            <td>Dispel Both</td>
+            <td>Light and dark cancel out</td>
+          </tr>
+          <tr>
+            <td>💨 Haste + 🐌 Slow</td>
+            <td>Dispel Both</td>
+            <td>Time effects cancel</td>
+          </tr>
+          <tr>
+            <td>🩸 Bleed + Action Taken</td>
+            <td>Stack Bleed</td>
+            <td>Taking actions worsens bleeding</td>
+          </tr>
+          <tr>
+            <td>💔 Vulnerable + ⛰️ Fortify</td>
+            <td>Reduce Both</td>
+            <td>Partially cancel (50%)</td>
+          </tr>
+        </table>
+
+        <h2>💡 Strategic Combos</h2>
+
+        <h3>🔴 Offensive Combos</h3>
+        <div class="success-box">
+          <h4>DOT Stack</h4>
+          <p><code>Poison + Burn + Bleed</code> = Massive sustained damage (30+ HP/turn!)</p>
+
+          <h4>Burst Damage</h4>
+          <p><code>Bless + Enrage + Vulnerable (on enemy)</code> = Maximum burst potential</p>
+
+          <h4>Shatter Combo</h4>
+          <p><code>1. Apply Frozen → 2. Deal heavy damage → 3. SHATTER (+30 bonus!)</code></p>
+        </div>
+
+        <h3>🛡️ Defensive Combos</h3>
+        <div class="info-box">
+          <h4>Tank Build</h4>
+          <p><code>Fortify + Shield + Thorns</code> = Absorb and reflect damage</p>
+
+          <h4>Sustain Build</h4>
+          <p><code>Regeneration (stacked x3) + Clarity</code> = Continuous healing with mana</p>
+        </div>
+
+        <h3>⚔️ Counter-Plays</h3>
+        <ul>
+          <li><strong>vs Healing:</strong> Apply Curse (-50% healing received)</li>
+          <li><strong>vs Casters:</strong> Apply Silence (can't use skills)</li>
+          <li><strong>vs DOTs:</strong> Stack Regeneration or end fight quickly</li>
+          <li><strong>vs Buffs:</strong> Use Vulnerable to bypass shields</li>
+        </ul>
+
+        <h2>📊 Effect Stacking</h2>
+        <p>Some effects can stack for increased power:</p>
+        <table>
+          <tr>
+            <th>Effect</th>
+            <th>Max Stacks</th>
+            <th>Total Power at Max</th>
+          </tr>
+          <tr>
+            <td>☠️ Poison</td>
+            <td>5 stacks</td>
+            <td>50 HP/turn</td>
+          </tr>
+          <tr>
+            <td>🔥 Burn</td>
+            <td>3 stacks</td>
+            <td>36 HP/turn</td>
+          </tr>
+          <tr>
+            <td>🩸 Bleed</td>
+            <td>5 stacks</td>
+            <td>40 HP/turn</td>
+          </tr>
+          <tr>
+            <td>💚 Regeneration</td>
+            <td>3 stacks</td>
+            <td>45 HP/turn heal</td>
+          </tr>
+          <tr>
+            <td>⛰️ Fortify</td>
+            <td>2 stacks</td>
+            <td>-60% damage taken</td>
+          </tr>
+          <tr>
+            <td>🌹 Thorns</td>
+            <td>3 stacks</td>
+            <td>45 damage returned</td>
+          </tr>
+        </table>
+
+        <h2>🎮 How to Apply Effects</h2>
+        <p>Status effects are applied through:</p>
+        <ul>
+          <li><strong>⚔️ Skills</strong> - Most skills apply status effects</li>
+          <li><strong>🎁 Items</strong> - Some consumables grant buffs</li>
+          <li><strong>⚙️ Equipment</strong> - Certain legendary items apply effects</li>
+          <li><strong>🎭 Class Abilities</strong> - Passive effects from your class</li>
+        </ul>
+
+        <h2>💡 Pro Tips</h2>
+        <div class="success-box">
+          <ul>
+            <li><strong>Stack Early</strong> - Apply multiple DOTs at fight start</li>
+            <li><strong>Watch for Combos</strong> - Look for interaction opportunities</li>
+            <li><strong>Counter Enemy Strategy</strong> - Use Curse vs healers, Silence vs casters</li>
+            <li><strong>Time Your Dispels</strong> - Save dispels for critical debuffs</li>
+            <li><strong>Shatter Setup</strong> - Frozen + Heavy hit = free +30 damage</li>
+            <li><strong>Elemental Advantage</strong> - Use fire vs ice, ice vs fire</li>
+          </ul>
+        </div>
+
+        <h2>⚠️ Important Notes</h2>
+        <div class="warning-box">
+          <ul>
+            <li>Effects tick at the START of each turn</li>
+            <li>Some effects can be dispelled, others are permanent</li>
+            <li>Interactions trigger automatically when conditions are met</li>
+            <li>Stacking effects refresh duration on new application</li>
+            <li>CC effects (Stun, Frozen, Silence) are very powerful - use wisely!</li>
+          </ul>
+        </div>
+
+        <h2>📈 Advanced Strategy</h2>
+        <h3>Early Game (Level 1-5):</h3>
+        <ul>
+          <li>Focus on simple buffs (Strength, Defense)</li>
+          <li>Use Regeneration for sustain</li>
+          <li>Learn basic interactions</li>
+        </ul>
+
+        <h3>Mid Game (Level 5-10):</h3>
+        <ul>
+          <li>Start stacking DOTs for damage</li>
+          <li>Experiment with combos</li>
+          <li>Use CC strategically</li>
+        </ul>
+
+        <h3>Late Game (Level 10+):</h3>
+        <ul>
+          <li>Master all interactions</li>
+          <li>Build specialized strategies</li>
+          <li>Shatter combo for burst</li>
+          <li>Counter enemy strategies</li>
+        </ul>
+
+        <p style="text-align: center; margin-top: 30px;">
+          <strong>📚 For complete details and API reference, see STATUS_EFFECTS.md</strong>
         </p>
       </div>
     `;

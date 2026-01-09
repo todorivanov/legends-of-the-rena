@@ -3,7 +3,7 @@
  * Manages the campaign system and mission rewards
  */
 
-import { SaveManager } from '../utils/saveManager.js';
+import { SaveManagerV2 as SaveManager } from '../utils/SaveManagerV2.js';
 import { getMissionById } from '../data/storyMissions.js';
 import { getRegionById, isRegionUnlocked } from '../data/storyRegions.js';
 import { EconomyManager } from './EconomyManager.js';

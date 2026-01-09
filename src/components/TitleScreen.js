@@ -264,10 +264,6 @@ export class TitleScreen extends BaseComponent {
               <span class="btn-icon">⚔️</span>
               Single Combat
             </button>
-            <button class="menu-btn" data-mode="team">
-              <span class="btn-icon">👥</span>
-              Team Battle
-            </button>
             <button class="menu-btn" id="tournament-btn">
               <span class="btn-icon">🏆</span>
               Tournament

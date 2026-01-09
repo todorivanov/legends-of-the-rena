@@ -3,7 +3,7 @@
  * Manages buying, selling, and shop inventory refreshes
  */
 
-import { SaveManager } from '../utils/saveManager.js';
+import { SaveManagerV2 as SaveManager } from '../utils/SaveManagerV2.js';
 import { getEquipmentById, EQUIPMENT_DATABASE } from '../data/equipment.js';
 import { EconomyManager } from './EconomyManager.js';
 import { EquipmentManager } from './EquipmentManager.js';

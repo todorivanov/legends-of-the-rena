@@ -31,6 +31,9 @@ export class StatusEffect {
       case 'strength_debuff':
         fighter.strength -= this.value;
         break;
+      case 'defense_boost':
+        fighter.defense += this.value;
+        break;
       case 'regeneration':
         fighter.health = Math.min(fighter.maxHealth, fighter.health + this.value);
         fighter.showFloatingDamage(this.value, 'heal');
@@ -39,8 +42,15 @@ export class StatusEffect {
         fighter.health -= this.value;
         fighter.showFloatingDamage(this.value, 'critical');
         break;
+      case 'burn':
+        fighter.health -= this.value;
+        fighter.showFloatingDamage(this.value, 'critical');
+        break;
       case 'mana_regen':
         fighter.mana = Math.min(fighter.maxMana, fighter.mana + this.value);
+        break;
+      case 'stun':
+        // Stun is handled in turn logic, not in apply
         break;
     }
   }
@@ -56,6 +66,9 @@ export class StatusEffect {
         break;
       case 'strength_debuff':
         fighter.strength += this.value;
+        break;
+      case 'defense_boost':
+        fighter.defense -= this.value;
         break;
     }
   }
@@ -104,6 +117,30 @@ export const STATUS_EFFECTS = {
     value: 20,
     icon: '✨',
     description: '+20 MP per turn for 3 turns',
+  },
+  DEFENSE_BOOST: {
+    name: 'defense_boost',
+    type: 'buff',
+    duration: 3,
+    value: 15,
+    icon: '🛡️',
+    description: '+15 Defense for 3 turns',
+  },
+  BURN: {
+    name: 'burn',
+    type: 'debuff',
+    duration: 3,
+    value: 12,
+    icon: '🔥',
+    description: '-12 HP per turn for 3 turns',
+  },
+  STUN: {
+    name: 'stun',
+    type: 'debuff',
+    duration: 1,
+    value: 0,
+    icon: '💫',
+    description: 'Stunned for 1 turn',
   },
 };
 

@@ -3,7 +3,7 @@
  * Manages earning, spending, and tracking of gold throughout the game
  */
 
-import { SaveManager } from '../utils/saveManager.js';
+import { SaveManagerV2 as SaveManager } from '../utils/SaveManagerV2.js';
 import { Logger } from '../utils/logger.js';
 
 export class EconomyManager {

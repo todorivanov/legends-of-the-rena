@@ -1,5 +1,5 @@
 import { BaseComponent } from './BaseComponent.js';
-import { SaveManager } from '../utils/saveManager.js';
+import { SaveManagerV2 as SaveManager } from '../utils/SaveManagerV2.js';
 import { LevelingSystem } from '../game/LevelingSystem.js';
 import { EquipmentManager } from '../game/EquipmentManager.js';
 import { AchievementManager } from '../game/AchievementManager.js';
@@ -16,11 +16,17 @@ export class ProfileScreen extends BaseComponent {
   constructor() {
     super();
     this.profileData = SaveManager.load();
+
+    // Ensure storyProgress exists for backward compatibility
+    if (!this.profileData.storyProgress && this.profileData.story) {
+      this.profileData.storyProgress = this.profileData.story;
+    }
+
     this.currentTab = 'profile'; // 'profile' or 'equipment'
   }
 
   getTotalStars() {
-    const missionStars = this.profileData.storyProgress.missionStars || {};
+    const missionStars = this.profileData.storyProgress?.missionStars || {};
     return Object.values(missionStars).reduce((sum, stars) => sum + stars, 0);
   }
 
@@ -37,11 +43,11 @@ export class ProfileScreen extends BaseComponent {
     let maxProgress = 0;
 
     // Level progress (out of 20)
-    totalProgress += profile.level;
+    totalProgress += profile?.level || 1;
     maxProgress += 20;
 
     // Story missions (out of 25)
-    totalProgress += storyProgress.completedMissions?.length || 0;
+    totalProgress += storyProgress?.completedMissions?.length || 0;
     maxProgress += 25;
 
     // Achievements (out of total)
@@ -499,12 +505,12 @@ export class ProfileScreen extends BaseComponent {
             <div class="stat-row">
               <span class="stat-label">Campaign Progress</span>
               <span class="stat-value highlight">
-                ${Math.floor((this.profileData.storyProgress.completedMissions.length / 25) * 100)}%
+                ${Math.floor(((this.profileData.storyProgress?.completedMissions?.length || 0) / 25) * 100)}%
               </span>
             </div>
             <div class="stat-row">
               <span class="stat-label">Missions Completed</span>
-              <span class="stat-value highlight">${this.profileData.storyProgress.completedMissions.length || 0}/25</span>
+              <span class="stat-value highlight">${this.profileData.storyProgress?.completedMissions?.length || 0}/25</span>
             </div>
             <div class="stat-row">
               <span class="stat-label">Total Stars Earned</span>

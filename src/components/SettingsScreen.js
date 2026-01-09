@@ -1,5 +1,7 @@
 import { BaseComponent } from './BaseComponent.js';
 import { DifficultyManager, DIFFICULTY_CONFIG } from '../game/DifficultyManager.js';
+import { router } from '../utils/Router.js';
+import { RoutePaths } from '../config/routes.js';
 
 /**
  * SettingsScreen Web Component
@@ -226,6 +228,30 @@ export class SettingsScreen extends BaseComponent {
         font-size: 16px;
       }
 
+      .save-management-btn {
+        width: 100%;
+        padding: 20px;
+        font-size: 18px;
+        font-weight: 700;
+        color: white;
+        background: linear-gradient(135deg, #6a42c2 0%, #2d1b69 100%);
+        border: 3px solid #b39ddb;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+      }
+
+      .save-management-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(106, 66, 194, 0.5);
+        border-color: #6a42c2;
+      }
+
       @keyframes fadeIn {
         from { opacity: 0; }
         to { opacity: 1; }
@@ -282,6 +308,9 @@ export class SettingsScreen extends BaseComponent {
             <span class="setting-label">Equipment Drop Rate</span>
             <span class="setting-value">${(DifficultyManager.getEquipmentDropRate() * 100).toFixed(0)}%</span>
           </div>
+          <button class="save-management-btn">
+            💾 Manage Save Files
+          </button>
         </div>
 
         <!-- Difficulty Selection -->
@@ -334,6 +363,14 @@ export class SettingsScreen extends BaseComponent {
     if (backBtn) {
       backBtn.addEventListener('click', () => {
         this.emit('back-to-menu');
+      });
+    }
+
+    // Save management button
+    const saveManagementBtn = this.shadowRoot.querySelector('.save-management-btn');
+    if (saveManagementBtn) {
+      saveManagementBtn.addEventListener('click', () => {
+        router.navigate(RoutePaths.SAVE_MANAGEMENT);
       });
     }
 

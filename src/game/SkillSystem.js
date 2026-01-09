@@ -57,6 +57,14 @@ export class Skill {
    */
   executeEffect(caster, target) {
     switch (this.type) {
+      case 'movement':
+        // Movement is handled separately by the grid system
+        Logger.log(
+          `<div class="system-message">🏃 <strong>${caster.name}</strong> is repositioning...</div>`
+        );
+        soundManager.play('event');
+        break;
+
       case 'damage': {
         const damage = Math.ceil(this.power + caster.strength * 0.5);
         target.takeDamage(damage);
@@ -122,30 +130,37 @@ export class Skill {
  */
 export const CLASS_SKILLS = {
   TANK: [
+    new Skill('Tactical Reposition', 15, 2, 'movement', 0, null),
     new Skill('Iron Wall', 30, 3, 'buff', 0, 'STRENGTH_BOOST'),
     new Skill('Taunt Strike', 20, 2, 'damage', 40, null),
   ],
   BALANCED: [
+    new Skill('Reposition', 10, 1, 'movement', 0, null),
     new Skill('Power Slash', 25, 2, 'damage', 50, null),
     new Skill('Second Wind', 30, 4, 'heal', 60, null),
   ],
   AGILE: [
+    new Skill('Quick Step', 10, 1, 'movement', 0, null),
     new Skill('Swift Strike', 20, 1, 'damage', 35, null),
     new Skill('Poison Dart', 25, 3, 'debuff', 0, 'POISON'),
   ],
   MAGE: [
+    new Skill('Arcane Step', 15, 2, 'movement', 0, null),
     new Skill('Fireball', 35, 2, 'damage', 70, null),
     new Skill('Mana Surge', 15, 3, 'buff', 0, 'MANA_REGEN'),
   ],
   HYBRID: [
+    new Skill('Tactical Movement', 10, 1, 'movement', 0, null),
     new Skill('Versatile Strike', 25, 2, 'damage', 45, null),
     new Skill('Rejuvenate', 30, 3, 'buff', 0, 'REGENERATION'),
   ],
   ASSASSIN: [
+    new Skill('Shadow Step', 10, 0, 'movement', 0, null),
     new Skill('Shadow Strike', 40, 3, 'damage', 90, null),
     new Skill('Weaken', 25, 2, 'debuff', 0, 'STRENGTH_DEBUFF'),
   ],
   BRAWLER: [
+    new Skill('Advance', 10, 1, 'movement', 0, null),
     new Skill('Haymaker', 30, 2, 'damage', 65, null),
     new Skill('Adrenaline', 20, 3, 'buff', 0, 'STRENGTH_BOOST'),
   ],

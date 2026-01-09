@@ -1,10 +1,33 @@
 import { BaseEntity } from './baseEntity.js';
+import { getClassById } from '../data/classes.js';
+import { EQUIPMENT_DATABASE } from '../data/equipment.js';
 
 /**
  * Fighter - Represents a combat fighter with unique abilities
  * Extends BaseEntity with fighter-specific functionality
  */
 export class Fighter extends BaseEntity {
+  /**
+   * Get fighter's attack range
+   * Combines base class range + equipped weapon range
+   * @returns {number} - Attack range in grid cells
+   */
+  getAttackRange() {
+    // Get base class range
+    const classData = getClassById(this.class);
+    let range = classData?.stats?.attackRange || 1;
+
+    // Add weapon range if equipped
+    if (this.equipped && this.equipped.weapon) {
+      const weapon = EQUIPMENT_DATABASE[this.equipped.weapon];
+      if (weapon && weapon.range) {
+        range = Math.max(range, weapon.range); // Use highest range
+      }
+    }
+
+    return range;
+  }
+
   /**
    * Get fighter's current effectiveness (based on HP percentage)
    * @returns {number} - Effectiveness multiplier (0-1)

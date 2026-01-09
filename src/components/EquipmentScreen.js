@@ -1,5 +1,5 @@
 import { BaseComponent } from './BaseComponent.js';
-import { SaveManager } from '../utils/saveManager.js';
+import { SaveManagerV2 as SaveManager } from '../utils/SaveManagerV2.js';
 import { EquipmentManager } from '../game/EquipmentManager.js';
 import { RARITY_COLORS, RARITY_NAMES } from '../data/equipment.js';
 

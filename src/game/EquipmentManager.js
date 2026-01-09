@@ -2,7 +2,7 @@
  * EquipmentManager - Handles equipment logic, equipping/unequipping, and stat calculations
  */
 
-import { SaveManager } from '../utils/saveManager.js';
+import { SaveManagerV2 as SaveManager } from '../utils/SaveManagerV2.js';
 import { getEquipmentById, getRandomEquipmentDrop } from '../data/equipment.js';
 import { Logger } from '../utils/logger.js';
 

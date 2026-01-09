@@ -2,7 +2,7 @@
  * LevelingSystem - Manages player progression, XP, and level-ups
  */
 
-import { SaveManager } from '../utils/saveManager.js';
+import { SaveManagerV2 as SaveManager } from '../utils/SaveManagerV2.js';
 import { Logger } from '../utils/logger.js';
 import { soundManager } from '../utils/soundManager.js';
 import { DifficultyManager } from './DifficultyManager.js';

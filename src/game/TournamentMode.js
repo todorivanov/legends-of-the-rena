@@ -3,7 +3,7 @@
  * Quarter Final → Semi Final → Final
  */
 
-import { SaveManager } from '../utils/saveManager.js';
+import { SaveManagerV2 as SaveManager } from '../utils/SaveManagerV2.js';
 import { LevelingSystem } from './LevelingSystem.js';
 import { EquipmentManager } from './EquipmentManager.js';
 import { Logger } from '../utils/logger.js';

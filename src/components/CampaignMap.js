@@ -7,7 +7,7 @@ import {
 } from '../data/storyRegions.js';
 import { getMissionsByRegion, getMissionById } from '../data/storyMissions.js';
 import { StoryMode } from '../game/StoryMode.js';
-import { SaveManager } from '../utils/saveManager.js';
+import { SaveManagerV2 as SaveManager } from '../utils/SaveManagerV2.js';
 
 /**
  * CampaignMap Web Component
@@ -256,9 +256,9 @@ export class CampaignMap extends BaseComponent {
   }
 
   template() {
-    const storyProgress = SaveManager.get('storyProgress');
+    const storyProgress = SaveManager.get('storyProgress') || SaveManager.get('story') || {};
     const regions = getRegionsInOrder();
-    const completedMissions = storyProgress.completedMissions.length;
+    const completedMissions = storyProgress.completedMissions?.length || 0;
     const totalStars = StoryMode.getTotalStars();
 
     return `

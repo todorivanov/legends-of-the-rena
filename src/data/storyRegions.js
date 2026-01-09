@@ -104,7 +104,11 @@ export function isRegionUnlocked(regionId, storyProgress) {
   // Check if unlocking mission(s) completed
   const unlockedBy = Array.isArray(region.unlockedBy) ? region.unlockedBy : [region.unlockedBy];
 
-  return unlockedBy.some((missionId) => storyProgress.completedMissions.includes(missionId));
+  // Ensure completedMissions is an array (handle old object format)
+  const completed = storyProgress?.completedMissions;
+  const completedArray = Array.isArray(completed) ? completed : [];
+
+  return unlockedBy.some((missionId) => completedArray.includes(missionId));
 }
 
 /**
@@ -122,8 +126,13 @@ export function getRegionCompletion(regionId, storyProgress) {
   if (!region) return 0;
 
   const totalMissions = region.missions.length;
+
+  // Ensure completedMissions is an array (handle old object format)
+  const completed = storyProgress?.completedMissions;
+  const completedArray = Array.isArray(completed) ? completed : [];
+
   const completedMissions = region.missions.filter((missionId) =>
-    storyProgress.completedMissions.includes(missionId)
+    completedArray.includes(missionId)
   ).length;
 
   return Math.floor((completedMissions / totalMissions) * 100);

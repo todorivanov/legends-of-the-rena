@@ -3,7 +3,7 @@ import { MarketplaceManager } from '../game/MarketplaceManager.js';
 import { DurabilityManager } from '../game/DurabilityManager.js';
 import { EquipmentManager } from '../game/EquipmentManager.js';
 import { EconomyManager } from '../game/EconomyManager.js';
-import { SaveManager } from '../utils/saveManager.js';
+import { SaveManagerV2 as SaveManager } from '../utils/SaveManagerV2.js';
 import { RARITY_COLORS, RARITY_NAMES } from '../data/equipment.js';
 import { GameConfig } from '../config/gameConfig.js';
 
