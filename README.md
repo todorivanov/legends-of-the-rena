@@ -71,13 +71,22 @@
 - **Repair shop** - Restore durability of damaged items
 - **Consumables** - Purchase health and mana potions
 
-### ⚡ **Combo System** ⭐NEW⭐
+### ⚡ **Combo System**
 - **20+ unique combos** - Universal and class-specific chains
 - **Action sequences** - Trigger combos by performing specific moves
 - **Powerful bonuses** - Damage multipliers, healing, mana restore
 - **Status effects** - Apply buffs/debuffs through combos
 - **Visual feedback** - Stunning animations when combos trigger
 - **Combo hints** - Real-time suggestions for available combos
+
+### 🎯 **Combat Phase System** ⭐ACTIVE⭐
+- **Fully Integrated** - All combat uses phase system
+- **Structured phases** - 8 distinct battle phases
+- **Event hooks** - Extensibility points for custom logic
+- **Action queue** - Priority-based action execution
+- **Event bus** - Rich combat events for integrations
+- **Modular design** - Easy to extend and customize
+- **Backward Compatible** - All existing features preserved
 
 ### 💾 **Advanced Save System**
 - **Multiple save slots** - Manage up to 3 different characters

@@ -5,6 +5,105 @@ All notable changes to Legends of the Arena will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.4.0] - 2026-01-09
+
+### Changed - Full Combat Phase System Migration 🎯
+- **Complete Migration**: Old combat system fully replaced with phase system
+- **game.js Refactored**: Main game loop now uses CombatPhaseManager
+- **New Methods**:
+  - `startGame()` now async, initializes phase manager
+  - `executeActionPhased()` replaces direct action execution
+  - `registerCombatHooks()` sets up phase hooks for combat systems
+- **Phase Integration**:
+  - Combo system integrated via phase hooks
+  - Status effects processed in turn start phase
+  - Action execution flows through phase system
+  - Victory checking integrated with battle end phase
+- **Backward Compatibility**: All existing features work identically
+- **Performance**: No noticeable overhead from phase system
+
+### Technical Changes
+- Combat loop now uses `async/await` for phase transitions
+- Actions queued and executed through CombatPhaseManager
+- Turn management integrated with phase system
+- Story mode tracking works with phased combat
+- Statistics tracking preserved through hooks
+- Equipment and durability systems unchanged
+
+### Benefits Realized
+- ✅ Combat now extensible via hooks
+- ✅ Clear phase structure for debugging
+- ✅ Event system ready for new features
+- ✅ Action queue enables complex mechanics
+- ✅ Foundation for future enhancements
+
+### Migration Notes
+- Old `executeAction()` method kept for reference
+- New `executeActionPhased()` handles all combat
+- Phase hooks registered at battle start
+- No breaking changes to existing gameplay
+- Full test coverage maintained
+
+### Version
+- Version bumped from 4.3.0 to 4.4.0
+
+## [4.3.0] - 2026-01-09
+
+### Added - Combat Phase System 🎯
+- **CombatPhaseManager**: Structured combat flow with 8 distinct phases
+  - IDLE, BATTLE_START, TURN_START, ACTION_SELECTION
+  - ACTION_EXECUTION, ACTION_RESOLUTION, TURN_END, BATTLE_END
+- **Event System**: 15+ combat events for integration
+  - Battle lifecycle events (started, ended)
+  - Turn lifecycle events (started, ended)
+  - Action lifecycle events (selected, queued, executing, executed, resolved)
+  - Combat result events (damage dealt, healing applied, status effects)
+  - Fighter state events (defeated, health/mana changed)
+  - Combo events (triggered, broken)
+- **Phase Hooks**: Extensibility system with priority support
+  - Register custom logic at any combat phase
+  - Priority-based execution order (0-15+)
+  - Async hook support
+  - Hook registration and removal
+- **ActionQueue**: Advanced action queue system
+  - Priority-based action execution
+  - Action batching support
+  - Queue pause/resume functionality
+  - Action history tracking (last 50 actions)
+  - Action filtering and search
+  - Queue statistics and debugging
+
+### Added - New Files
+- `src/game/CombatPhaseManager.js`: Main phase orchestrator (400+ lines)
+- `src/game/ActionQueue.js`: Action queue implementation (300+ lines)
+- `docs/COMBAT_PHASES.md`: Comprehensive system documentation
+- `docs/COMBAT_PHASES_EXAMPLES.md`: Practical usage examples
+
+### Technical Features
+- **Modular Architecture**: Clean separation of concerns
+- **Event-Driven**: Decoupled components communicate via events
+- **Extensible**: Add custom behavior without modifying core
+- **Debuggable**: Rich logging and state inspection tools
+- **Testable**: Designed for unit and integration testing
+
+### Use Cases Enabled
+- Custom abilities (lifesteal, thorns, berserk)
+- Reactive systems (counter-attacks, dodge, auto-revive)
+- Environmental effects (weather, terrain)
+- Complex mechanics (multi-hit combos, delayed damage, resurrection)
+- Conditional triggers (low HP bonuses, mana shields)
+
+### Changed
+- Version bumped from 4.2.0 to 4.3.0
+- Updated README.md with Combat Phase System section
+
+### Developer Benefits
+- **Easier Extensions**: Add new mechanics via hooks instead of core edits
+- **Better Testing**: Mock phases and events for isolated testing
+- **Cleaner Code**: Replace spaghetti logic with structured phases
+- **Rich Events**: Subscribe to specific combat moments
+- **Debug Tools**: Inspect phases, queue, and history in real-time
+
 ## [4.2.0] - 2026-01-09
 
 ### Added - Combo System ⚡

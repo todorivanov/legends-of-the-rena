@@ -17,6 +17,7 @@ import { DurabilityManager } from './DurabilityManager.js';
 import { StoryMode } from './StoryMode.js';
 import { createAI, simpleFallbackAI } from '../ai/AIManager.js';
 import { comboSystem } from './ComboSystem.js';
+import { combatPhaseManager, CombatPhase, CombatEvent } from './CombatPhaseManager.js';
 
 const ROUND_INTERVAL = 1500;
 const AI_TURN_DELAY = 1200;
@@ -52,12 +53,17 @@ export default class Game {
    * @param {Object} secondFighter - Second fighter (enemy)
    * @param {string} missionId - Optional story mission ID
    */
-  static startGame(firstFighter, secondFighter, missionId = null) {
+  static async startGame(firstFighter, secondFighter, missionId = null) {
     // Initialize clean state
     this.stopGame();
     gameState = new GameStateManager();
     comboSystem.reset(); // Reset combo tracking for new battle
     const turnManager = new TurnManager();
+    
+    // Initialize combat phase manager
+    combatPhaseManager.reset();
+    combatPhaseManager.initialize(firstFighter, secondFighter, turnManager);
+    this.registerCombatHooks(); // Register phase hooks
 
     // Store fighter references globally
     currentPlayerFighter = firstFighter;
@@ -96,8 +102,11 @@ export default class Game {
 
     let roundCount = 0;
 
-    // Main turn-based game loop
-    const processTurn = () => {
+    // Start battle with phase system
+    await combatPhaseManager.startBattle();
+
+    // Main turn-based game loop using phase system
+    const processTurn = async () => {
       if (turnManager.isPaused) {
         setTimeout(processTurn, 100);
         return;
@@ -122,52 +131,45 @@ export default class Game {
 
       turnManager.startTurn();
 
+      // Get active fighter
+      const activeFighter = turnManager.isPlayerTurn() ? firstFighter : secondFighter;
+      const targetFighter = turnManager.isPlayerTurn() ? secondFighter : firstFighter;
+
+      // Start turn with phase system
+      await combatPhaseManager.startTurn(activeFighter);
+
       // Show turn indicator
-      this.showTurnIndicator(turnManager.isPlayerTurn() ? firstFighter.name : secondFighter.name);
+      this.showTurnIndicator(activeFighter.name);
 
-      if (turnManager.isPlayerTurn()) {
-        // Process status effects at turn start
-        firstFighter.processStatusEffects();
-        firstFighter.tickSkillCooldowns();
-        hudManager.update();
+      // Process status effects at turn start (handled by phase hooks)
+      activeFighter.processStatusEffects();
+      activeFighter.tickSkillCooldowns();
+      hudManager.update();
 
-        // Check if auto-battle is enabled
-        if (autoBattleEnabled) {
-          // Auto-battle: AI chooses action for player
-          setTimeout(() => {
-            const aiActionData = this.chooseAIAction(firstFighter, secondFighter);
-            this.executeAction(firstFighter, secondFighter, aiActionData, turnManager, processTurn);
-          }, AI_TURN_DELAY);
-        } else {
-          // Manual: Player's turn - wait for input using Web Component
-          const actionSelection = document.createElement('action-selection');
-          actionSelection.fighter = firstFighter;
-          actionSelection.addEventListener('action-selected', (e) => {
-            actionSelection.remove();
-            // Remove combo hints when action is selected
-            document.querySelectorAll('combo-hint').forEach((el) => el.remove());
-            this.executeAction(firstFighter, secondFighter, e.detail, turnManager, processTurn);
-          });
-          document.body.appendChild(actionSelection);
+      if (turnManager.isPlayerTurn() && !autoBattleEnabled) {
+        // Manual: Player's turn - wait for input using Web Component
+        const actionSelection = document.createElement('action-selection');
+        actionSelection.fighter = firstFighter;
+        actionSelection.addEventListener('action-selected', async (e) => {
+          actionSelection.remove();
+          // Remove combo hints when action is selected
+          document.querySelectorAll('combo-hint').forEach((el) => el.remove());
+          await this.executeActionPhased(firstFighter, secondFighter, e.detail, turnManager, processTurn);
+        });
+        document.body.appendChild(actionSelection);
 
-          // Show combo hints for player
-          const suggestions = comboSystem.getComboSuggestions(firstFighter);
-          if (suggestions.length > 0) {
-            const comboHint = document.createElement('combo-hint');
-            comboHint.suggestions = suggestions;
-            document.body.appendChild(comboHint);
-          }
+        // Show combo hints for player
+        const suggestions = comboSystem.getComboSuggestions(firstFighter);
+        if (suggestions.length > 0) {
+          const comboHint = document.createElement('combo-hint');
+          comboHint.suggestions = suggestions;
+          document.body.appendChild(comboHint);
         }
       } else {
-        // Process status effects at turn start
-        secondFighter.processStatusEffects();
-        secondFighter.tickSkillCooldowns();
-        hudManager.update();
-
-        // Enemy AI turn
-        setTimeout(() => {
-          const aiActionData = this.chooseAIAction(secondFighter, firstFighter);
-          this.executeAction(secondFighter, firstFighter, aiActionData, turnManager, processTurn);
+        // Auto-battle or AI turn
+        setTimeout(async () => {
+          const aiActionData = this.chooseAIAction(activeFighter, targetFighter);
+          await this.executeActionPhased(activeFighter, targetFighter, aiActionData, turnManager, processTurn);
         }, AI_TURN_DELAY);
       }
     };
@@ -441,6 +443,323 @@ export default class Game {
   }
 
   /**
+   * Execute an action using the phase system
+   * @param {Object} attacker - Attacking fighter
+   * @param {Object} defender - Defending fighter
+   * @param {Object} actionData - Action data
+   * @param {Object} turnManager - Turn manager
+   * @param {Function} callback - Callback for next turn
+   */
+  static async executeActionPhased(attacker, defender, actionData, turnManager, callback) {
+    const action = actionData.action || actionData;
+
+    // Handle surrender
+    if (action === 'surrender') {
+      Logger.log(
+        `<div class="attack-div text-center" style="background: #f8d7da; border-left-color: #ff1744;">🏳️ <strong>${attacker.name}</strong> has surrendered!</div>`
+      );
+
+      // Remove action selection
+      document.querySelectorAll('action-selection').forEach((el) => el.remove());
+
+      // Declare opponent as winner
+      setTimeout(async () => {
+        await combatPhaseManager.endBattle(defender, attacker);
+        Referee.declareWinner(defender);
+        hudManager.showWinner(defender);
+
+        // Handle story mission failure from surrender
+        if (currentStoryMission) {
+          const playerState = {
+            currentHP: currentPlayerFighter.health,
+            maxHP: currentPlayerFighter.maxHealth,
+          };
+          const missionResult = StoryMode.completeMission(false, playerState);
+
+          setTimeout(() => {
+            if (window.showMissionResults) {
+              window.showMissionResults(missionResult);
+            }
+          }, 2000);
+
+          // Clear story mission state
+          currentStoryMission = null;
+          currentPlayerFighter = null;
+          currentEnemyFighter = null;
+        } else {
+          // Track loss from surrender (normal combat)
+          SaveManager.increment('stats.totalLosses');
+          SaveManager.increment('stats.totalFightsPlayed');
+          SaveManager.update('stats.winStreak', 0);
+
+          // Small XP for attempt
+          LevelingSystem.awardXP(25, 'Battle Participation');
+
+          // Show victory screen for opponent
+          setTimeout(() => {
+            if (window.showVictoryScreen) {
+              window.showVictoryScreen(defender);
+            }
+          }, 2000);
+        }
+      }, 1000);
+      return;
+    }
+
+    // Queue action in phase manager
+    const queuedAction = {
+      type: action,
+      attacker,
+      target: defender,
+      actionData,
+      skillIndex: actionData.skillIndex,
+    };
+
+    combatPhaseManager.queueAction(queuedAction);
+
+    // Execute action through phase system
+    const result = await combatPhaseManager.executeNextAction();
+
+    // Update HUD after action
+    hudManager.update();
+
+    // Check victory condition
+    const victoryResult = CombatEngine.checkVictoryCondition(attacker, defender, false);
+    if (victoryResult) {
+      await combatPhaseManager.endBattle(victoryResult.winner, victoryResult.winner === attacker ? defender : attacker);
+      
+      Referee.declareWinner(victoryResult.winner);
+      hudManager.showWinner(victoryResult.winner);
+      document.querySelectorAll('action-selection').forEach((el) => el.remove());
+
+      const playerWon = victoryResult.winner.isPlayer;
+
+      // Handle story mission completion
+      if (currentStoryMission) {
+        const playerState = {
+          currentHP: currentPlayerFighter.health,
+          maxHP: currentPlayerFighter.maxHealth,
+        };
+
+        const missionResult = StoryMode.completeMission(playerWon, playerState);
+        DurabilityManager.applyBattleWear();
+
+        setTimeout(() => {
+          if (window.showMissionResults) {
+            window.showMissionResults(missionResult);
+          } else if (window.showVictoryScreen) {
+            window.showVictoryScreen(victoryResult.winner);
+          }
+        }, 2000);
+
+        currentStoryMission = null;
+        currentPlayerFighter = null;
+        currentEnemyFighter = null;
+        return;
+      }
+
+      // Normal combat
+      SaveManager.increment('stats.totalFightsPlayed');
+
+      if (playerWon) {
+        const xpReward = 100;
+        SaveManager.increment('stats.totalWins');
+        SaveManager.increment('stats.winStreak');
+        const bestStreak = SaveManager.get('stats.bestStreak') || 0;
+        if (SaveManager.get('stats.winStreak') > bestStreak) {
+          SaveManager.update('stats.bestStreak', SaveManager.get('stats.winStreak'));
+        }
+        LevelingSystem.awardXP(xpReward, 'Victory in Single Combat');
+
+        const difficulty = SaveManager.get('settings.difficulty') || 'normal';
+        const enemyLevel = currentEnemyFighter?.level || 1;
+        const goldReward = EconomyManager.calculateBattleReward(difficulty, true, enemyLevel);
+        EconomyManager.addGold(goldReward, 'Battle Victory');
+
+        DurabilityManager.applyBattleWear();
+
+        const dropRate = DifficultyManager.getEquipmentDropRate();
+        if (Math.random() < dropRate) {
+          setTimeout(() => {
+            EquipmentManager.awardRandomDrop();
+          }, 1000);
+        }
+      } else {
+        SaveManager.increment('stats.totalLosses');
+        SaveManager.update('stats.winStreak', 0);
+        LevelingSystem.awardXP(50, 'Battle Participation');
+      }
+
+      setTimeout(() => {
+        if (window.showVictoryScreen) {
+          window.showVictoryScreen(victoryResult.winner);
+        }
+        currentPlayerFighter = null;
+        currentEnemyFighter = null;
+      }, 2000);
+      return;
+    }
+
+    // End turn with phase system
+    await combatPhaseManager.endTurn(attacker);
+
+    // Next turn
+    turnManager.nextTurn();
+    setTimeout(callback, 800);
+  }
+
+  /**
+   * Register phase hooks for combat systems
+   */
+  static registerCombatHooks() {
+    // Hook: Combo system integration
+    combatPhaseManager.registerPhaseHook(
+      CombatPhase.ACTION_EXECUTION,
+      (data) => {
+        const { action } = data;
+        
+        // Record action for combo tracking
+        let skillName = null;
+        if (action.type === 'skill' && action.skillIndex !== undefined) {
+          skillName = action.attacker.skills[action.skillIndex]?.name;
+        }
+        comboSystem.recordAction(action.attacker, action.type, skillName);
+
+        return { comboRecorded: true };
+      },
+      5
+    );
+
+    // Hook: Apply combo effects to damage
+    combatPhaseManager.registerPhaseHook(
+      CombatPhase.ACTION_RESOLUTION,
+      (data) => {
+        const { action, result } = data;
+        
+        if (action.type === 'attack' && result.damage) {
+          result.damage = comboSystem.applyComboEffects(action.attacker, action.target, result.damage);
+        }
+
+        return { comboEffectsApplied: true };
+      },
+      8
+    );
+
+    // Hook: Execute actual action logic
+    combatPhaseManager.registerPhaseHook(
+      CombatPhase.ACTION_EXECUTION,
+      (data) => {
+        const { action } = data;
+        const result = { damage: 0, success: true };
+
+        switch (action.type) {
+          case 'attack': {
+            let attackResult = action.attacker.normalAttack();
+            result.damage = attackResult.damage;
+            result.isCritical = attackResult.isCritical;
+
+            const actualDmg = action.target.takeDamage(result.damage);
+
+            // Track player stats
+            if (action.attacker.isPlayer) {
+              SaveManager.increment('stats.totalDamageDealt', actualDmg);
+              if (attackResult.isCritical) {
+                SaveManager.increment('stats.criticalHits');
+              }
+
+              if (currentStoryMission) {
+                StoryMode.trackMissionEvent('damage_dealt', { amount: actualDmg });
+                if (attackResult.isCritical) {
+                  StoryMode.trackMissionEvent('critical_hit');
+                }
+              }
+            }
+            if (action.target.isPlayer) {
+              SaveManager.increment('stats.totalDamageTaken', actualDmg);
+
+              if (currentStoryMission) {
+                StoryMode.trackMissionEvent('damage_taken', { amount: actualDmg });
+              }
+            }
+
+            // Combo counter (old system - keep for compatibility)
+            action.attacker.combo++;
+            if (action.attacker.combo >= 3) {
+              this.showComboIndicator(action.attacker.combo);
+              const bonusDmg = Math.ceil(actualDmg * 0.2);
+              action.target.health -= bonusDmg;
+              Logger.log(
+                `<div class="attack-div text-center" style="background: #fff3cd;">🔥 <strong>COMBO x${action.attacker.combo}!</strong> <span class="badge bg-warning">+${bonusDmg} bonus damage</span></div>`
+              );
+
+              if (currentStoryMission && action.attacker.isPlayer) {
+                StoryMode.trackMissionEvent('combo', { combo: action.attacker.combo });
+              }
+            }
+            break;
+          }
+
+          case 'defend':
+            action.attacker.defend();
+            action.attacker.combo = 0;
+
+            if (currentStoryMission && action.attacker.isPlayer) {
+              StoryMode.trackMissionEvent('defended');
+            }
+            break;
+
+          case 'skill': {
+            const skillIndex = action.skillIndex;
+            if (skillIndex !== undefined && action.attacker.skills[skillIndex]) {
+              const skill = action.attacker.skills[skillIndex];
+              const success = skill.use(action.attacker, action.target);
+              result.success = success;
+              
+              if (success) {
+                if (action.attacker.isPlayer) {
+                  SaveManager.increment('stats.skillsUsed');
+
+                  if (currentStoryMission) {
+                    StoryMode.trackMissionEvent('skill_used');
+                  }
+                }
+                action.attacker.combo = 0;
+              }
+            }
+            break;
+          }
+
+          case 'item': {
+            const previousHealth = action.attacker.health;
+            action.attacker.useItem();
+            
+            if (action.attacker.isPlayer) {
+              SaveManager.increment('stats.itemsUsed');
+
+              if (currentStoryMission) {
+                const isHealing = action.attacker.health > previousHealth;
+                StoryMode.trackMissionEvent('item_used', { isHealing });
+              }
+            }
+            action.attacker.combo = 0;
+            break;
+          }
+        }
+
+        // Reset defender combo on damage
+        if (action.type === 'attack' || action.type === 'skill') {
+          action.target.combo = 0;
+        }
+
+        return result;
+      },
+      10
+    );
+
+    console.log('✅ Combat phase hooks registered');
+  }
+
+  /**
    * AI decision making
    */
   static chooseAIAction(fighter) {
@@ -682,6 +1001,9 @@ export default class Game {
     
     // Clear AI managers
     aiManagers = {};
+    
+    // Reset phase manager
+    combatPhaseManager.reset();
 
     // Remove any Web Components
     document.querySelectorAll('action-selection').forEach((el) => el.remove());
