@@ -76,8 +76,6 @@ export class TitleScreen extends BaseComponent {
         text-align: center;
         max-width: 700px;
         padding: 20px;
-        max-height: 100vh;
-        overflow-y: auto;
       }
 
       .logo {
