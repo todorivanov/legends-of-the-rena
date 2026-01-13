@@ -76,7 +76,7 @@ export function mockLocalStorage(data = {}) {
  */
 export function createMockSaveData(overrides = {}) {
   return {
-    version: '4.4.0',
+    version: '4.10.0',
     profile: {
       name: 'Test Player',
       level: 1,

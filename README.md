@@ -1,6 +1,8 @@
-# Legends of the Arena v4.9 ⚔️
+# Legends of the Arena v4.10 ⚔️
 
 **A modern browser-based RPG fighting game with tactical grid combat, story campaigns, character progression, and dynamic equipment systems.**
+
+> **Latest Update (v4.10.0):** Major state management refactor! All game systems now use centralized gameStore for better performance and reliability. Fixed story mission completion, statistics tracking, marketplace activity, and numerous UI bugs. [See full changelog](CHANGELOG.md#4100---2026-01-13)
 
 ## 🎮 [Play Live Demo](https://todorivanov.github.io/legends-of-the-rena/)
 

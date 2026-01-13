@@ -5,35 +5,32 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { LevelingSystem } from '../../src/game/LevelingSystem.js';
 
+// Mock gameStore
+let mockState = {
+  player: { level: 1, xp: 0 },
+};
+
+vi.mock('../../src/store/gameStore.js', () => ({
+  gameStore: {
+    getState: vi.fn(() => mockState),
+    dispatch: vi.fn((action) => {
+      if (action.type === 'ADD_XP') {
+        mockState.player.xp += action.payload.amount;
+      } else if (action.type === 'LEVEL_UP') {
+        mockState.player.level += 1;
+      }
+    }),
+  },
+}));
+
 // Mock SaveManager
-vi.mock('../../src/utils/SaveManagerV2.js', () => {
-  let mockData = {};
-  return {
-    SaveManagerV2: {
-      load: vi.fn(() => null),
-      get: vi.fn((key) => {
-        const keys = key.split('.');
-        let value = mockData;
-        for (const k of keys) {
-          value = value?.[k];
-        }
-        return value;
-      }),
-      update: vi.fn((key, value) => {
-        const keys = key.split('.');
-        let obj = mockData;
-        for (let i = 0; i < keys.length - 1; i++) {
-          if (!obj[keys[i]]) obj[keys[i]] = {};
-          obj = obj[keys[i]];
-        }
-        obj[keys[keys.length - 1]] = value;
-      }),
-      _setMockData: (data) => {
-        mockData = data;
-      },
-    },
-  };
-});
+vi.mock('../../src/utils/SaveManagerV2.js', () => ({
+  SaveManagerV2: {
+    load: vi.fn(() => null),
+    get: vi.fn(),
+    update: vi.fn(),
+  },
+}));
 
 // Mock Logger
 vi.mock('../../src/utils/logger.js', () => ({
@@ -57,11 +54,11 @@ vi.mock('../../src/game/DifficultyManager.js', () => ({
 }));
 
 describe('LevelingSystem', () => {
-  beforeEach(async () => {
-    const { SaveManagerV2 } = await import('../../src/utils/SaveManagerV2.js');
-    SaveManagerV2._setMockData({
-      profile: { level: 1, xp: 0 },
-    });
+  beforeEach(() => {
+    // Reset mock state before each test
+    mockState = {
+      player: { level: 1, xp: 0 },
+    };
     vi.clearAllMocks();
   });
 
@@ -151,12 +148,10 @@ describe('LevelingSystem', () => {
   });
 
   describe('awardXP()', () => {
-    it('should award XP to player', async () => {
-      const { SaveManagerV2 } = await import('../../src/utils/SaveManagerV2.js');
-      
+    it('should award XP to player', () => {
       const result = LevelingSystem.awardXP(50, 'Victory');
       
-      expect(SaveManagerV2.update).toHaveBeenCalledWith('profile.xp', 50);
+      expect(mockState.player.xp).toBe(50);
       expect(result.xpGained).toBe(50);
     });
 
@@ -177,13 +172,12 @@ describe('LevelingSystem', () => {
       expect(result.oldLevel).toBe(1);
     });
 
-    it('should update level in save data', async () => {
-      const { SaveManagerV2 } = await import('../../src/utils/SaveManagerV2.js');
+    it('should update level in save data', () => {
       const xpForLevel2 = LevelingSystem.getXPForLevel(1);
       
       LevelingSystem.awardXP(xpForLevel2, 'Level Up');
       
-      expect(SaveManagerV2.update).toHaveBeenCalledWith('profile.level', 2);
+      expect(mockState.player.level).toBe(2);
     });
 
     it('should play victory sound on level up', async () => {

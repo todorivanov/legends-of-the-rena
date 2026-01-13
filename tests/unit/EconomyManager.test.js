@@ -5,46 +5,36 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { EconomyManager } from '../../src/game/EconomyManager.js';
 
+// Mock gameStore
+let mockState = {
+  player: { gold: 100 },
+  stats: { totalGoldEarned: 0, totalGoldSpent: 0 },
+};
+
+vi.mock('../../src/store/gameStore.js', () => ({
+  gameStore: {
+    getState: vi.fn(() => mockState),
+    dispatch: vi.fn((action) => {
+      if (action.type === 'ADD_GOLD') {
+        mockState.player.gold += action.payload.amount;
+        mockState.stats.totalGoldEarned += action.payload.amount;
+      } else if (action.type === 'SPEND_GOLD') {
+        mockState.player.gold -= action.payload.amount;
+        mockState.stats.totalGoldSpent += action.payload.amount;
+      }
+    }),
+  },
+}));
+
 // Mock SaveManager
-vi.mock('../../src/utils/SaveManagerV2.js', () => {
-  let mockData = {};
-  return {
-    SaveManagerV2: {
-      load: vi.fn(() => null),
-      get: vi.fn((key) => {
-        const keys = key.split('.');
-        let value = mockData;
-        for (const k of keys) {
-          value = value?.[k];
-        }
-        return value;
-      }),
-      update: vi.fn((key, value) => {
-        const keys = key.split('.');
-        let obj = mockData;
-        for (let i = 0; i < keys.length - 1; i++) {
-          if (!obj[keys[i]]) obj[keys[i]] = {};
-          obj = obj[keys[i]];
-        }
-        obj[keys[keys.length - 1]] = value;
-      }),
-      increment: vi.fn((key, amount) => {
-        const keys = key.split('.');
-        let obj = mockData;
-        for (let i = 0; i < keys.length - 1; i++) {
-          if (!obj[keys[i]]) obj[keys[i]] = {};
-          obj = obj[keys[i]];
-        }
-        const lastKey = keys[keys.length - 1];
-        obj[lastKey] = (obj[lastKey] || 0) + amount;
-      }),
-      _setMockData: (data) => {
-        mockData = data;
-      },
-      _getMockData: () => mockData,
-    },
-  };
-});
+vi.mock('../../src/utils/SaveManagerV2.js', () => ({
+  SaveManagerV2: {
+    load: vi.fn(() => null),
+    get: vi.fn(),
+    update: vi.fn(),
+    increment: vi.fn(),
+  },
+}));
 
 // Mock Logger
 vi.mock('../../src/utils/logger.js', () => ({
@@ -54,32 +44,27 @@ vi.mock('../../src/utils/logger.js', () => ({
 }));
 
 describe('EconomyManager', () => {
-  beforeEach(async () => {
-    // Reset mock data before each test
-    const { SaveManagerV2 } = await import('../../src/utils/SaveManagerV2.js');
-    SaveManagerV2._setMockData({
-      profile: { gold: 100 },
+  beforeEach(() => {
+    // Reset mock state before each test
+    mockState = {
+      player: { gold: 100 },
       stats: { totalGoldEarned: 0, totalGoldSpent: 0 },
-    });
+    };
     vi.clearAllMocks();
   });
 
   describe('addGold()', () => {
-    it('should add gold to player balance', async () => {
-      const { SaveManagerV2 } = await import('../../src/utils/SaveManagerV2.js');
-      
+    it('should add gold to player balance', () => {
       const success = EconomyManager.addGold(50, 'Victory');
       
       expect(success).toBe(true);
-      expect(SaveManagerV2.update).toHaveBeenCalledWith('profile.gold', 150);
+      expect(mockState.player.gold).toBe(150);
     });
 
-    it('should track total gold earned', async () => {
-      const { SaveManagerV2 } = await import('../../src/utils/SaveManagerV2.js');
-      
+    it('should track total gold earned', () => {
       EconomyManager.addGold(75, 'Quest');
       
-      expect(SaveManagerV2.increment).toHaveBeenCalledWith('stats.totalGoldEarned', 75);
+      expect(mockState.stats.totalGoldEarned).toBe(75);
     });
 
     it('should return false for negative amounts', () => {
@@ -104,21 +89,17 @@ describe('EconomyManager', () => {
   });
 
   describe('spendGold()', () => {
-    it('should spend gold from player balance', async () => {
-      const { SaveManagerV2 } = await import('../../src/utils/SaveManagerV2.js');
-      
+    it('should spend gold from player balance', () => {
       const success = EconomyManager.spendGold(50, 'Equipment');
       
       expect(success).toBe(true);
-      expect(SaveManagerV2.update).toHaveBeenCalledWith('profile.gold', 50);
+      expect(mockState.player.gold).toBe(50);
     });
 
-    it('should track total gold spent', async () => {
-      const { SaveManagerV2 } = await import('../../src/utils/SaveManagerV2.js');
-      
+    it('should track total gold spent', () => {
       EconomyManager.spendGold(30, 'Item');
       
-      expect(SaveManagerV2.increment).toHaveBeenCalledWith('stats.totalGoldSpent', 30);
+      expect(mockState.stats.totalGoldSpent).toBe(30);
     });
 
     it('should return false if insufficient gold', () => {
@@ -182,9 +163,8 @@ describe('EconomyManager', () => {
       expect(gold).toBe(100);
     });
 
-    it('should return 0 if no gold in save', async () => {
-      const { SaveManagerV2 } = await import('../../src/utils/SaveManagerV2.js');
-      SaveManagerV2._setMockData({ profile: {} });
+it('should return 0 if no gold in save', () => {
+      mockState.player.gold = 0;
       
       const gold = EconomyManager.getGold();
       

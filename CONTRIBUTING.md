@@ -131,6 +131,34 @@ npm run check
 - **JSDoc comments** - Document all functions/classes
 - **Meaningful names** - Clear variable and function names
 
+### State Management (v4.10.0+)
+
+**Important:** All game state management uses `gameStore` (centralized Redux-style store):
+
+```javascript
+// ✅ DO: Use gameStore for state
+import { gameStore } from '../store/gameStore.js';
+import { incrementStat, addGold } from '../store/actions.js';
+
+gameStore.dispatch(incrementStat('totalWins'));
+gameStore.dispatch(addGold(100));
+
+const state = gameStore.getState();
+const gold = state.player.gold;
+
+// ❌ DON'T: Use SaveManager for game state
+SaveManager.update('profile.gold', newGold); // Wrong!
+SaveManager.increment('stats.totalWins');    // Wrong!
+```
+
+**Key Rules:**
+1. **Read State**: Use `gameStore.getState()` 
+2. **Update State**: Use `gameStore.dispatch(action)`
+3. **SaveManager**: Only for save/load operations, not game state
+4. **All Changes**: Must go through actions/reducers
+
+📖 **See:** [State Management Documentation](docs/STATE_MANAGEMENT.md) for details.
+
 ### File Organization
 
 ```

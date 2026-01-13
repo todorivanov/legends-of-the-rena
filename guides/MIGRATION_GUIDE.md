@@ -1,4 +1,248 @@
-# Migration Guide - ObjectFighterJS v2.0
+# Migration Guide - ObjectFighterJS
+
+## Version 4.10.0 - State Management Migration (2026-01-13)
+
+### Overview
+Version 4.10.0 represents a major architectural refactor that migrates all game state management from direct `SaveManager` calls to a centralized `gameStore` (Redux-style state management). This provides better state consistency, easier debugging, and proper separation of concerns.
+
+### What Changed?
+
+**State Management Architecture:**
+- All game managers now use `gameStore` as the single source of truth
+- SaveManager is now only used for persistence (save/load operations)
+- State mutations happen through dispatched actions
+- 30-second auto-save writes gameStore state to localStorage
+
+### Breaking Changes for Developers
+
+#### 1. SaveManager.load() Returns Behavior
+**Before (4.2.0):**
+```javascript
+const profile = SaveManager.load(); // Always returned default profile if none exists
+expect(profile.profile.characterCreated).toBe(false);
+```
+
+**After (4.10.0):**
+```javascript
+const profile = SaveManager.load(); // Returns null if no save exists
+if (profile === null) {
+  // No save exists, handle first-time setup
+}
+```
+
+**Migration:**
+- Update any code expecting a default profile to check for `null` first
+- Use `gameStore.getState()` for reading current game state
+- Use `SaveManager.load()` only for actual load operations
+
+#### 2. Statistics Tracking
+**Before (4.2.0):**
+```javascript
+SaveManager.increment('stats.totalWins');
+SaveManager.update('stats.winStreak', 0);
+```
+
+**After (4.10.0):**
+```javascript
+import { gameStore } from '../store/gameStore.js';
+import { incrementStat, updateStreak } from '../store/actions.js';
+
+gameStore.dispatch(incrementStat('totalWins'));
+gameStore.dispatch(updateStreak(false)); // Auto-updates winStreak and bestStreak
+```
+
+**Migration:**
+- Replace all `SaveManager.increment('stats.X')` with `gameStore.dispatch(incrementStat('X'))`
+- Replace streak management with `updateStreak(won)` action
+- Import gameStore and actions in any file that tracks stats
+
+#### 3. Reading Game State
+**Before (4.2.0):**
+```javascript
+const gold = SaveManager.get('profile.gold');
+const level = SaveManager.get('profile.level');
+```
+
+**After (4.10.0):**
+```javascript
+import { gameStore } from '../store/gameStore.js';
+
+const state = gameStore.getState();
+const gold = state.player.gold;
+const level = state.player.level;
+```
+
+**Migration:**
+- Replace `SaveManager.get()` with `gameStore.getState()` for reading state
+- Access nested properties directly from state object
+- State structure: `player`, `inventory`, `equipped`, `stats`, `story`, `unlocks`, `settings`
+
+#### 4. Updating Game State
+**Before (4.2.0):**
+```javascript
+SaveManager.update('profile.gold', newGold);
+SaveManager.update('inventory.equipment', newEquipment);
+```
+
+**After (4.10.0):**
+```javascript
+import { gameStore } from '../store/gameStore.js';
+import { addGold, spendGold, addItem, removeItem } from '../store/actions.js';
+
+gameStore.dispatch(addGold(100));
+gameStore.dispatch(spendGold(50));
+gameStore.dispatch(addItem(itemId));
+gameStore.dispatch(removeItem(itemId));
+```
+
+**Migration:**
+- Use specific action creators for state mutations
+- Never mutate state directly
+- All changes go through `gameStore.dispatch()`
+
+### Data Format Changes
+
+#### Completed Missions Structure
+**Before (4.2.0):**
+```javascript
+completedMissions: ['mission_id_1', 'mission_id_2']
+```
+
+**After (4.10.0):**
+```javascript
+completedMissions: {
+  'mission_id_1': { stars: 3, completedAt: 1234567890 },
+  'mission_id_2': { stars: 2, completedAt: 1234567900 }
+}
+```
+
+**Migration:**
+- Array format is automatically migrated on load
+- Check missions with `if (state.story.completedMissions[missionId])`
+- Get star count: `state.story.completedMissions[missionId].stars`
+
+### Available Actions
+
+**Player Actions:**
+```javascript
+updatePlayer(updates)       // Update player properties
+addGold(amount)            // Add gold
+spendGold(amount)          // Spend gold
+addXP(amount)              // Award XP
+levelUp()                  // Level up player
+```
+
+**Inventory Actions:**
+```javascript
+addItem(itemId)            // Add item to inventory
+removeItem(itemId)         // Remove item from inventory
+equipItem(itemId, slot)    // Equip item
+unequipItem(slot)          // Unequip item
+updateDurability(itemId, durability)  // Update item durability
+```
+
+**Statistics Actions:**
+```javascript
+incrementStat(statName, amount = 1)  // Increment any stat
+updateStreak(won)                    // Update win/loss streak
+```
+
+**Story Actions:**
+```javascript
+setCurrentMissionState(missionState)     // Set active mission
+completeMission(missionId, stars, rewards)  // Complete mission
+unlockRegion(regionId)                   // Unlock region
+unlockMission(missionId)                 // Unlock mission
+```
+
+**Achievement Actions:**
+```javascript
+unlockAchievement(achievementId)  // Unlock achievement
+```
+
+### Testing Changes
+
+**Mock SaveManager in Tests:**
+```javascript
+vi.mock('../../src/utils/SaveManagerV2.js', () => ({
+  SaveManagerV2: {
+    load: vi.fn(() => null),  // Important: return null
+    save: vi.fn(() => true),
+    get: vi.fn(),
+    update: vi.fn(),
+  },
+}));
+```
+
+**Test Expectations:**
+```javascript
+// Old
+expect(profile.profile.characterCreated).toBe(false);
+
+// New
+expect(profile).toBeNull();
+```
+
+### File Structure Changes
+
+**New State Management Files:**
+- `src/store/gameStore.js` - Main store with reducer and auto-save
+- `src/store/actions.js` - All action creators and types
+- `src/store/reducers.js` - All state mutation logic
+- `src/store/index.js` - Store exports
+
+**Modified Game Managers:**
+- `src/game/game.js` - Combat engine (28 stat tracking calls)
+- `src/game/StoryMode.js` - Story mode management
+- `src/game/EconomyManager.js` - Gold management
+- `src/game/LevelingSystem.js` - XP/leveling
+- `src/game/EquipmentManager.js` - Equipment/inventory
+- `src/game/DurabilityManager.js` - Item durability
+- `src/game/AchievementManager.js` - Achievements
+- `src/game/MarketplaceManager.js` - Shop operations
+
+### Benefits of Migration
+
+1. **Single Source of Truth** - All state in one place
+2. **Predictable State Updates** - Actions define all mutations
+3. **Easier Debugging** - Can log all state changes
+4. **Better Testing** - Mock gameStore instead of SaveManager
+5. **Atomic Updates** - State changes are batched
+6. **Performance** - Reduced localStorage operations
+7. **Time Travel Debugging** - Can replay actions (future feature)
+
+### Common Pitfalls
+
+❌ **Don't:**
+```javascript
+// Direct SaveManager calls for game state
+SaveManager.update('profile.gold', newGold);
+
+// Mutating state directly
+const state = gameStore.getState();
+state.player.gold = 100; // WRONG
+
+// Reading stale state
+const gold = gameStore.getState().player.gold;
+// ... long operation ...
+// gold might be outdated now
+```
+
+✅ **Do:**
+```javascript
+// Use actions for state updates
+gameStore.dispatch(addGold(100));
+
+// Create new state via reducers
+const newState = { ...state, player: { ...state.player, gold: 100 } };
+
+// Read fresh state when needed
+const currentGold = gameStore.getState().player.gold;
+```
+
+---
+
+## Version 2.0 - Tech Stack Modernization (Previous)
 
 ## What Changed?
 

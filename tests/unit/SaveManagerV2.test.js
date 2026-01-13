@@ -53,7 +53,7 @@ describe('SaveManagerV2', () => {
       const profile = SaveManagerV2.getDefaultProfile();
 
       expect(profile).toBeDefined();
-      expect(profile.version).toBe('4.2.0');
+      expect(profile.version).toBe('4.10.0');
       expect(profile.profile).toBeDefined();
       expect(profile.stats).toBeDefined();
       expect(profile.equipped).toBeDefined();
@@ -493,7 +493,7 @@ describe('SaveManagerV2', () => {
 
       expect(slots[0].level).toBe(10);
       expect(slots[0].gold).toBe(500);
-      expect(slots[0].version).toBe('4.2.0');
+      expect(slots[0].version).toBe('4.10.0');
     });
   });
 

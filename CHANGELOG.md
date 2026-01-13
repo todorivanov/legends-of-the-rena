@@ -5,6 +5,144 @@ All notable changes to Legends of the Arena will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.10.0] - 2026-01-13
+
+### Fixed - Complete State Management Migration 🔧
+
+**Critical Bug Fixes:**
+- **Story Mode Mission Completion** - Fixed "Mission failed - Unknown mission" error after winning battles
+  - StoryMode now uses gameStore instead of SaveManager for all state operations
+  - Mission completion properly tracks and saves mission state
+  - All story progress correctly persists across sessions
+
+- **Statistics Tracking** - Fixed ALL stat tracking across the entire game (28+ calls)
+  - Migrated all `SaveManager.increment()` calls to `gameStore.dispatch(incrementStat())`
+  - Battle statistics (wins, losses, damage dealt, crits, etc.) now track in all modes
+  - Win/loss streak tracking fully migrated to gameStore with `UPDATE_STREAK` action
+  - Story mode combat now properly updates battle performance stats
+  - Combat stats work correctly in single combat, tournament, and story missions
+
+- **Marketplace Activity Stats** - Fixed items sold and gold from sales not tracking
+  - Stat tracking code was incorrectly placed after early return statement
+  - Now properly tracks `itemsSold` and `goldFromSales` on successful sales
+  - Purchase stats (`itemsPurchased`, `legendaryPurchases`) confirmed working
+
+**State Management Refactor:**
+- **Unified Architecture** - All game managers now use gameStore as single source of truth
+  - `StoryMode.js` - Fully migrated to gameStore actions
+  - `EconomyManager.js` - Reads gold from gameStore.getState()
+  - `LevelingSystem.js` - All XP/level operations via gameStore
+  - `EquipmentManager.js` - Inventory management through gameStore
+  - `DurabilityManager.js` - Durability updates + stat tracking
+  - `AchievementManager.js` - Achievement unlocks via gameStore
+  - `MarketplaceManager.js` - Shop operations with stat tracking
+  - `game.js` (Combat Engine) - All 28 stat tracking calls use gameStore
+
+- **Removed Force-Saves** - Eliminated 4 immediate save operations after combat
+  - Relies on 30-second auto-save interval instead
+  - Prevents excessive localStorage writes
+  - Reduces save file corruption risk
+
+**Profile & UI Fixes:**
+- **XP Display** - Fixed negative XP percentages (was showing -167%)
+  - ProfileScreen now uses `getLevelFromXP()` for correct level calculation
+  - Handles level/XP data mismatches gracefully
+  
+- **XP Progress Bar** - Fixed visual progress bar not filling
+  - Calculates progress locally from xpForCurrentLevel/xpForNextLevel
+  - Shows accurate visual representation of XP progress
+
+- **Story Progress** - Fixed story progress showing 0%
+  - Updated to handle new `completedMissions` object format: `{ 'mission_id': { stars: 3, completedAt: timestamp } }`
+  - Uses `Object.keys(completedMissions).length` instead of array length
+  - `getTotalStars()` correctly reads from object values
+
+- **Profile Dates** - Fixed "Invalid Date" display
+  - Added null checks for `createdAt` and `lastPlayedAt`
+  - Shows 'N/A' or current date as fallback
+  - Character creation now sets timestamps properly
+
+**Inventory & Equipment Fixes:**
+- **Equipped Items in Inventory** - Fixed equipped items still showing in inventory list
+  - `EQUIP_ITEM` reducer now removes item from inventory.equipment array
+  - `UNEQUIP_ITEM` reducer adds item back to inventory
+  - Equipped items properly filtered from inventory display
+
+- **Selling Items** - Fixed sold items not being removed from inventory
+  - Fixed critical bug in `REMOVE_ITEM` reducer
+  - Changed comparison from `item.id !== itemId` to `item !== itemId`
+  - Inventory stores string IDs, not objects
+
+**Save System Improvements:**
+- **Reset Progress** - Fixed reset creating default saves immediately
+  - Added `isResetting` flag to gameStore to prevent beforeunload save
+  - `SaveManager.load()` now returns `null` instead of auto-creating profiles
+  - True reset now clears all data and forces character creation
+
+- **Character Creation** - Fixed profile access denied after creating character
+  - Character creation now dispatches `updatePlayer()` action
+  - Sets `characterCreated: true` in gameStore (enables route guards)
+  - Auto-save only starts after character creation completes
+  - Added `createdAt` and `lastPlayedAt` timestamps
+
+**UI/UX Fixes:**
+- **Wiki Back Button** - Fixed non-functional back button on Game Wiki screen
+  - Removed duplicate back button elements
+  - Added missing `id="backBtn"` attribute
+  - Event listener now properly connects to button
+
+**Test Suite Updates:**
+- **SaveManagerV2 Tests** - Updated all tests to expect `null` when no save exists
+  - Changed from expecting default profile to expecting `null`
+  - Matches new SaveManager behavior
+  
+- **Unit Test Mocks** - Fixed "SaveManagerV2.load is not a function" errors
+  - Added `load: vi.fn(() => null)` to SaveManager mocks
+  - Fixed AchievementManager, EconomyManager, and LevelingSystem tests
+  - All 8 previously failing tests now pass
+
+### Changed
+- **Data Migration** - `completedMissions` format changed from array to object
+  - Old: `['mission_id_1', 'mission_id_2']`
+  - New: `{ 'mission_id_1': { stars: 3, completedAt: 1234567890 } }`
+  - Provides star ratings and completion timestamps
+  - Backwards compatible via migration in gameStore
+
+- **Auto-Save Behavior** - Conditional auto-save initialization
+  - Auto-save only starts if `characterCreated: true`
+  - Prevents empty save file creation before character setup
+  - Starts immediately after character creation event
+
+### Technical Details
+
+**GameStore Actions Used:**
+- `setCurrentMissionState` - Track active story mission
+- `completeMissionAction` - Complete mission with stars/rewards
+- `unlockRegionAction` - Unlock new story regions
+- `incrementStat` - Increment any statistic by amount
+- `updateStreak` - Update win/loss streak and best streak
+- `equipItemAction` - Equip item and remove from inventory
+- `unequipItemAction` - Unequip item and return to inventory
+- `removeItem` - Remove item from inventory (selling/consuming)
+- `addItem` - Add item to inventory
+- `updatePlayer` - Update player properties
+- `unlockAchievementAction` - Unlock achievement
+
+**Files Modified:**
+- `src/game/game.js` - 28 stat tracking calls migrated
+- `src/game/StoryMode.js` - Complete gameStore migration
+- `src/game/MarketplaceManager.js` - Fixed stat tracking placement
+- `src/store/reducers.js` - Fixed EQUIP_ITEM, UNEQUIP_ITEM, REMOVE_ITEM
+- `src/store/gameStore.js` - Added isResetting flag, conditional auto-save
+- `src/utils/SaveManagerV2.js` - load() returns null, no auto-creation
+- `src/components/ProfileScreen.js` - Fixed XP/progress/dates/story display
+- `src/components/CharacterCreation.js` - Added timestamps, gameStore sync
+- `src/components/WikiScreen.js` - Fixed back button
+- `src/main-new.js` - Conditional auto-save start
+- All test files - Updated for new SaveManager behavior
+
+---
+
 ## [4.9.0] - 2026-01-09
 
 ### Added - Weapon Range & Attack Distance System 🎯
