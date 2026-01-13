@@ -9,7 +9,7 @@ import { soundManager } from '../utils/soundManager.js';
 import { ACHIEVEMENTS, getAchievementById } from '../data/achievements.js';
 import { EconomyManager } from './EconomyManager.js';
 import { gameStore } from '../store/gameStore.js';
-import { unlockAchievement as unlockAchievementAction } from '../store/actions.js';
+import { unlockAchievement as unlockAchievementAction, incrementStat } from '../store/actions.js';
 
 export class AchievementManager {
   /**
@@ -320,13 +320,13 @@ export class AchievementManager {
 
     // Check if boss
     if (mission.type === 'boss') {
-      SaveManager.increment('stats.bossesDefeated');
+      gameStore.dispatch(incrementStat('bossesDefeated'));
       this.unlockAchievement('boss_slayer');
     }
 
     // Check if survival
     if (mission.type === 'survival') {
-      SaveManager.increment('stats.survivalMissionsCompleted');
+      gameStore.dispatch(incrementStat('survivalMissionsCompleted'));
       this.unlockAchievement('survivor');
     }
 
@@ -350,11 +350,11 @@ export class AchievementManager {
    * Track marketplace achievements
    */
   static trackMarketplacePurchase(item) {
-    SaveManager.increment('stats.marketplacePurchases');
+    gameStore.dispatch(incrementStat('marketplacePurchases'));
     this.unlockAchievement('first_purchase');
 
     if (item.rarity === 'legendary') {
-      SaveManager.increment('stats.legendaryPurchases');
+      gameStore.dispatch(incrementStat('legendaryPurchases'));
       this.unlockAchievement('legendary_buyer');
     }
 
@@ -362,13 +362,13 @@ export class AchievementManager {
   }
 
   static trackItemSold(goldEarned) {
-    SaveManager.increment('stats.itemsSold');
-    SaveManager.increment('stats.goldFromSales', goldEarned);
+    gameStore.dispatch(incrementStat('itemsSold'));
+    gameStore.dispatch(incrementStat('goldFromSales', goldEarned));
     this.checkAchievements();
   }
 
   static trackItemRepaired() {
-    SaveManager.increment('stats.itemsRepaired');
+    gameStore.dispatch(incrementStat('itemsRepaired'));
     this.unlockAchievement('first_repair');
     this.checkAchievements();
   }

@@ -7,7 +7,7 @@ import { compress, decompress, getSizeKB } from './compression.js';
 // Save keys
 const SAVE_KEY_PREFIX = 'legends_arena_save';
 const BACKUP_KEY_PREFIX = 'legends_arena_backup';
-const CURRENT_VERSION = '4.10.1';
+const CURRENT_VERSION = '4.10.2';
 const MAX_BACKUPS = 5;
 const MAX_SAVE_SLOTS = 3;
 

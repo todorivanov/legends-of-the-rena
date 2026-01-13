@@ -9,6 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [4.10.2] - 2026-01-13
+
+### Fixed
+- **Story Mode Achievements** - Fixed achievements not tracking for story missions, bosses, and survival modes
+- **Tournament Stats** - Fixed tournament statistics not being tracked properly
+- **Marketplace Stats** - Fixed marketplace purchase and sale statistics tracking
+- Migrated remaining `SaveManager.increment()` calls to use `gameStore.dispatch(incrementStat())`
+- Completed state management migration that was partially finished in v4.10.0
+
+---
+
 ## [4.10.1] - 2026-01-13
 
 ### Added - Spawn Zone Validation System \ud83c\udfaf

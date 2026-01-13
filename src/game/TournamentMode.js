@@ -8,6 +8,8 @@ import { LevelingSystem } from './LevelingSystem.js';
 import { EquipmentManager } from './EquipmentManager.js';
 import { Logger } from '../utils/logger.js';
 import { soundManager } from '../utils/soundManager.js';
+import { gameStore } from '../store/gameStore.js';
+import { incrementStat } from '../store/actions.js';
 
 export class TournamentMode {
   constructor() {
@@ -278,7 +280,7 @@ export class TournamentMode {
     this.awardChampionshipRewards();
 
     // Update tournament stats
-    SaveManager.increment('stats.tournamentsWon');
+    gameStore.dispatch(incrementStat('tournamentsWon'));
     SaveManager.save();
 
     this.endTournament();

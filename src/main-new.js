@@ -33,6 +33,7 @@ import {
   stopAutoSave,
   saveGameState,
 } from './store/index.js';
+import { incrementStat } from './store/actions.js';
 
 // Make bootstrap available globally if needed
 window.bootstrap = bootstrap;
@@ -708,7 +709,7 @@ function startTournament(opponents, difficulty) {
 
   appState.tournamentActive = true;
   appState.gameMode = 'tournament';
-  SaveManager.increment('stats.tournamentsPlayed');
+  gameStore.dispatch(incrementStat('tournamentsPlayed'));
 
   // Start first battle
   startTournamentBattle();
