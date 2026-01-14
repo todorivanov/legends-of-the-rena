@@ -2,6 +2,9 @@
  * Sound Manager - Handles game sound effects
  * Uses Web Audio API for better performance
  */
+
+import { ConsoleLogger, LogCategory } from './ConsoleLogger.js';
+
 export class SoundManager {
   constructor() {
     this.enabled = localStorage.getItem('soundEnabled') !== 'false';
@@ -19,12 +22,12 @@ export class SoundManager {
     try {
       this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
       this.initialized = true;
-      console.log('🔊 Sound system initialized');
+      ConsoleLogger.info(LogCategory.SOUND, '🔊 Sound system initialized');
 
       // Play a silent sound to "unlock" audio on mobile
       this.playTestSound();
     } catch (e) {
-      console.warn('Sound not supported:', e);
+      ConsoleLogger.warn(LogCategory.SOUND, 'Sound not supported:', e);
       this.enabled = false;
     }
   }

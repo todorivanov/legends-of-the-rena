@@ -1,4 +1,6 @@
 import { Referee } from '../entities/referee.js';
+import { ConsoleLogger, LogCategory } from '../utils/ConsoleLogger.js';
+
 // Helpers and EventManager imports removed - no longer needed after Team Battle removal
 import { Logger } from '../utils/logger.js';
 import { getFighters } from '../api/mockFighters.js';
@@ -40,7 +42,7 @@ export default class Game {
    */
   static setAutoBattle(enabled) {
     autoBattleEnabled = enabled;
-    console.log('🤖 Auto Battle:', enabled ? 'ENABLED' : 'DISABLED');
+    ConsoleLogger.info(LogCategory.COMBAT, '🤖 Auto Battle:', enabled ? 'ENABLED' : 'DISABLED');
 
     // Log to combat log
     const message = enabled
@@ -94,7 +96,7 @@ export default class Game {
     // Create AI for opponent
     if (!secondFighter.isPlayer) {
       aiManagers[secondFighter.id] = createAI(secondFighter, difficulty);
-      console.log('🤖 Enemy AI Personality:', aiManagers[secondFighter.id].getPersonalityInfo());
+      ConsoleLogger.info(LogCategory.COMBAT, '🤖 Enemy AI Personality:', aiManagers[secondFighter.id].getPersonalityInfo());
     }
 
     Logger.clearLog();
@@ -1002,7 +1004,7 @@ export default class Game {
       10
     );
 
-    console.log('✅ Combat phase hooks registered');
+    ConsoleLogger.info(LogCategory.COMBAT, '✅ Combat phase hooks registered');
   }
 
   /**
@@ -1106,13 +1108,13 @@ export default class Game {
   static initializeGridUI() {
     const arena = document.querySelector('combat-arena');
     if (!arena || !arena.shadowRoot) {
-      console.warn('Combat arena not found for grid UI');
+      ConsoleLogger.warn(LogCategory.COMBAT, 'Combat arena not found for grid UI');
       return;
     }
 
     const gridArea = arena.shadowRoot.querySelector('#grid-area');
     if (!gridArea) {
-      console.warn('Grid area not found in combat arena');
+      ConsoleLogger.warn(LogCategory.COMBAT, 'Grid area not found in combat arena');
       return;
     }
 
@@ -1125,7 +1127,7 @@ export default class Game {
     gridArea.innerHTML = '';
     gridArea.appendChild(gridUI);
 
-    console.log('🗺️ Grid UI initialized');
+    ConsoleLogger.info(LogCategory.COMBAT, '🗺️ Grid UI initialized');
   }
 
   /**

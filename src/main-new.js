@@ -11,6 +11,7 @@ import './components/index.js';
 
 // Import game modules
 import Game from './game/game.js';
+import { ConsoleLogger, LogCategory } from './utils/ConsoleLogger.js';
 // Team Battle removed - keeping only Story, Single Combat, and Tournament modes
 import { Fighter } from './entities/fighter.js';
 import { soundManager } from './utils/soundManager.js';
@@ -64,29 +65,29 @@ const appState = {
  * Initialize the application
  */
 function initApp() {
-  console.log('🎮 Legends of the Arena v4.0.0 - Initializing...');
+  ConsoleLogger.info(LogCategory.UI, '🎮 Legends of the Arena v4.0.0 - Initializing...');
 
   // Initialize store
-  console.log('📦 Store initialized with state:', gameStore.inspect());
+  ConsoleLogger.info(LogCategory.UI, '📦 Store initialized with state:', gameStore.inspect());
 
   // Start auto-save only if character is already created
   const state = gameStore.getState();
   if (state.player.characterCreated) {
     startAutoSave();
   } else {
-    console.log('⏰ Auto-save deferred until character creation');
+    ConsoleLogger.info(LogCategory.UI, '⏰ Auto-save deferred until character creation');
   }
 
   // Initialize router
   initializeRouter();
 
-  console.log(`💾 Save data loaded. Player Level: ${state.player.level}`);
-  console.log(`👤 Character created: ${state.player.characterCreated}`);
+  ConsoleLogger.info(LogCategory.UI, `💾 Save data loaded. Player Level: ${state.player.level}`);
+  ConsoleLogger.info(LogCategory.UI, `👤 Character created: ${state.player.characterCreated}`);
 
   // Load fighters data
   getFighters().then((fighters) => {
     appState.fighters = fighters;
-    console.log(`✅ Loaded ${fighters.length} fighters`);
+    ConsoleLogger.info(LogCategory.UI, `✅ Loaded ${fighters.length} fighters`);
 
     // Navigate to initial route
     const initialPath = state.player.characterCreated
@@ -122,7 +123,7 @@ function initializeRouter() {
     showOpponentSelection,
     showCombat: () => {
       // Combat is handled separately as it needs more context
-      console.log('Combat route accessed - needs battle setup first');
+      ConsoleLogger.info(LogCategory.UI, 'Combat route accessed - needs battle setup first');
     },
     showTournamentBracketScreen,
     showCampaignMapScreen,
@@ -134,7 +135,7 @@ function initializeRouter() {
     showMarketplaceScreen,
     showEquipmentScreen: () => {
       // Equipment screen to be implemented
-      console.log('Equipment screen - to be implemented');
+      ConsoleLogger.info(LogCategory.UI, 'Equipment screen - to be implemented');
     },
     showSaveManagementScreen,
   };
@@ -148,7 +149,7 @@ function initializeRouter() {
     });
   });
 
-  console.log('🧭 Router initialized with', routes.length, 'routes');
+  ConsoleLogger.info(LogCategory.UI, '🧭 Router initialized with', routes.length, 'routes');
 }
 
 /**
@@ -176,10 +177,10 @@ function initNavigationComponents() {
   if (state.settings.showPerformanceMonitor) {
     const perfMonitor = document.createElement('performance-monitor-ui');
     document.body.appendChild(perfMonitor);
-    console.log('⚡ Performance monitoring active');
+    ConsoleLogger.info(LogCategory.UI, '⚡ Performance monitoring active');
   }
 
-  console.log('✅ Navigation components initialized');
+  ConsoleLogger.info(LogCategory.UI, '✅ Navigation components initialized');
 }
 
 /**
@@ -191,7 +192,7 @@ function showCharacterCreation() {
 
   const charCreation = document.createElement('character-creation');
   charCreation.addEventListener('character-created', (e) => {
-    console.log('✅ Character created:', e.detail);
+    ConsoleLogger.info(LogCategory.UI, '✅ Character created:', e.detail);
     soundManager.init();
 
     // Start auto-save now that character is created
@@ -349,7 +350,7 @@ function showMissionBriefing(missionId) {
 
   briefing.addEventListener('start-mission', (e) => {
     const missionId = e.detail.missionId;
-    console.log('Starting mission:', missionId);
+    ConsoleLogger.info(LogCategory.UI, 'Starting mission:', missionId);
     soundManager.play('event');
     startStoryMission(missionId);
   });
@@ -363,7 +364,7 @@ function showMissionBriefing(missionId) {
 function startStoryMission(missionId) {
   const mission = getMissionById(missionId);
   if (!mission) {
-    console.error('Mission not found:', missionId);
+    ConsoleLogger.error(LogCategory.UI, 'Mission not found:', missionId);
     return;
   }
 
@@ -408,7 +409,7 @@ function startStoryMission(missionId) {
       isPlayer: false,
     });
   } else {
-    console.error('No enemy configuration found for mission:', missionId);
+    ConsoleLogger.error(LogCategory.UI, 'No enemy configuration found for mission:', missionId);
     return;
   }
 
@@ -444,7 +445,7 @@ function startStoryMission(missionId) {
       if (logElement) {
         Logger.setLogHolder(logElement);
         Logger.setAutoScroll(arena.autoScroll);
-        console.log('✅ Logger initialized for story mission combat');
+        ConsoleLogger.info(LogCategory.UI, '✅ Logger initialized for story mission combat');
 
         // Log mission start message
         if (mission.dialogue?.before) {
@@ -471,7 +472,7 @@ function startStoryMission(missionId) {
         // Start the game with the mission ID
         Game.startGame(playerFighter, enemyFighter, missionId);
       } else {
-        console.error('❌ Could not find log element in combat arena');
+        ConsoleLogger.error(LogCategory.UI, '❌ Could not find log element in combat arena');
       }
     });
   });
@@ -703,7 +704,7 @@ function showSaveManagementScreen() {
 function startTournament(opponents, difficulty) {
   // Initialize tournament
   if (!tournamentMode.startTournament(opponents, difficulty)) {
-    console.error('❌ Failed to start tournament');
+    ConsoleLogger.error(LogCategory.UI, '❌ Failed to start tournament');
     return;
   }
 
@@ -721,7 +722,7 @@ function startTournament(opponents, difficulty) {
 function startTournamentBattle() {
   const opponent = tournamentMode.getCurrentOpponent();
   if (!opponent) {
-    console.error('❌ No opponent available');
+    ConsoleLogger.error(LogCategory.UI, '❌ No opponent available');
     return;
   }
 
@@ -789,12 +790,12 @@ function showOpponentSelection() {
   gallery.playerMode = true; // Flag to show it's opponent selection
 
   gallery.addEventListener('fighter-selected', (e) => {
-    console.log('Opponent selected:', e.detail.fighter.name);
+    ConsoleLogger.info(LogCategory.UI, 'Opponent selected:', e.detail.fighter.name);
     appState.selectedFighters.push(e.detail.fighter);
   });
 
   gallery.addEventListener('selection-complete', (e) => {
-    console.log('Opponent chosen:', e.detail);
+    ConsoleLogger.info(LogCategory.UI, 'Opponent chosen:', e.detail);
     // Get player's character
     const state = gameStore.getState();
     const playerCharacter = createPlayerFighter(state.player.character);
@@ -843,7 +844,7 @@ function createPlayerFighter(characterData) {
   // Apply difficulty modifiers (modifies fighter in place)
   DifficultyManager.applyDifficultyModifiers(fighter, true); // true = isPlayer
 
-  console.log(
+  ConsoleLogger.info(LogCategory.UI, 
     `⚔️ Player Character: ${fighter.name} (Lvl ${SaveManager.get('profile.level')}, ${DifficultyManager.formatDifficultyDisplay()}) - HP: ${fighter.health}, STR: ${fighter.strength}`
   );
 
@@ -888,9 +889,9 @@ function startBattle(fighters, tournamentInfo = null) {
         Logger.setLogHolder(logElement);
         // Initialize Logger with arena's auto-scroll state
         Logger.setAutoScroll(arena.autoScroll);
-        console.log('✅ Logger initialized for combat arena');
-        console.log('📜 Auto-scroll:', arena.autoScroll ? 'ENABLED' : 'DISABLED');
-        console.log('Log element:', logElement);
+        ConsoleLogger.info(LogCategory.UI, '✅ Logger initialized for combat arena');
+        ConsoleLogger.info(LogCategory.UI, '📜 Auto-scroll:', arena.autoScroll ? 'ENABLED' : 'DISABLED');
+        ConsoleLogger.info(LogCategory.UI, 'Log element:', logElement);
 
         // Log tournament round info if this is a tournament battle
         if (tournamentInfo) {
@@ -918,8 +919,8 @@ function startBattle(fighters, tournamentInfo = null) {
           Logger.log(message);
         }
       } else {
-        console.error('❌ Could not find log element in combat arena');
-        console.error('Arena shadowRoot:', arena.shadowRoot);
+        ConsoleLogger.error(LogCategory.UI, '❌ Could not find log element in combat arena');
+        ConsoleLogger.error(LogCategory.UI, 'Arena shadowRoot:', arena.shadowRoot);
       }
 
       // Start game based on mode
@@ -927,7 +928,7 @@ function startBattle(fighters, tournamentInfo = null) {
         (appState.gameMode === 'single' || appState.gameMode === 'tournament') &&
         fighters.length >= 2
       ) {
-        console.log('🎮 Starting single fight:', fighters[0].name, 'vs', fighters[1].name);
+        ConsoleLogger.info(LogCategory.UI, '🎮 Starting single fight:', fighters[0].name, 'vs', fighters[1].name);
         Game.startGame(fighters[0], fighters[1]);
       }
     });

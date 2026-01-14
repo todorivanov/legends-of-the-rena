@@ -1,4 +1,6 @@
 import { BaseComponent } from './BaseComponent.js';
+import { ConsoleLogger, LogCategory } from '../utils/ConsoleLogger.js';
+
 import { SaveManagerV2 as SaveManager } from '../utils/SaveManagerV2.js';
 import { getAllClasses } from '../data/classes.js';
 import { gameStore } from '../store/gameStore.js';
@@ -245,7 +247,7 @@ export class CharacterCreation extends BaseComponent {
       })
     );
 
-    console.log('✅ Character created:', characterData);
+    ConsoleLogger.info(LogCategory.UI, '✅ Character created:', characterData);
 
     // Emit event
     this.emit('character-created', characterData);

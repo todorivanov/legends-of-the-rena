@@ -3,6 +3,8 @@
  */
 
 import LZString from 'lz-string';
+import { ConsoleLogger, LogCategory } from '../utils/ConsoleLogger.js';
+
 
 /**
  * Compress a string using LZ compression
@@ -15,7 +17,7 @@ export function compress(str) {
   try {
     return LZString.compressToUTF16(str);
   } catch (error) {
-    console.error('Compression failed:', error);
+    ConsoleLogger.error(LogCategory.SAVE_SYSTEM, 'Compression failed:', error);
     return str; // Return original if compression fails
   }
 }
@@ -32,7 +34,7 @@ export function decompress(compressed) {
     const decompressed = LZString.decompressFromUTF16(compressed);
     return decompressed || compressed;
   } catch (error) {
-    console.error('Decompression failed:', error);
+    ConsoleLogger.error(LogCategory.SAVE_SYSTEM, 'Decompression failed:', error);
     return compressed; // Return original if decompression fails
   }
 }
@@ -57,7 +59,7 @@ export function decompressJSON(compressed) {
   try {
     return JSON.parse(decompressed);
   } catch (error) {
-    console.error('JSON parse failed:', error);
+    ConsoleLogger.error(LogCategory.SAVE_SYSTEM, 'JSON parse failed:', error);
     return null;
   }
 }

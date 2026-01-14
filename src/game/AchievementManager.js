@@ -3,6 +3,8 @@
  */
 
 import { SaveManagerV2 as SaveManager } from '../utils/SaveManagerV2.js';
+import { ConsoleLogger, LogCategory } from '../utils/ConsoleLogger.js';
+
 import { LevelingSystem } from './LevelingSystem.js';
 import { Logger } from '../utils/logger.js';
 import { soundManager } from '../utils/soundManager.js';
@@ -49,7 +51,7 @@ export class AchievementManager {
 
     const achievement = getAchievementById(achievementId);
     if (!achievement) {
-      console.error(`Achievement not found: ${achievementId}`);
+      ConsoleLogger.error(LogCategory.ACHIEVEMENT, `Achievement not found: ${achievementId}`);
       return false;
     }
 
@@ -69,7 +71,7 @@ export class AchievementManager {
     // Show achievement notification
     this.showAchievementNotification(achievement);
 
-    console.log(`🏅 Achievement Unlocked: ${achievement.name}`);
+    ConsoleLogger.info(LogCategory.ACHIEVEMENT, `🏅 Achievement Unlocked: ${achievement.name}`);
     return true;
   }
 

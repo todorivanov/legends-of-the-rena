@@ -10,6 +10,7 @@ import { Logger } from '../utils/logger.js';
 import { soundManager } from '../utils/soundManager.js';
 import { gameStore } from '../store/gameStore.js';
 import { incrementStat } from '../store/actions.js';
+import { ConsoleLogger, LogCategory } from '../utils/ConsoleLogger.js';
 
 export class TournamentMode {
   constructor() {
@@ -28,7 +29,7 @@ export class TournamentMode {
    */
   startTournament(opponents, difficulty = 'normal') {
     if (opponents.length !== 4) {
-      console.error('❌ Tournament requires exactly 4 opponents');
+      ConsoleLogger.error(LogCategory.TOURNAMENT, '❌ Tournament requires exactly 4 opponents');
       return false;
     }
 
@@ -39,9 +40,9 @@ export class TournamentMode {
     this.playerWins = 0;
     this.isActive = true;
 
-    console.log('🏆 Tournament Started!');
-    console.log(`📋 Difficulty: ${difficulty}`);
-    console.log(`👥 Opponents: ${opponents.map((f) => f.name).join(', ')}`);
+    ConsoleLogger.info(LogCategory.TOURNAMENT, '🏆 Tournament Started!');
+    ConsoleLogger.info(LogCategory.TOURNAMENT, `📋 Difficulty: ${difficulty}`);
+    ConsoleLogger.info(LogCategory.TOURNAMENT, `👥 Opponents: ${opponents.map((f) => f.name).join(', ')}`);
 
     // Apply difficulty modifiers to opponents
     this.applyDifficultyModifiers();
@@ -96,7 +97,8 @@ export class TournamentMode {
       opponent.strength = Math.floor(opponent.strength * mod.str);
     });
 
-    console.log(
+    ConsoleLogger.info(
+      LogCategory.TOURNAMENT,
       `⚡ Applied ${this.difficulty} difficulty modifiers: +${Math.floor((mod.hp - 1) * 100)}% HP, +${Math.floor((mod.str - 1) * 100)}% STR`
     );
   }
@@ -147,7 +149,7 @@ export class TournamentMode {
     this.currentOpponentIndex++;
     this.currentRound++;
 
-    console.log(`✅ Tournament Victory ${this.playerWins}/3`);
+    ConsoleLogger.info(LogCategory.TOURNAMENT, `✅ Tournament Victory ${this.playerWins}/3`);
 
     // Check if tournament is complete
     if (this.playerWins >= 3) {
@@ -190,7 +192,7 @@ export class TournamentMode {
    */
   recordDefeat() {
     const defeatedAt = this.getCurrentRoundName();
-    console.log(`💔 Tournament ended at ${defeatedAt} (${this.playerWins}/3 wins)`);
+    ConsoleLogger.info(LogCategory.TOURNAMENT, `💔 Tournament ended at ${defeatedAt} (${this.playerWins}/3 wins)`);
 
     const message = `
       <div class="tournament-defeat" style="
@@ -235,7 +237,7 @@ export class TournamentMode {
    * Complete tournament - player won all 3 rounds!
    */
   completeTournament() {
-    console.log('🏆 TOURNAMENT CHAMPION!');
+    ConsoleLogger.info(LogCategory.TOURNAMENT, '🏆 TOURNAMENT CHAMPION!');
 
     const message = `
       <div class="tournament-victory" style="
@@ -345,7 +347,7 @@ export class TournamentMode {
   awardGuaranteedEquipment(minRarity = 'rare') {
     // This is a simplified version - in a full implementation,
     // you'd filter equipment by rarity and award a specific piece
-    console.log(`🎁 Awarding guaranteed ${minRarity}+ equipment`);
+    ConsoleLogger.info(LogCategory.TOURNAMENT, `🎁 Awarding guaranteed ${minRarity}+ equipment`);
 
     // For now, just trigger multiple drops with higher chances for better items
     const dropAttempts = minRarity === 'legendary' ? 3 : minRarity === 'epic' ? 2 : 1;
@@ -364,7 +366,7 @@ export class TournamentMode {
     this.currentRound = 0;
     this.currentOpponentIndex = 0;
     this.playerWins = 0;
-    console.log('🏁 Tournament ended');
+    ConsoleLogger.info(LogCategory.TOURNAMENT, '🏁 Tournament ended');
   }
 
   /**

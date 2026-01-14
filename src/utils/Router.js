@@ -3,6 +3,8 @@
  * Uses History API for proper browser navigation
  */
 
+import { ConsoleLogger, LogCategory } from './ConsoleLogger.js';
+
 // SaveManager imported but not used - kept for future route guards
 
 export class Router {
@@ -27,7 +29,7 @@ export class Router {
     });
 
     this.initialized = true;
-    console.log('🧭 Router initialized');
+    ConsoleLogger.info(LogCategory.ROUTER, '🧭 Router initialized');
   }
 
   /**
@@ -63,7 +65,7 @@ export class Router {
     const route = this.routes.get(path);
 
     if (!route) {
-      console.error(`❌ Route not found: ${path}`);
+      ConsoleLogger.error(LogCategory.ROUTER, `❌ Route not found: ${path}`);
       return false;
     }
 
@@ -71,7 +73,7 @@ export class Router {
     if (route.guard) {
       const guard = this.guards.get(route.guard);
       if (guard && !guard(data)) {
-        console.warn(`🚫 Access denied to route: ${path}`);
+        ConsoleLogger.warn(LogCategory.ROUTER, `🚫 Access denied to route: ${path}`);
         return false;
       }
     }
@@ -96,7 +98,7 @@ export class Router {
     // Notify listeners
     this.notifyListeners(path, data);
 
-    console.log(`🧭 Navigated to: ${path}`);
+    ConsoleLogger.info(LogCategory.ROUTER, `🧭 Navigated to: ${path}`);
     return true;
   }
 
@@ -108,7 +110,7 @@ export class Router {
     const route = this.routes.get(path);
 
     if (!route) {
-      console.error(`❌ Route not found: ${path}`);
+      ConsoleLogger.error(LogCategory.ROUTER, `❌ Route not found: ${path}`);
       this.navigate('/', {}, true); // Fallback to home
       return;
     }
@@ -117,7 +119,7 @@ export class Router {
     if (route.guard) {
       const guard = this.guards.get(route.guard);
       if (guard && !guard(data)) {
-        console.warn(`🚫 Access denied to route: ${path}`);
+        ConsoleLogger.warn(LogCategory.ROUTER, `🚫 Access denied to route: ${path}`);
         this.navigate('/', {}, true); // Redirect to home
         return;
       }
@@ -188,7 +190,7 @@ export class Router {
       try {
         listener({ path, data });
       } catch (error) {
-        console.error('Error in route listener:', error);
+        ConsoleLogger.error(LogCategory.ROUTER, 'Error in route listener:', error);
       }
     });
   }

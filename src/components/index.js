@@ -3,6 +3,8 @@
  * Import all components to register them
  */
 
+import { ConsoleLogger, LogCategory } from '../utils/ConsoleLogger.js';
+
 export { BaseComponent } from './BaseComponent.js';
 export { FighterCard } from './FighterCard.js';
 export { ActionSelection } from './ActionSelection.js';
@@ -33,4 +35,4 @@ export { PerformanceMonitorUI } from './PerformanceMonitorUI.js'; // v4.6 - Perf
 export { GridCombatUI } from './GridCombatUI.js'; // v4.7 - Grid Combat
 
 // Auto-register all components by importing this file
-console.log('✅ All Web Components registered');
+ConsoleLogger.info(LogCategory.UI, '✅ All Web Components registered');

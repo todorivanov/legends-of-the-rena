@@ -3,6 +3,8 @@
  * Monitors FPS, memory usage, render times, and custom metrics
  */
 
+import { ConsoleLogger, LogCategory } from './ConsoleLogger.js';
+
 export class PerformanceMonitor {
   constructor() {
     this.enabled = true;
@@ -146,13 +148,13 @@ export class PerformanceMonitor {
 
     const startTime = this.marks.get(startMark);
     if (!startTime) {
-      console.warn(`Start mark "${startMark}" not found`);
+      ConsoleLogger.warn(LogCategory.PERFORMANCE, `Start mark "${startMark}" not found`);
       return 0;
     }
 
     const endTime = endMark ? this.marks.get(endMark) : performance.now();
     if (endMark && !endTime) {
-      console.warn(`End mark "${endMark}" not found`);
+      ConsoleLogger.warn(LogCategory.PERFORMANCE, `End mark "${endMark}" not found`);
       return 0;
     }
 
@@ -189,7 +191,7 @@ export class PerformanceMonitor {
 
     const startTime = this.timers.get(name);
     if (!startTime) {
-      console.warn(`Timer "${name}" not found`);
+      ConsoleLogger.warn(LogCategory.PERFORMANCE, `Timer "${name}" not found`);
       return 0;
     }
 
@@ -211,7 +213,7 @@ export class PerformanceMonitor {
     const result = fn();
     const duration = this.endTimer(name);
 
-    console.log(`⏱️ ${name}: ${duration.toFixed(2)}ms`);
+    ConsoleLogger.info(LogCategory.PERFORMANCE, `⏱️ ${name}: ${duration.toFixed(2)}ms`);
     return result;
   }
 
@@ -228,7 +230,7 @@ export class PerformanceMonitor {
     const result = await fn();
     const duration = this.endTimer(name);
 
-    console.log(`⏱️ ${name}: ${duration.toFixed(2)}ms`);
+    ConsoleLogger.info(LogCategory.PERFORMANCE, `⏱️ ${name}: ${duration.toFixed(2)}ms`);
     return result;
   }
 
@@ -345,20 +347,20 @@ export class PerformanceMonitor {
     const { min: minFps, max: maxFps } = this.getMinMax('fps');
 
     console.group('📊 Performance Summary');
-    console.log(`FPS: ${fps} (avg: ${avgFps}, min: ${minFps}, max: ${maxFps})`);
-    console.log(`Frame Time: ${this.metrics.frameTime}ms`);
+    ConsoleLogger.info(LogCategory.PERFORMANCE, `FPS: ${fps} (avg: ${avgFps}, min: ${minFps}, max: ${maxFps})`);
+    ConsoleLogger.info(LogCategory.PERFORMANCE, `Frame Time: ${this.metrics.frameTime}ms`);
 
     if (this.metrics.memory.limit > 0) {
       const memPercent = ((this.metrics.memory.used / this.metrics.memory.limit) * 100).toFixed(1);
-      console.log(
+      ConsoleLogger.info(LogCategory.PERFORMANCE, 
         `Memory: ${this.metrics.memory.used}MB / ${this.metrics.memory.limit}MB (${memPercent}%)`
       );
     }
 
     if (this.measures.size > 0) {
-      console.log('⏱️ Measures:');
+      ConsoleLogger.info(LogCategory.PERFORMANCE, '⏱️ Measures:');
       this.measures.forEach((duration, name) => {
-        console.log(`  ${name}: ${duration.toFixed(2)}ms`);
+        ConsoleLogger.info(LogCategory.PERFORMANCE, `  ${name}: ${duration.toFixed(2)}ms`);
       });
     }
 

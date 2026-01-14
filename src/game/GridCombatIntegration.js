@@ -4,6 +4,7 @@
 
 import { gridManager } from './GridManager.js';
 import { TerrainGenerator, TerrainEffectProcessor } from './TerrainSystem.js';
+import { ConsoleLogger, LogCategory } from '../utils/ConsoleLogger.js';
 
 /**
  * Grid Combat Actions
@@ -44,7 +45,7 @@ export class GridCombatIntegration {
     // Place fighters
     this.placeFightersInitial(playerFighter, enemyFighter);
 
-    console.log('🗺️ Grid combat initialized');
+    ConsoleLogger.info(LogCategory.GRID, '🗺️ Grid combat initialized');
   }
 
   /**
@@ -89,7 +90,7 @@ export class GridCombatIntegration {
     }
 
     if (!playerPlaced) {
-      console.error('⚠️ Failed to place player fighter on grid!');
+      ConsoleLogger.error(LogCategory.GRID, '⚠️ Failed to place player fighter on grid!');
     }
 
     // Place enemy fighter
@@ -114,10 +115,11 @@ export class GridCombatIntegration {
     }
 
     if (!enemyPlaced) {
-      console.error('⚠️ Failed to place enemy fighter on grid!');
+      ConsoleLogger.error(LogCategory.GRID, '⚠️ Failed to place enemy fighter on grid!');
     }
 
-    console.log(
+    ConsoleLogger.info(
+      LogCategory.GRID,
       `🗺️ Fighters placed: Player at (${playerFighter.gridPosition?.x}, ${playerFighter.gridPosition?.y}), Enemy at (${enemyFighter.gridPosition?.x}, ${enemyFighter.gridPosition?.y})`
     );
   }
@@ -220,7 +222,7 @@ export class GridCombatIntegration {
   getValidMoves(fighterId) {
     const fighter = gridManager.getFighterById(fighterId);
     if (!fighter) {
-      console.warn(`Fighter with ID ${fighterId} not found on grid`);
+      ConsoleLogger.warn(LogCategory.GRID, `Fighter with ID ${fighterId} not found on grid`);
       return [];
     }
 
@@ -238,7 +240,7 @@ export class GridCombatIntegration {
   moveFighter(fighterId, x, y) {
     const fighter = gridManager.getFighterById(fighterId);
     if (!fighter) {
-      console.warn(`Fighter with ID ${fighterId} not found on grid`);
+      ConsoleLogger.warn(LogCategory.GRID, `Fighter with ID ${fighterId} not found on grid`);
       return false;
     }
 
@@ -272,19 +274,19 @@ export class GridCombatIntegration {
     const isValid = validMoves.some((m) => m.x === targetX && m.y === targetY);
 
     if (!isValid) {
-      console.warn('Invalid move target');
+      ConsoleLogger.warn(LogCategory.GRID, 'Invalid move target');
       return false;
     }
 
     const cell = gridManager.getCell(targetX, targetY);
     if (!cell || !cell.isPassable()) {
-      console.warn('Target cell is not passable');
+      ConsoleLogger.warn(LogCategory.GRID, 'Target cell is not passable');
       return false;
     }
 
     // Execute movement
     gridManager.placeFighter(fighter, targetX, targetY);
-    console.log(`🏃 ${fighter.name} moved to (${targetX}, ${targetY})`);
+    ConsoleLogger.info(LogCategory.GRID, `🏃 ${fighter.name} moved to (${targetX}, ${targetY})`);
 
     return true;
   }
@@ -295,7 +297,7 @@ export class GridCombatIntegration {
   executeAttack(attacker, targetX, targetY) {
     const target = gridManager.getFighterAt(targetX, targetY);
     if (!target) {
-      console.warn('No target at position');
+      ConsoleLogger.warn(LogCategory.GRID, 'No target at position');
       return null;
     }
 
@@ -304,7 +306,7 @@ export class GridCombatIntegration {
     const targetInRange = enemiesInRange.some((e) => e.x === targetX && e.y === targetY);
 
     if (!targetInRange) {
-      console.warn('Target not in attack range');
+      ConsoleLogger.warn(LogCategory.GRID, 'Target not in attack range');
       return null;
     }
 
@@ -324,13 +326,13 @@ export class GridCombatIntegration {
     // Apply flanking bonus
     if (gridManager.isFlanked(target)) {
       baseDamage *= 1.25; // +25% damage when flanked
-      console.log('💥 Flanking bonus! +25% damage');
+      ConsoleLogger.info(LogCategory.GRID, '💥 Flanking bonus! +25% damage');
     }
 
     // Deal damage
     target.takeDamage(baseDamage);
 
-    console.log(`⚔️ ${attacker.name} attacked ${target.name} for ${baseDamage} damage`);
+    ConsoleLogger.info(LogCategory.GRID, `⚔️ ${attacker.name} attacked ${target.name} for ${baseDamage} damage`);
 
     return {
       attacker,
@@ -461,7 +463,7 @@ export class GridCombatIntegration {
    */
   setEnabled(enabled) {
     this.enabled = enabled;
-    console.log(`Grid combat ${enabled ? 'enabled' : 'disabled'}`);
+    ConsoleLogger.info(LogCategory.GRID, `Grid combat ${enabled ? 'enabled' : 'disabled'}`);
   }
 
   /**

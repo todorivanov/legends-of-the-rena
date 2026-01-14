@@ -4,6 +4,8 @@
  */
 
 import { gameStore } from '../store/gameStore.js';
+import { ConsoleLogger, LogCategory } from '../utils/ConsoleLogger.js';
+
 import { updateDurability, unequipItem, incrementStat } from '../store/actions.js';
 import { getEquipmentById } from '../data/equipment.js';
 import { Logger } from '../utils/logger.js';
@@ -49,7 +51,7 @@ export class DurabilityManager {
         brokenItems.push({ slot, equipment });
         // Unequip broken item
         gameStore.dispatch(unequipItem(slot));
-        console.log(`💔 ${equipment.name} broke!`);
+        ConsoleLogger.info(LogCategory.DURABILITY, `💔 ${equipment.name} broke!`);
 
         const message = `
           <div class="item-broken" style="
@@ -69,7 +71,7 @@ export class DurabilityManager {
         Logger.log(message);
       } else if (newDurability <= equipment.durability.max * 0.25) {
         // Warn when durability is low
-        console.log(`⚠️ ${equipment.name} durability: ${newDurability}%`);
+        ConsoleLogger.info(LogCategory.DURABILITY, `⚠️ ${equipment.name} durability: ${newDurability}%`);
       }
     });
 
@@ -127,7 +129,7 @@ export class DurabilityManager {
   static repairItem(equipmentId, targetDurability = null) {
     const equipment = getEquipmentById(equipmentId);
     if (!equipment || !equipment.durability) {
-      console.error('Equipment not found or has no durability');
+      ConsoleLogger.error(LogCategory.DURABILITY, 'Equipment not found or has no durability');
       return false;
     }
 
@@ -139,7 +141,7 @@ export class DurabilityManager {
 
     // Check if player can afford
     if (!EconomyManager.canAfford(repairCost)) {
-      console.log(`❌ Cannot afford repair. Need ${repairCost} gold.`);
+      ConsoleLogger.info(LogCategory.DURABILITY, `❌ Cannot afford repair. Need ${repairCost} gold.`);
       return false;
     }
 
@@ -154,7 +156,7 @@ export class DurabilityManager {
     // Track repair statistics
     gameStore.dispatch(incrementStat('itemsRepaired'));
 
-    console.log(`🔧 Repaired ${equipment.name} to ${finalTarget}/${maxDurability}`);
+    ConsoleLogger.info(LogCategory.DURABILITY, `🔧 Repaired ${equipment.name} to ${finalTarget}/${maxDurability}`);
 
     const message = `
       <div class="item-repaired" style="

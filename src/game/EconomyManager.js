@@ -10,6 +10,7 @@ import {
   incrementStat,
 } from '../store/actions.js';
 import { Logger } from '../utils/logger.js';
+import { ConsoleLogger, LogCategory } from '../utils/ConsoleLogger.js';
 
 export class EconomyManager {
   /**
@@ -20,7 +21,7 @@ export class EconomyManager {
    */
   static addGold(amount, source = 'Unknown') {
     if (amount <= 0) {
-      console.warn('⚠️ Cannot add negative or zero gold');
+      ConsoleLogger.warn(LogCategory.ECONOMY, '⚠️ Cannot add negative or zero gold');
       return false;
     }
 
@@ -31,7 +32,7 @@ export class EconomyManager {
     gameStore.dispatch(addGoldAction(amount));
     gameStore.dispatch(incrementStat('totalGoldEarned', amount));
 
-    console.log(`💰 +${amount} gold earned from ${source} (Total: ${newGold})`);
+    ConsoleLogger.info(LogCategory.ECONOMY, `💰 +${amount} gold earned from ${source} (Total: ${newGold})`);
 
     // Log to combat log
     const message = `
@@ -61,7 +62,7 @@ export class EconomyManager {
    */
   static spendGold(amount, purpose = 'Purchase') {
     if (amount <= 0) {
-      console.warn('⚠️ Cannot spend negative or zero gold');
+      ConsoleLogger.warn(LogCategory.ECONOMY, '⚠️ Cannot spend negative or zero gold');
       return false;
     }
 
@@ -69,7 +70,7 @@ export class EconomyManager {
     const currentGold = state.player.gold || 0;
 
     if (currentGold < amount) {
-      console.log(`❌ Insufficient gold. Need ${amount}, have ${currentGold}`);
+      ConsoleLogger.warn(LogCategory.ECONOMY, `❌ Insufficient gold. Need ${amount}, have ${currentGold}`);
 
       // Log error message
       const message = `
@@ -95,7 +96,7 @@ export class EconomyManager {
     gameStore.dispatch(spendGoldAction(amount));
     gameStore.dispatch(incrementStat('totalGoldSpent', amount));
 
-    console.log(`💸 -${amount} gold spent on ${purpose} (Remaining: ${newGold})`);
+    ConsoleLogger.info(LogCategory.ECONOMY, `💸 -${amount} gold spent on ${purpose} (Remaining: ${newGold})`);
 
     return true;
   }

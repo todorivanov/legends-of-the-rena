@@ -1,4 +1,6 @@
 import { BaseComponent } from './BaseComponent.js';
+import { ConsoleLogger, LogCategory } from '../utils/ConsoleLogger.js';
+
 import styles from '../styles/components/CombatArena.scss?inline';
 
 /**
@@ -92,7 +94,7 @@ export class CombatArena extends BaseComponent {
         // Emit event for game to listen to
         this.emit('auto-battle-toggle', { enabled: this.autoBattle });
 
-        console.log('Auto Battle:', this.autoBattle ? 'ON' : 'OFF');
+        ConsoleLogger.info(LogCategory.UI, 'Auto Battle:', this.autoBattle ? 'ON' : 'OFF');
       });
     }
 
@@ -109,7 +111,7 @@ export class CombatArena extends BaseComponent {
         // Emit event for Logger to listen to
         this.emit('auto-scroll-toggle', { enabled: this.autoScroll });
 
-        console.log('Auto-Scroll:', this.autoScroll ? 'ON' : 'OFF');
+        ConsoleLogger.info(LogCategory.UI, 'Auto-Scroll:', this.autoScroll ? 'ON' : 'OFF');
 
         // If enabled, scroll to bottom immediately
         if (this.autoScroll) {

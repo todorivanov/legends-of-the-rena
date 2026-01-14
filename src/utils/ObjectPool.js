@@ -3,6 +3,8 @@
  * Reduces garbage collection pressure by reusing objects
  */
 
+import { ConsoleLogger, LogCategory } from './ConsoleLogger.js';
+
 export class ObjectPool {
   /**
    * @param {Function} factory - Function to create new objects
@@ -62,7 +64,7 @@ export class ObjectPool {
    */
   release(obj) {
     if (!this.active.has(obj)) {
-      console.warn('Attempting to release object not from this pool');
+      ConsoleLogger.warn(LogCategory.PERFORMANCE, 'Attempting to release object not from this pool');
       return;
     }
 
@@ -176,7 +178,7 @@ export class PoolManager {
   release(poolName, obj) {
     const pool = this.getPool(poolName);
     if (!pool) {
-      console.warn(`Pool "${poolName}" not found`);
+      ConsoleLogger.warn(LogCategory.PERFORMANCE, `Pool "${poolName}" not found`);
       return;
     }
     pool.release(obj);

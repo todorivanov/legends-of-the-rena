@@ -4,6 +4,8 @@
  */
 
 import { StatusEffect } from './StatusEffect.js';
+import { ConsoleLogger, LogCategory } from '../utils/ConsoleLogger.js';
+
 
 /**
  * Status Effect Categories
@@ -459,7 +461,7 @@ export class StatusEffectManager {
       if (template.stackable) {
         const stacked = existing.stack();
         if (stacked) {
-          console.log(`📚 ${effectKey} stacked on ${fighter.name} (${existing.stacks} stacks)`);
+          ConsoleLogger.info(LogCategory.STATUS_EFFECT, `📚 ${effectKey} stacked on ${fighter.name} (${existing.stacks} stacks)`);
         }
         return stacked;
       } else {
@@ -492,7 +494,7 @@ export class StatusEffectManager {
     // Check for interactions
     this.checkInteractions(fighter, effect);
 
-    console.log(`✨ ${effectKey} applied to ${fighter.name}`);
+    ConsoleLogger.info(LogCategory.STATUS_EFFECT, `✨ ${effectKey} applied to ${fighter.name}`);
     return true;
   }
 
@@ -519,7 +521,7 @@ export class StatusEffectManager {
     effects.splice(index, 1);
     this.setEffects(fighter, effects);
 
-    console.log(`🔄 ${effectName} removed from ${fighter.name}`);
+    ConsoleLogger.info(LogCategory.STATUS_EFFECT, `🔄 ${effectName} removed from ${fighter.name}`);
     return true;
   }
 
@@ -576,7 +578,7 @@ export class StatusEffectManager {
    * @param {Object} interaction - Interaction definition
    */
   executeInteraction(fighter, interaction) {
-    console.log(`⚡ Interaction: ${interaction.description}`);
+    ConsoleLogger.info(LogCategory.STATUS_EFFECT, `⚡ Interaction: ${interaction.description}`);
 
     switch (interaction.result) {
       case 'dispel_frozen':
@@ -634,7 +636,7 @@ export class StatusEffectManager {
           const shatterDamage = 30;
           fighter.takeDamage(shatterDamage);
           this.removeEffect(fighter, 'frozen');
-          console.log(`💥 Shatter! ${shatterDamage} bonus damage`);
+          ConsoleLogger.info(LogCategory.STATUS_EFFECT, `💥 Shatter! ${shatterDamage} bonus damage`);
         }
         break;
       }

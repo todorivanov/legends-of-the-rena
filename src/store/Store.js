@@ -3,6 +3,8 @@
  * Inspired by Redux/Zustand but vanilla JS
  */
 
+import { ConsoleLogger, LogCategory } from '../utils/ConsoleLogger.js';
+
 export class Store {
   /**
    * Create a new store
@@ -35,15 +37,15 @@ export class Store {
    */
   dispatch(action) {
     if (!action || !action.type) {
-      console.error('❌ Action must have a type property');
+      ConsoleLogger.error(LogCategory.STORE, '❌ Action must have a type property');
       return this.state;
     }
 
-    console.log('📦 Store Action:', action.type, action.payload);
+    ConsoleLogger.info(LogCategory.STORE, '📦 Store Action:', action.type, action.payload);
 
     const reducer = this.reducers[action.type];
     if (!reducer) {
-      console.warn(`⚠️ No reducer found for action: ${action.type}`);
+      ConsoleLogger.warn(LogCategory.STORE, `⚠️ No reducer found for action: ${action.type}`);
       return this.state;
     }
 
@@ -115,7 +117,7 @@ export class Store {
           subscription.callback(this.state, actionType);
         }
       } catch (error) {
-        console.error('Error in store listener:', error);
+        ConsoleLogger.error(LogCategory.STORE, 'Error in store listener:', error);
       }
     });
   }
@@ -167,7 +169,7 @@ export class Store {
       this.historyIndex--;
       this.state = { ...this.history[this.historyIndex] };
       this.notify('@@UNDO');
-      console.log('⏪ State restored to:', this.historyIndex);
+      ConsoleLogger.info(LogCategory.STORE, '⏪ State restored to:', this.historyIndex);
       return true;
     }
     return false;
@@ -182,7 +184,7 @@ export class Store {
       this.historyIndex++;
       this.state = { ...this.history[this.historyIndex] };
       this.notify('@@REDO');
-      console.log('⏩ State restored to:', this.historyIndex);
+      ConsoleLogger.info(LogCategory.STORE, '⏩ State restored to:', this.historyIndex);
       return true;
     }
     return false;
@@ -210,7 +212,7 @@ export class Store {
     this.history = [this.state];
     this.historyIndex = 0;
     this.notify('@@RESET');
-    console.log('🔄 Store reset to initial state');
+    ConsoleLogger.info(LogCategory.STORE, '🔄 Store reset to initial state');
   }
 
   /**

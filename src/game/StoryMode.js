@@ -20,6 +20,7 @@ import { EquipmentManager } from './EquipmentManager.js';
 import { DurabilityManager } from './DurabilityManager.js';
 import { Logger } from '../utils/logger.js';
 import { AchievementManager } from './AchievementManager.js';
+import { ConsoleLogger, LogCategory } from '../utils/ConsoleLogger.js';
 
 export class StoryMode {
   /**
@@ -30,7 +31,7 @@ export class StoryMode {
   static startMission(missionId) {
     const mission = getMissionById(missionId);
     if (!mission) {
-      console.error('Mission not found:', missionId);
+      ConsoleLogger.error(LogCategory.STORY, 'Mission not found:', missionId);
       return null;
     }
 
@@ -41,7 +42,7 @@ export class StoryMode {
       unlockedRegions: state.story.unlockedRegions || [],
     };
     if (!isRegionUnlocked(mission.region, storyProgress)) {
-      console.log('❌ Region not unlocked yet');
+      ConsoleLogger.warn(LogCategory.STORY, '❌ Region not unlocked yet');
       return null;
     }
 
@@ -66,7 +67,7 @@ export class StoryMode {
     // Set as current mission
     gameStore.dispatch(setCurrentMissionState(missionState));
 
-    console.log(`📖 Started Mission: ${mission.name}`);
+    ConsoleLogger.info(LogCategory.STORY, `📖 Started Mission: ${mission.name}`);
     return missionState;
   }
 
@@ -113,7 +114,7 @@ export class StoryMode {
     const state = gameStore.getState();
     const missionState = state.story.currentMission;
     if (!missionState || typeof missionState === 'string') {
-      console.error('No active mission');
+      ConsoleLogger.error(LogCategory.STORY, 'No active mission');
       return null;
     }
 
@@ -121,7 +122,7 @@ export class StoryMode {
 
     if (!victory) {
       // Mission failed
-      console.log('❌ Mission failed');
+      ConsoleLogger.info(LogCategory.STORY, '❌ Mission failed');
       gameStore.dispatch(setCurrentMissionState(null));
 
       return {
@@ -148,7 +149,7 @@ export class StoryMode {
           const unlockedRegions = state.story.unlockedRegions || [];
           if (!unlockedRegions.includes(regionId)) {
             gameStore.dispatch(unlockRegionAction(regionId));
-            console.log(`🗺️ Unlocked new region: ${regionId}`);
+            ConsoleLogger.info(LogCategory.STORY, `🗺️ Unlocked new region: ${regionId}`);
           }
         }
       });
@@ -157,7 +158,7 @@ export class StoryMode {
     // Award rewards
     const rewards = this.awardMissionRewards(mission, starsEarned);
 
-    console.log(`✅ Mission Complete: ${starsEarned}/3 stars`);
+    ConsoleLogger.info(LogCategory.STORY, `✅ Mission Complete: ${starsEarned}/3 stars`);
 
     // Track achievements
     AchievementManager.trackStoryMissionCompleted(mission, starsEarned);
@@ -291,7 +292,7 @@ export class StoryMode {
         return missionState.maxSingleHit >= objective.value;
 
       default:
-        console.warn('Unknown objective type:', objective.type);
+        ConsoleLogger.warn(LogCategory.STORY, 'Unknown objective type:', objective.type);
         return false;
     }
   }

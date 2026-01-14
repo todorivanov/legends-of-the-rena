@@ -3,6 +3,8 @@
  */
 
 import { BaseComponent } from './BaseComponent.js';
+import { ConsoleLogger, LogCategory } from '../utils/ConsoleLogger.js';
+
 import comboHintStyles from '../styles/components/ComboHint.scss?inline';
 
 export class ComboHint extends BaseComponent {
@@ -21,7 +23,7 @@ export class ComboHint extends BaseComponent {
         this._suggestions = JSON.parse(newValue);
         this.render();
       } catch (e) {
-        console.error('Failed to parse combo suggestions:', e);
+        ConsoleLogger.error(LogCategory.UI, 'Failed to parse combo suggestions:', e);
       }
     }
   }

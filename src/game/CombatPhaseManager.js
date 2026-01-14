@@ -3,6 +3,8 @@
  * Provides a structured approach to combat flow with extensibility points
  */
 
+import { ConsoleLogger, LogCategory } from '../utils/ConsoleLogger.js';
+
 /**
  * Simple Event Emitter for combat events
  */
@@ -36,7 +38,7 @@ class CombatEventEmitter {
         try {
           callback(data);
         } catch (error) {
-          console.error(`Error in event listener for ${event}:`, error);
+          ConsoleLogger.error(LogCategory.COMBAT, `Error in event listener for ${event}:`, error);
         }
       });
     }
@@ -146,7 +148,7 @@ export class CombatPhaseManager {
     await this.executePhaseHooks(CombatPhase.BATTLE_START, eventData);
     this.emit(CombatEvent.BATTLE_STARTED, eventData);
 
-    console.log('⚔️ Battle Started');
+    ConsoleLogger.info(LogCategory.COMBAT, '⚔️ Battle Started');
   }
 
   /**
@@ -166,7 +168,7 @@ export class CombatPhaseManager {
     await this.executePhaseHooks(CombatPhase.TURN_START, eventData);
     this.emit(CombatEvent.TURN_STARTED, eventData);
 
-    console.log(`🎯 Turn ${this.turnCount}: ${activeFighter.name}'s turn`);
+    ConsoleLogger.info(LogCategory.COMBAT, `🎯 Turn ${this.turnCount}: ${activeFighter.name}'s turn`);
   }
 
   /**
@@ -201,7 +203,7 @@ export class CombatPhaseManager {
     this.actionQueue.push(queuedAction);
     this.emit(CombatEvent.ACTION_QUEUED, { action: queuedAction });
 
-    console.log(`📋 Action queued: ${action.type}`, queuedAction);
+    ConsoleLogger.debug(LogCategory.COMBAT, `📋 Action queued: ${action.type}`, queuedAction);
     return queuedAction;
   }
 
@@ -211,7 +213,7 @@ export class CombatPhaseManager {
    */
   async executeNextAction() {
     if (this.actionQueue.length === 0) {
-      console.warn('⚠️ No actions in queue');
+      ConsoleLogger.warn(LogCategory.COMBAT, '⚠️ No actions in queue');
       return null;
     }
 
@@ -286,7 +288,7 @@ export class CombatPhaseManager {
     await this.executePhaseHooks(CombatPhase.BATTLE_END, eventData);
     this.emit(CombatEvent.BATTLE_ENDED, eventData);
 
-    console.log(`🏆 Battle Ended: ${winner.name} wins!`);
+    ConsoleLogger.info(LogCategory.COMBAT, `🏆 Battle Ended: ${winner.name} wins!`);
 
     this.setPhase(CombatPhase.IDLE);
   }
@@ -315,7 +317,7 @@ export class CombatPhaseManager {
     // Sort by priority (descending)
     this.hooks.get(phase).sort((a, b) => b.priority - a.priority);
 
-    console.log(`🪝 Registered hook for ${phase} (priority: ${priority})`);
+    ConsoleLogger.debug(LogCategory.COMBAT, `🪝 Registered hook for ${phase} (priority: ${priority})`);
     return hookId;
   }
 
@@ -328,7 +330,7 @@ export class CombatPhaseManager {
       const index = hooks.findIndex((h) => h.id === hookId);
       if (index !== -1) {
         hooks.splice(index, 1);
-        console.log(`🪝 Unregistered hook ${hookId} from ${phase}`);
+        ConsoleLogger.debug(LogCategory.COMBAT, `🪝 Unregistered hook ${hookId} from ${phase}`);
         return true;
       }
     }
@@ -352,7 +354,7 @@ export class CombatPhaseManager {
           Object.assign(results, result);
         }
       } catch (error) {
-        console.error(`❌ Hook error in ${phase}:`, error);
+        ConsoleLogger.error(LogCategory.COMBAT, `❌ Hook error in ${phase}:`, error);
       }
     }
 
@@ -399,7 +401,7 @@ export class CombatPhaseManager {
       timestamp: Date.now(),
     });
 
-    console.log(`📍 Phase: ${previousPhase} → ${phase}`);
+    ConsoleLogger.debug(LogCategory.COMBAT, `📍 Phase: ${previousPhase} → ${phase}`);
   }
 
   /**
@@ -432,7 +434,7 @@ export class CombatPhaseManager {
    */
   clearActionQueue() {
     this.actionQueue = [];
-    console.log('🗑️ Action queue cleared');
+    ConsoleLogger.debug(LogCategory.COMBAT, '🗑️ Action queue cleared');
   }
 
   /**
@@ -467,7 +469,7 @@ export class CombatPhaseManager {
     };
     this.hooks.clear();
 
-    console.log('🔄 Phase manager reset');
+    ConsoleLogger.info(LogCategory.COMBAT, '🔄 Phase manager reset');
   }
 
   /**

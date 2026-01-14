@@ -3,6 +3,8 @@
  * Improves initial load time by loading resources on demand
  */
 
+import { ConsoleLogger, LogCategory } from './ConsoleLogger.js';
+
 export class LazyLoader {
   constructor() {
     this.cache = new Map();
@@ -38,7 +40,7 @@ export class LazyLoader {
       .catch((error) => {
         this.loading.delete(modulePath);
         this.notifyObservers(modulePath, 'error', error);
-        console.error(`Failed to load module: ${modulePath}`, error);
+        ConsoleLogger.error(LogCategory.PERFORMANCE, `Failed to load module: ${modulePath}`, error);
         throw error;
       });
 
@@ -134,7 +136,7 @@ export class LazyLoader {
         await this.loadModule(path);
       }
     } catch (error) {
-      console.warn(`Preload failed for ${path}:`, error);
+      ConsoleLogger.warn(LogCategory.PERFORMANCE, `Preload failed for ${path}:`, error);
     }
 
     // Continue with next item
@@ -221,7 +223,7 @@ export class LazyLoader {
       try {
         callback(event, data);
       } catch (error) {
-        console.error('Observer callback error:', error);
+        ConsoleLogger.error(LogCategory.PERFORMANCE, 'Observer callback error:', error);
       }
     });
   }

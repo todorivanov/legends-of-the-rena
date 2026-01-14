@@ -1,4 +1,6 @@
 import { Helpers } from '../utils/helpers.js';
+import { ConsoleLogger, LogCategory } from '../utils/ConsoleLogger.js';
+
 import { Logger } from '../utils/logger.js';
 import { soundManager } from '../utils/soundManager.js';
 import { assignSkillsToFighter } from '../game/SkillSystem.js';
@@ -195,7 +197,7 @@ export class BaseEntity {
 
     // Ensure health is a valid number before subtracting
     if (isNaN(this.health)) {
-      console.error(`${this.name} has NaN health! Resetting to maxHealth.`);
+      ConsoleLogger.error(LogCategory.COMBAT, `${this.name} has NaN health! Resetting to maxHealth.`);
       this.health = this.maxHealth || 100;
     }
 

@@ -12,6 +12,7 @@ import { Logger } from '../utils/logger.js';
 import { AchievementManager } from './AchievementManager.js';
 import { gameStore } from '../store/gameStore.js';
 import { incrementStat } from '../store/actions.js';
+import { ConsoleLogger, LogCategory } from '../utils/ConsoleLogger.js';
 
 export class MarketplaceManager {
   // Refresh interval: 24 hours in milliseconds
@@ -171,7 +172,7 @@ export class MarketplaceManager {
     SaveManager.update('marketplace.currentInventory', inventory);
     SaveManager.update('marketplace.lastRefresh', Date.now());
 
-    console.log(`🏪 Shop inventory refreshed! ${inventory.length} items available.`);
+    ConsoleLogger.info(LogCategory.MARKETPLACE, `🏪 Shop inventory refreshed! ${inventory.length} items available.`);
 
     return inventory;
   }
@@ -195,14 +196,14 @@ export class MarketplaceManager {
   static purchaseItem(equipmentId) {
     const equipment = getEquipmentById(equipmentId);
     if (!equipment) {
-      console.error('Equipment not found');
+      ConsoleLogger.error(LogCategory.MARKETPLACE, 'Equipment not found');
       return false;
     }
 
     // Check if item is in shop
     const currentInventory = SaveManager.get('marketplace.currentInventory') || [];
     if (!currentInventory.includes(equipmentId)) {
-      console.log('❌ Item not available in shop');
+      ConsoleLogger.warn(LogCategory.MARKETPLACE, '❌ Item not available in shop');
       return false;
     }
 
@@ -211,14 +212,14 @@ export class MarketplaceManager {
 
     // Check if player can afford
     if (!EconomyManager.canAfford(price)) {
-      console.log(`❌ Cannot afford ${equipment.name}. Need ${price} gold.`);
+      ConsoleLogger.warn(LogCategory.MARKETPLACE, `❌ Cannot afford ${equipment.name}. Need ${price} gold.`);
       return false;
     }
 
     // Check inventory space
     const inventory = SaveManager.get('inventory.equipment') || [];
     if (inventory.length >= 20) {
-      console.log('❌ Inventory full! Sell items to make space.');
+      ConsoleLogger.warn(LogCategory.MARKETPLACE, '❌ Inventory full! Sell items to make space.');
 
       const message = `
         <div class="inventory-full" style="
@@ -269,7 +270,7 @@ export class MarketplaceManager {
     });
     SaveManager.update('marketplace.purchaseHistory', purchaseHistory);
 
-    console.log(`✅ Purchased ${equipment.name} for ${price} gold`);
+    ConsoleLogger.info(LogCategory.MARKETPLACE, `✅ Purchased ${equipment.name} for ${price} gold`);
 
     const rarityColors = {
       common: '#9e9e9e',
@@ -315,7 +316,7 @@ export class MarketplaceManager {
   static sellItem(equipmentId) {
     const equipment = getEquipmentById(equipmentId);
     if (!equipment) {
-      console.error('Equipment not found');
+      ConsoleLogger.error(LogCategory.MARKETPLACE, 'Equipment not found');
       return false;
     }
 
@@ -323,7 +324,7 @@ export class MarketplaceManager {
     const state = gameStore.getState();
     const inventory = state.inventory?.equipment || [];
     if (!inventory.includes(equipmentId)) {
-      console.log('❌ Item not in inventory');
+      ConsoleLogger.warn(LogCategory.MARKETPLACE, '❌ Item not in inventory');
       return false;
     }
 
@@ -339,7 +340,7 @@ export class MarketplaceManager {
     // 2. This is the only copy (no duplicates)
     // If there are duplicates, we allow selling the non-equipped copy
     if (isEquipped && itemCount === 1) {
-      console.log('❌ Cannot sell equipped items. Unequip first.');
+      ConsoleLogger.warn(LogCategory.MARKETPLACE, '❌ Cannot sell equipped items. Unequip first.');
 
       const message = `
         <div class="cannot-sell" style="
@@ -375,7 +376,7 @@ export class MarketplaceManager {
     gameStore.dispatch(incrementStat('itemsSold'));
     gameStore.dispatch(incrementStat('goldFromSales', sellPrice));
 
-    console.log(`✅ Sold ${equipment.name} for ${sellPrice} gold`);
+    ConsoleLogger.info(LogCategory.MARKETPLACE, `✅ Sold ${equipment.name} for ${sellPrice} gold`);
 
     const message = `
       <div class="item-sold" style="
@@ -447,7 +448,7 @@ export class MarketplaceManager {
         </div>
       `;
       Logger.log(message);
-      console.log(`❌ Cannot afford shop refresh. Need ${cost} gold.`);
+      ConsoleLogger.warn(LogCategory.MARKETPLACE, `❌ Cannot afford shop refresh. Need ${cost} gold.`);
       return false;
     }
 
@@ -477,7 +478,7 @@ export class MarketplaceManager {
     `;
     Logger.log(message);
 
-    console.log(`✅ Shop refreshed for ${cost} gold`);
+    ConsoleLogger.info(LogCategory.MARKETPLACE, `✅ Shop refreshed for ${cost} gold`);
     return true;
   }
 
@@ -503,14 +504,14 @@ export class MarketplaceManager {
     const price = prices[type];
 
     if (!price) {
-      console.error('Invalid consumable type');
+      ConsoleLogger.error(LogCategory.MARKETPLACE, 'Invalid consumable type');
       return false;
     }
 
     const totalCost = price * quantity;
 
     if (!EconomyManager.canAfford(totalCost)) {
-      console.log(`❌ Cannot afford ${quantity}x ${type}. Need ${totalCost} gold.`);
+      ConsoleLogger.warn(LogCategory.MARKETPLACE, `❌ Cannot afford ${quantity}x ${type}. Need ${totalCost} gold.`);
       return false;
     }
 
@@ -522,7 +523,7 @@ export class MarketplaceManager {
     const current = SaveManager.get(`inventory.consumables.${type}`) || 0;
     SaveManager.update(`inventory.consumables.${type}`, current + quantity);
 
-    console.log(`✅ Purchased ${quantity}x ${type} for ${totalCost} gold`);
+    ConsoleLogger.info(LogCategory.MARKETPLACE, `✅ Purchased ${quantity}x ${type} for ${totalCost} gold`);
 
     const message = `
       <div class="consumable-purchased" style="

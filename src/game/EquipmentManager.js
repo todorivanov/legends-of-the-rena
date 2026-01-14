@@ -11,6 +11,7 @@ import {
 } from '../store/actions.js';
 import { getEquipmentById, getRandomEquipmentDrop } from '../data/equipment.js';
 import { Logger } from '../utils/logger.js';
+import { ConsoleLogger, LogCategory } from '../utils/ConsoleLogger.js';
 
 export class EquipmentManager {
   /**
@@ -21,7 +22,7 @@ export class EquipmentManager {
   static equipItem(equipmentId) {
     const equipment = getEquipmentById(equipmentId);
     if (!equipment) {
-      console.error('Equipment not found:', equipmentId);
+      ConsoleLogger.error(LogCategory.EQUIPMENT, 'Equipment not found:', equipmentId);
       return false;
     }
 
@@ -31,12 +32,12 @@ export class EquipmentManager {
     const playerClass = state.player.class;
 
     if (equipment.requirements.level > playerLevel) {
-      console.log(`❌ Level ${equipment.requirements.level} required (you are ${playerLevel})`);
+      ConsoleLogger.warn(LogCategory.EQUIPMENT, `❌ Level ${equipment.requirements.level} required (you are ${playerLevel})`);
       return false;
     }
 
     if (equipment.requirements.class && !equipment.requirements.class.includes(playerClass)) {
-      console.log(`❌ Class requirement not met: ${equipment.requirements.class.join(', ')}`);
+      ConsoleLogger.warn(LogCategory.EQUIPMENT, `❌ Class requirement not met: ${equipment.requirements.class.join(', ')}`);
       return false;
     }
 
@@ -48,7 +49,7 @@ export class EquipmentManager {
 
     // Equip new item
     gameStore.dispatch(equipItemAction(equipmentId, equipment.type));
-    console.log(`⚔️ Equipped: ${equipment.name}`);
+    ConsoleLogger.info(LogCategory.EQUIPMENT, `⚔️ Equipped: ${equipment.name}`);
 
     return true;
   }
@@ -67,7 +68,7 @@ export class EquipmentManager {
 
     // Remove from equipped slot
     gameStore.dispatch(unequipItemAction(slot));
-    console.log(`🔓 Unequipped ${slot}`);
+    ConsoleLogger.info(LogCategory.EQUIPMENT, `🔓 Unequipped ${slot}`);
 
     return true;
   }
@@ -88,13 +89,13 @@ export class EquipmentManager {
 
     // Check inventory limit (20 items)
     if (inventory.length >= 20) {
-      console.log('⚠️ Inventory full! Sell or discard items.');
+      ConsoleLogger.warn(LogCategory.EQUIPMENT, '⚠️ Inventory full! Sell or discard items.');
       return false;
     }
 
     gameStore.dispatch(addItem(equipmentId));
 
-    console.log(`📦 Added to inventory: ${equipment.name}`);
+    ConsoleLogger.info(LogCategory.EQUIPMENT, `📦 Added to inventory: ${equipment.name}`);
     return true;
   }
 
@@ -174,7 +175,7 @@ export class EquipmentManager {
     fighter.baseCritDamage = stats.critDamage;
     fighter.baseManaRegen = stats.manaRegen;
 
-    console.log(`⚔️ Equipment bonuses applied:`, {
+    ConsoleLogger.debug(LogCategory.EQUIPMENT, `⚔️ Equipment bonuses applied:`, {
       '+HP': stats.health,
       '+STR': stats.strength,
       '+DEF': stats.defense,

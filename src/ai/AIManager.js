@@ -4,6 +4,8 @@
  */
 
 import { BehaviorTree } from './BehaviorTree.js';
+import { ConsoleLogger, LogCategory } from '../utils/ConsoleLogger.js';
+
 import { getPersonalityForClass, getRandomArchetype, AIPersonality } from './AIPersonality.js';
 import { getBehaviorForPersonality } from './CombatBehaviors.js';
 
@@ -26,7 +28,7 @@ export class AIManager {
     const behaviorRoot = getBehaviorForPersonality(this.personality);
     this.behaviorTree = new BehaviorTree(`${fighter.name}_AI`, behaviorRoot);
 
-    console.log(
+    ConsoleLogger.info(LogCategory.AI, 
       `🤖 AI Created for ${fighter.name}: ${this.personality.archetype.name} (${difficulty})`
     );
   }
@@ -55,7 +57,7 @@ export class AIManager {
     // Record action for learning
     this.personality.recordAction(action.type, 'pending');
 
-    console.log(`🤖 ${this.fighter.name} chose:`, action.type);
+    ConsoleLogger.info(LogCategory.AI, `🤖 ${this.fighter.name} chose:`, action.type);
 
     return action;
   }
@@ -148,7 +150,7 @@ export function createRandomAI(fighter, difficulty = 'normal') {
  * Used if behavior tree system fails
  */
 export function simpleFallbackAI(fighter, _opponent) {
-  console.warn('⚠️ Using fallback AI - behavior tree failed');
+  ConsoleLogger.warn(LogCategory.AI, '⚠️ Using fallback AI - behavior tree failed');
 
   // Simple decision logic
   const healthPercent = fighter.health / fighter.maxHealth;

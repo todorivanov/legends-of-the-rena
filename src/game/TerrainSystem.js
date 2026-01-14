@@ -2,6 +2,8 @@
  * TerrainSystem - Defines terrain types, effects, and visual properties
  */
 
+import { ConsoleLogger, LogCategory } from '../utils/ConsoleLogger.js';
+
 /**
  * Terrain type definitions
  */
@@ -390,7 +392,7 @@ export class TerrainGenerator {
   static generateByName(name) {
     const layout = BATTLEFIELD_LAYOUTS[name];
     if (!layout) {
-      console.warn(`Unknown battlefield layout: ${name}`);
+      ConsoleLogger.warn(LogCategory.TERRAIN, `Unknown battlefield layout: ${name}`);
       return BATTLEFIELD_LAYOUTS.OPEN_FIELD.generate();
     }
     return layout.generate();

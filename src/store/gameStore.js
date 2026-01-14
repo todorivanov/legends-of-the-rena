@@ -3,6 +3,8 @@
  */
 
 import { createStore } from './Store.js';
+import { ConsoleLogger, LogCategory } from '../utils/ConsoleLogger.js';
+
 import { reducers } from './reducers.js';
 import { SaveManagerV2 as SaveManager } from '../utils/SaveManagerV2.js';
 
@@ -14,7 +16,7 @@ function getInitialState() {
 
   // If no save exists, return minimal state for character creation
   if (!saveData) {
-    console.log('💾 No save found, initializing for character creation');
+    ConsoleLogger.info(LogCategory.STORE, '💾 No save found, initializing for character creation');
     return {
       player: {
         id: `player_${Date.now()}`,
@@ -262,7 +264,7 @@ export const gameStore = createStore(getInitialState(), reducers);
 export function saveGameState() {
   // Skip saving if we're in the middle of resetting
   if (isResetting) {
-    console.log('💾 Save skipped (resetting)');
+    ConsoleLogger.info(LogCategory.STORE, '💾 Save skipped (resetting)');
     return;
   }
 
@@ -284,9 +286,9 @@ export function saveGameState() {
       settings: state.settings,
       story: state.story,
     });
-    console.log('💾 Game auto-saved');
+    ConsoleLogger.info(LogCategory.STORE, '💾 Game auto-saved');
   } catch (error) {
-    console.error('❌ Failed to save:', error);
+    ConsoleLogger.error(LogCategory.STORE, '❌ Failed to save:', error);
   }
 }
 
@@ -306,14 +308,14 @@ export function startAutoSave() {
     saveGameState();
   }, 30000);
 
-  console.log('⏰ Auto-save started (every 30 seconds)');
+  ConsoleLogger.info(LogCategory.STORE, '⏰ Auto-save started (every 30 seconds)');
 }
 
 export function stopAutoSave() {
   if (autoSaveInterval) {
     clearInterval(autoSaveInterval);
     autoSaveInterval = null;
-    console.log('⏰ Auto-save stopped');
+    ConsoleLogger.info(LogCategory.STORE, '⏰ Auto-save stopped');
   }
 }
 
@@ -335,11 +337,11 @@ if (import.meta.env.DEV) {
   gameStore.use({
     before: (state, action) => {
       console.group(`%c Action: ${action.type}`, 'color: #03A9F4; font-weight: bold;');
-      console.log('Payload:', action.payload);
-      console.log('State before:', state);
+      ConsoleLogger.info(LogCategory.STORE, 'Payload:', action.payload);
+      ConsoleLogger.info(LogCategory.STORE, 'State before:', state);
     },
     after: (state, _action, _prevState) => {
-      console.log('State after:', state);
+      ConsoleLogger.info(LogCategory.STORE, 'State after:', state);
       console.groupEnd();
     },
   });
@@ -351,5 +353,5 @@ export default gameStore;
 // Make store available globally for debugging
 if (typeof window !== 'undefined') {
   window.__GAME_STORE__ = gameStore;
-  console.log('🎮 Game Store initialized. Access via window.__GAME_STORE__');
+  ConsoleLogger.info(LogCategory.STORE, '🎮 Game Store initialized. Access via window.__GAME_STORE__');
 }

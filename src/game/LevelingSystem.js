@@ -3,6 +3,8 @@
  */
 
 import { gameStore } from '../store/gameStore.js';
+import { ConsoleLogger, LogCategory } from '../utils/ConsoleLogger.js';
+
 import { addXP as addXPAction, levelUp as levelUpAction, updatePlayer } from '../store/actions.js';
 import { Logger } from '../utils/logger.js';
 import { soundManager } from '../utils/soundManager.js';
@@ -89,9 +91,9 @@ export class LevelingSystem {
       soundManager.play('victory'); // Play victory sound for level up
     }
 
-    console.log(`🎯 Awarded ${scaledAmount} XP for ${reason}`);
+    ConsoleLogger.info(LogCategory.LEVELING, `🎯 Awarded ${scaledAmount} XP for ${reason}`);
     if (leveledUp) {
-      console.log(`🎉 LEVEL UP! ${currentLevel} → ${newLevel}`);
+      ConsoleLogger.info(LogCategory.LEVELING, `🎉 LEVEL UP! ${currentLevel} → ${newLevel}`);
     }
 
     return {
@@ -195,7 +197,7 @@ export class LevelingSystem {
     fighter.maxHealth = Math.floor(fighter.maxHealth * hpBonus);
     fighter.strength = Math.floor(fighter.strength * strBonus);
 
-    console.log(`💪 Applied level ${level} bonuses to ${fighter.name}:`, {
+    ConsoleLogger.info(LogCategory.LEVELING, `💪 Applied level ${level} bonuses to ${fighter.name}:`, {
       hp: `${originalHealth} → ${fighter.health}`,
       str: `${originalStrength} → ${fighter.strength}`,
     });

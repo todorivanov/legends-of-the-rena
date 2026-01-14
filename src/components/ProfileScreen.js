@@ -1,4 +1,6 @@
 import { BaseComponent } from './BaseComponent.js';
+import { ConsoleLogger, LogCategory } from '../utils/ConsoleLogger.js';
+
 import profileStyles from '../styles/components/ProfileScreen.scss?inline';
 import { gameStore, setResetting } from '../store/gameStore.js';
 import { LevelingSystem } from '../game/LevelingSystem.js';
@@ -118,7 +120,7 @@ export class ProfileScreen extends BaseComponent {
       xpForNext = Math.max(0, xpForNextLevel - totalXP);
       xpProgress = xpNeededForLevel > 0 ? (xpInCurrentLevel / xpNeededForLevel) * 100 : 0;
 
-      console.log('XP Debug:', {
+      ConsoleLogger.info(LogCategory.UI, 'XP Debug:', {
         storedLevel: profile.level,
         correctLevel,
         totalXP,
@@ -130,7 +132,7 @@ export class ProfileScreen extends BaseComponent {
         xpProgress,
       });
     } catch (e) {
-      console.error('Error calculating XP:', e);
+      ConsoleLogger.error(LogCategory.UI, 'Error calculating XP:', e);
       xpInCurrentLevel = totalXP;
       xpForNext = 100;
       xpProgress = 0;

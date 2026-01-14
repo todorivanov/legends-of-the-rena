@@ -3,6 +3,7 @@
  */
 
 import { compress, decompress, getSizeKB } from './compression.js';
+import { ConsoleLogger, LogCategory } from './ConsoleLogger.js';
 
 // Save keys
 const SAVE_KEY_PREFIX = 'legends_arena_save';
@@ -143,16 +144,16 @@ export class SaveManagerV2 {
       if (useCompression) {
         const compressed = compress(dataString);
         localStorage.setItem(saveKey, compressed);
-        console.log(`💾 Save compressed: ${getSizeKB(dataString)}KB → ${getSizeKB(compressed)}KB`);
+        ConsoleLogger.info(LogCategory.SAVE_SYSTEM, `💾 Save compressed: ${getSizeKB(dataString)}KB → ${getSizeKB(compressed)}KB`);
       } else {
         localStorage.setItem(saveKey, dataString);
-        console.log(`💾 Save stored: ${getSizeKB(dataString)}KB`);
+        ConsoleLogger.info(LogCategory.SAVE_SYSTEM, `💾 Save stored: ${getSizeKB(dataString)}KB`);
       }
 
-      console.log(`✅ Game saved to slot ${slot}`);
+      ConsoleLogger.info(LogCategory.SAVE_SYSTEM, `✅ Game saved to slot ${slot}`);
       return true;
     } catch (error) {
-      console.error('❌ Save failed:', error);
+      ConsoleLogger.error(LogCategory.SAVE_SYSTEM, '❌ Save failed:', error);
       return false;
     }
   }
@@ -168,7 +169,7 @@ export class SaveManagerV2 {
       const dataString = localStorage.getItem(saveKey);
 
       if (!dataString) {
-        console.log('💾 No save found');
+        ConsoleLogger.info(LogCategory.SAVE_SYSTEM, '💾 No save found');
         return null;
       }
 
@@ -187,7 +188,7 @@ export class SaveManagerV2 {
 
       return saveData;
     } catch (error) {
-      console.error('❌ Load failed:', error);
+      ConsoleLogger.error(LogCategory.SAVE_SYSTEM, '❌ Load failed:', error);
       return null;
     }
   }
@@ -216,9 +217,9 @@ export class SaveManagerV2 {
       const backupKey = this.getBackupKey(slot, Date.now());
       localStorage.setItem(backupKey, currentData);
 
-      console.log(`💾 Backup created: ${backupKey}`);
+      ConsoleLogger.info(LogCategory.SAVE_SYSTEM, `💾 Backup created: ${backupKey}`);
     } catch (error) {
-      console.error('❌ Backup creation failed:', error);
+      ConsoleLogger.error(LogCategory.SAVE_SYSTEM, '❌ Backup creation failed:', error);
     }
   }
 
@@ -233,7 +234,7 @@ export class SaveManagerV2 {
       const backups = this.listBackups(slot);
 
       if (backups.length === 0) {
-        console.warn('⚠️ No backups found');
+        ConsoleLogger.warn(LogCategory.SAVE_SYSTEM, '⚠️ No backups found');
         return false;
       }
 
@@ -241,7 +242,7 @@ export class SaveManagerV2 {
       const backup = timestamp === 0 ? backups[0] : backups.find((b) => b.timestamp === timestamp);
 
       if (!backup) {
-        console.warn('⚠️ Backup not found');
+        ConsoleLogger.warn(LogCategory.SAVE_SYSTEM, '⚠️ Backup not found');
         return false;
       }
 
@@ -250,10 +251,10 @@ export class SaveManagerV2 {
       const backupData = localStorage.getItem(backup.key);
       localStorage.setItem(saveKey, backupData);
 
-      console.log(`✅ Restored backup from ${new Date(backup.timestamp).toLocaleString()}`);
+      ConsoleLogger.info(LogCategory.SAVE_SYSTEM, `✅ Restored backup from ${new Date(backup.timestamp).toLocaleString()}`);
       return true;
     } catch (error) {
-      console.error('❌ Backup restore failed:', error);
+      ConsoleLogger.error(LogCategory.SAVE_SYSTEM, '❌ Backup restore failed:', error);
       return false;
     }
   }
@@ -330,10 +331,10 @@ export class SaveManagerV2 {
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
 
-      console.log('✅ Save exported successfully');
+      ConsoleLogger.info(LogCategory.SAVE_SYSTEM, '✅ Save exported successfully');
       return true;
     } catch (error) {
-      console.error('❌ Export failed:', error);
+      ConsoleLogger.error(LogCategory.SAVE_SYSTEM, '❌ Export failed:', error);
       return false;
     }
   }
@@ -355,7 +356,7 @@ export class SaveManagerV2 {
 
             // Validate save data
             if (!this.validateSaveData(saveData)) {
-              console.error('❌ Invalid save data');
+              ConsoleLogger.error(LogCategory.SAVE_SYSTEM, '❌ Invalid save data');
               resolve(false);
               return;
             }
@@ -366,22 +367,22 @@ export class SaveManagerV2 {
             // Save to slot
             this.save(migratedData, slot, true);
 
-            console.log('✅ Save imported successfully');
+            ConsoleLogger.info(LogCategory.SAVE_SYSTEM, '✅ Save imported successfully');
             resolve(true);
           } catch (error) {
-            console.error('❌ Import parsing failed:', error);
+            ConsoleLogger.error(LogCategory.SAVE_SYSTEM, '❌ Import parsing failed:', error);
             resolve(false);
           }
         };
 
         reader.onerror = () => {
-          console.error('❌ File read failed');
+          ConsoleLogger.error(LogCategory.SAVE_SYSTEM, '❌ File read failed');
           resolve(false);
         };
 
         reader.readAsText(file);
       } catch (error) {
-        console.error('❌ Import failed:', error);
+        ConsoleLogger.error(LogCategory.SAVE_SYSTEM, '❌ Import failed:', error);
         resolve(false);
       }
     });
@@ -398,10 +399,10 @@ export class SaveManagerV2 {
       const saveData = this.load(fromSlot);
       saveData.saveMetadata.slot = toSlot;
       this.save(saveData, toSlot);
-      console.log(`✅ Save copied from slot ${fromSlot} to slot ${toSlot}`);
+      ConsoleLogger.info(LogCategory.SAVE_SYSTEM, `✅ Save copied from slot ${fromSlot} to slot ${toSlot}`);
       return true;
     } catch (error) {
-      console.error('❌ Copy failed:', error);
+      ConsoleLogger.error(LogCategory.SAVE_SYSTEM, '❌ Copy failed:', error);
       return false;
     }
   }
@@ -422,10 +423,10 @@ export class SaveManagerV2 {
         localStorage.removeItem(backup.key);
       });
 
-      console.log(`✅ Save slot ${slot} deleted`);
+      ConsoleLogger.info(LogCategory.SAVE_SYSTEM, `✅ Save slot ${slot} deleted`);
       return true;
     } catch (error) {
-      console.error('❌ Delete failed:', error);
+      ConsoleLogger.error(LogCategory.SAVE_SYSTEM, '❌ Delete failed:', error);
       return false;
     }
   }
@@ -500,7 +501,7 @@ export class SaveManagerV2 {
    */
   static validateAndMigrate(data) {
     if (!this.validateSaveData(data)) {
-      console.warn('⚠️ Invalid save data, using defaults');
+      ConsoleLogger.warn(LogCategory.SAVE_SYSTEM, '⚠️ Invalid save data, using defaults');
       return this.getDefaultProfile();
     }
 
@@ -525,7 +526,7 @@ export class SaveManagerV2 {
    * @returns {Object} Migrated data
    */
   static migrateTo410(data) {
-    console.log(`🔄 Migrating save from ${data.version} to 4.1.0`);
+    ConsoleLogger.info(LogCategory.SAVE_SYSTEM, `🔄 Migrating save from ${data.version} to 4.1.0`);
 
     const defaultData = this.getDefaultProfile();
 
@@ -540,7 +541,7 @@ export class SaveManagerV2 {
       completedMissions = Object.keys(completedMissions).filter(
         (key) => completedMissions[key] === true
       );
-      console.log('🔄 Converted completedMissions from object to array');
+      ConsoleLogger.info(LogCategory.SAVE_SYSTEM, '🔄 Converted completedMissions from object to array');
     }
 
     // Ensure story has the correct structure
@@ -581,7 +582,7 @@ export class SaveManagerV2 {
     // Ensure completedMissions is an array
     if (data.story?.completedMissions && !Array.isArray(data.story.completedMissions)) {
       data.story.completedMissions = Object.keys(data.story.completedMissions);
-      console.log('🔄 Converted story.completedMissions from object to array');
+      ConsoleLogger.info(LogCategory.SAVE_SYSTEM, '🔄 Converted story.completedMissions from object to array');
     }
 
     if (
@@ -589,7 +590,7 @@ export class SaveManagerV2 {
       !Array.isArray(data.storyProgress.completedMissions)
     ) {
       data.storyProgress.completedMissions = Object.keys(data.storyProgress.completedMissions);
-      console.log('🔄 Converted storyProgress.completedMissions from object to array');
+      ConsoleLogger.info(LogCategory.SAVE_SYSTEM, '🔄 Converted storyProgress.completedMissions from object to array');
     }
 
     return {
@@ -685,7 +686,7 @@ export class SaveManagerV2 {
     let data = this.load();
     // If no save exists, create a new profile
     if (!data) {
-      console.log('💾 Creating new profile for first save');
+      ConsoleLogger.info(LogCategory.SAVE_SYSTEM, '💾 Creating new profile for first save');
       data = this.getDefaultProfile();
     }
     const keys = path.split('.');

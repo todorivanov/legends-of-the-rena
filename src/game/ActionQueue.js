@@ -2,6 +2,8 @@
  * ActionQueue - Advanced action queue with priorities and batching
  */
 
+import { ConsoleLogger, LogCategory } from '../utils/ConsoleLogger.js';
+
 export class ActionQueue {
   constructor() {
     this.queue = [];
@@ -28,7 +30,7 @@ export class ActionQueue {
     this.queue.push(queuedAction);
     this.sortByPriority();
 
-    console.log(`📥 Enqueued: ${action.type} (priority: ${queuedAction.priority})`);
+    ConsoleLogger.info(LogCategory.ACTION_QUEUE, `📥 Enqueued: ${action.type} (priority: ${queuedAction.priority})`);
     return queuedAction.id;
   }
 
@@ -39,7 +41,7 @@ export class ActionQueue {
    */
   enqueueBatch(actions) {
     const ids = actions.map((action) => this.enqueue(action));
-    console.log(`📦 Batch enqueued: ${actions.length} actions`);
+    ConsoleLogger.info(LogCategory.ACTION_QUEUE, `📦 Batch enqueued: ${actions.length} actions`);
     return ids;
   }
 
@@ -55,7 +57,7 @@ export class ActionQueue {
     const action = this.queue.shift();
     this.addToHistory(action);
 
-    console.log(`📤 Dequeued: ${action.type}`);
+    ConsoleLogger.info(LogCategory.ACTION_QUEUE, `📤 Dequeued: ${action.type}`);
     return action;
   }
 
@@ -86,7 +88,7 @@ export class ActionQueue {
     const index = this.queue.findIndex((a) => a.id === id);
     if (index !== -1) {
       const action = this.queue.splice(index, 1)[0];
-      console.log(`🗑️ Removed: ${action.type}`);
+      ConsoleLogger.info(LogCategory.ACTION_QUEUE, `🗑️ Removed: ${action.type}`);
       return true;
     }
     return false;
@@ -125,7 +127,7 @@ export class ActionQueue {
   clear() {
     const count = this.queue.length;
     this.queue = [];
-    console.log(`🗑️ Cleared ${count} actions`);
+    ConsoleLogger.info(LogCategory.ACTION_QUEUE, `🗑️ Cleared ${count} actions`);
   }
 
   /**
@@ -156,7 +158,7 @@ export class ActionQueue {
    */
   pause() {
     this.paused = true;
-    console.log('⏸️ Queue paused');
+    ConsoleLogger.info(LogCategory.ACTION_QUEUE, '⏸️ Queue paused');
   }
 
   /**
@@ -164,7 +166,7 @@ export class ActionQueue {
    */
   resume() {
     this.paused = false;
-    console.log('▶️ Queue resumed');
+    ConsoleLogger.info(LogCategory.ACTION_QUEUE, '▶️ Queue resumed');
   }
 
   /**
@@ -294,7 +296,7 @@ export class ActionQueue {
     this.history = [];
     this.processing = false;
     this.paused = false;
-    console.log('🔄 Action queue reset');
+    ConsoleLogger.info(LogCategory.ACTION_QUEUE, '🔄 Action queue reset');
   }
 }
 

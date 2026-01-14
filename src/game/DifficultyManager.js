@@ -3,6 +3,8 @@
  */
 
 import { SaveManagerV2 as SaveManager } from '../utils/SaveManagerV2.js';
+import { ConsoleLogger, LogCategory } from '../utils/ConsoleLogger.js';
+
 
 export const DIFFICULTY_LEVELS = {
   EASY: 'easy',
@@ -111,12 +113,12 @@ export class DifficultyManager {
    */
   static setDifficulty(difficulty) {
     if (!DIFFICULTY_CONFIG[difficulty]) {
-      console.error(`Invalid difficulty: ${difficulty}`);
+      ConsoleLogger.error(LogCategory.GENERAL, `Invalid difficulty: ${difficulty}`);
       return false;
     }
 
     SaveManager.update('settings.difficulty', difficulty);
-    console.log(`⚙️ Difficulty set to: ${DIFFICULTY_CONFIG[difficulty].name}`);
+    ConsoleLogger.info(LogCategory.GENERAL, `⚙️ Difficulty set to: ${DIFFICULTY_CONFIG[difficulty].name}`);
     return true;
   }
 
@@ -143,7 +145,7 @@ export class DifficultyManager {
       fighter.maxHealth = Math.floor(fighter.maxHealth * config.modifiers.playerHealthMultiplier);
       fighter.strength = Math.floor(fighter.strength * config.modifiers.playerStrengthMultiplier);
 
-      console.log(`💪 Player difficulty modifiers applied (${config.name}):`, {
+      ConsoleLogger.info(LogCategory.GENERAL, `💪 Player difficulty modifiers applied (${config.name}):`, {
         hp: `x${config.modifiers.playerHealthMultiplier}`,
         str: `x${config.modifiers.playerStrengthMultiplier}`,
       });
@@ -153,7 +155,7 @@ export class DifficultyManager {
       fighter.maxHealth = Math.floor(fighter.maxHealth * config.modifiers.enemyHealthMultiplier);
       fighter.strength = Math.floor(fighter.strength * config.modifiers.enemyStrengthMultiplier);
 
-      console.log(`👹 Enemy difficulty modifiers applied (${config.name}):`, {
+      ConsoleLogger.info(LogCategory.GENERAL, `👹 Enemy difficulty modifiers applied (${config.name}):`, {
         hp: `x${config.modifiers.enemyHealthMultiplier}`,
         str: `x${config.modifiers.enemyStrengthMultiplier}`,
       });

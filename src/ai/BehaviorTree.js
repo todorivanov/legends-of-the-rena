@@ -5,6 +5,8 @@
  * More flexible and maintainable than simple if/else chains
  */
 
+import { ConsoleLogger, LogCategory } from '../utils/ConsoleLogger.js';
+
 /**
  * Node Status - Result of node execution
  */
@@ -161,7 +163,7 @@ export class Action extends BehaviorNode {
       this.status = result ? NodeStatus.SUCCESS : NodeStatus.FAILURE;
       return this.status;
     } catch (error) {
-      console.error(`Action ${this.name} failed:`, error);
+      ConsoleLogger.error(LogCategory.AI, `Action ${this.name} failed:`, error);
       this.status = NodeStatus.FAILURE;
       return this.status;
     }
@@ -337,13 +339,13 @@ export class BehaviorTree {
    */
   execute(context) {
     if (!this.rootNode) {
-      console.warn(`BehaviorTree ${this.name} has no root node`);
+      ConsoleLogger.warn(LogCategory.AI, `BehaviorTree ${this.name} has no root node`);
       return NodeStatus.FAILURE;
     }
 
     const status = this.rootNode.execute(context);
 
-    console.log(`🤖 AI Decision (${this.name}):`, {
+    ConsoleLogger.info(LogCategory.AI, `🤖 AI Decision (${this.name}):`, {
       status,
       action: context.chosenAction,
     });

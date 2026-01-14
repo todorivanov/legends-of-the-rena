@@ -2,6 +2,8 @@
  * GridManager - Manages the 5x5 tactical grid for combat
  */
 
+import { ConsoleLogger, LogCategory } from '../utils/ConsoleLogger.js';
+
 /**
  * Grid cell representing a position on the battlefield
  */
@@ -137,13 +139,13 @@ export class GridManager {
   placeFighter(fighter, x, y) {
     const cell = this.getCell(x, y);
     if (!cell || cell.isOccupied()) {
-      console.warn(`Cannot place fighter at (${x}, ${y}): cell occupied or invalid`);
+      ConsoleLogger.warn(LogCategory.GRID, `Cannot place fighter at (${x}, ${y}): cell occupied or invalid`);
       return false;
     }
 
     // Validate terrain is passable (prevent spawning on walls/pits)
     if (!cell.isPassable()) {
-      console.warn(`Cannot place fighter at (${x}, ${y}): terrain '${cell.terrain}' is impassable`);
+      ConsoleLogger.warn(LogCategory.GRID, `Cannot place fighter at (${x}, ${y}): terrain '${cell.terrain}' is impassable`);
       return false;
     }
 
