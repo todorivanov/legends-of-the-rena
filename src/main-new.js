@@ -118,6 +118,7 @@ function initializeRouter() {
     showCharacterCreation,
     showProfileScreen,
     showAchievementsScreen,
+    showTalentTreeScreen,
     showSettingsScreen,
     showWikiScreen,
     showOpponentSelection,
@@ -265,6 +266,12 @@ function showProfileScreen() {
   profileScreen.addEventListener('back-to-menu', () => {
     appState.reset();
     router.navigate(RoutePaths.HOME);
+  });
+  profileScreen.addEventListener('navigate', (e) => {
+    const { screen } = e.detail;
+    if (screen === 'talents') {
+      router.navigate(RoutePaths.TALENTS);
+    }
   });
 
   root.appendChild(profileScreen);
@@ -663,6 +670,29 @@ function showAchievementsScreen() {
 
   root.appendChild(achievementsScreen);
   appState.currentScreen = 'achievements';
+}
+
+/**
+ * Show talent tree screen
+ */
+function showTalentTreeScreen() {
+  const root = document.getElementById('root');
+  root.innerHTML = '';
+
+  const talentTreeScreen = document.createElement('talent-tree-screen');
+  talentTreeScreen.addEventListener('navigate', (e) => {
+    const { screen } = e.detail;
+    if (screen === 'profile') {
+      router.navigate(RoutePaths.PROFILE);
+    }
+  });
+  talentTreeScreen.addEventListener('back-to-menu', () => {
+    appState.reset();
+    router.navigate(RoutePaths.HOME);
+  });
+
+  root.appendChild(talentTreeScreen);
+  appState.currentScreen = 'talents';
 }
 
 /**

@@ -32,6 +32,11 @@ function getInitialState() {
         class: null,
         characterCreated: false,
         character: null,
+        talents: {
+          tree1: {},
+          tree2: {},
+          tree3: {},
+        },
       },
       combat: {
         active: false,
@@ -141,6 +146,11 @@ function getInitialState() {
       class: saveData.profile.class || 'BALANCED',
       characterCreated: saveData.profile.characterCreated || false,
       character: saveData.profile.character,
+      talents: saveData.profile.talents || {
+        tree1: {},
+        tree2: {},
+        tree3: {},
+      },
     },
 
     // Combat state

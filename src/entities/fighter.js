@@ -1,6 +1,7 @@
 import { BaseEntity } from './baseEntity.js';
 import { getClassById } from '../data/classes.js';
 import { EQUIPMENT_DATABASE } from '../data/equipment.js';
+import { TalentManager } from '../game/TalentManager.js';
 
 /**
  * Fighter - Represents a combat fighter with unique abilities
@@ -96,6 +97,45 @@ export class Fighter extends BaseEntity {
     this.statusEffects = [];
     this.isDefending = false;
     this.combo = 0;
+  }
+
+  /**
+   * Apply talent effects to fighter stats
+   * Called when fighter is created or talents change
+   * @returns {Fighter} - This fighter with talents applied
+   */
+  applyTalents() {
+    if (!this.isPlayer) return this; // Only apply to player fighter
+    
+    TalentManager.applyTalentsToFighter(this);
+    return this;
+  }
+
+  /**
+   * Check if fighter has a specific talent passive
+   * @param {string} passiveType - Type of passive to check
+   * @returns {Object|null} - Passive effect object or null
+   */
+  getTalentPassive(passiveType) {
+    if (!this.talentPassives) return null;
+    return this.talentPassives.find(p => p.type === passiveType) || null;
+  }
+
+  /**
+   * Check if talent passive should proc
+   * @param {string} passiveType - Type of passive
+   * @returns {boolean} - Whether passive should activate
+   */
+  shouldProcTalentPassive(passiveType) {
+    const passive = this.getTalentPassive(passiveType);
+    if (!passive) return false;
+    
+    // Check chance-based passives
+    if (passive.chance) {
+      return Math.random() < passive.chance;
+    }
+    
+    return true;
   }
 
   /**

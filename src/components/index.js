@@ -33,6 +33,7 @@ export { SaveManagementScreen } from './SaveManagementScreen.js'; // v4.1 - Save
 export { ComboHint } from './ComboHint.js'; // v4.2 - Combo System
 export { PerformanceMonitorUI } from './PerformanceMonitorUI.js'; // v4.6 - Performance
 export { GridCombatUI } from './GridCombatUI.js'; // v4.7 - Grid Combat
+export { TalentTreeScreen } from './TalentTreeScreen.js'; // v4.11 - Talent System
 
 // Auto-register all components by importing this file
 ConsoleLogger.info(LogCategory.UI, '✅ All Web Components registered');

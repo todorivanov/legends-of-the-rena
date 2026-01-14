@@ -122,6 +122,12 @@ export function getRouteConfig(handlers) {
       title: 'Achievements - Legends of the Arena',
     },
     {
+      path: RoutePaths.TALENTS,
+      handler: handlers.showTalentTreeScreen,
+      guard: 'characterCreated',
+      title: 'Talents - Legends of the Arena',
+    },
+    {
       path: RoutePaths.SETTINGS,
       handler: handlers.showSettingsScreen,
       title: 'Settings - Legends of the Arena',

@@ -505,6 +505,72 @@ export const uiReducers = {
 };
 
 /**
+ * Talent reducers
+ */
+export const talentReducers = {
+  LEARN_TALENT: (state, { treeId, talentId }) => {
+    const currentRank = state.player.talents[treeId]?.[talentId] || 0;
+    
+    return {
+      player: {
+        ...state.player,
+        talents: {
+          ...state.player.talents,
+          [treeId]: {
+            ...state.player.talents[treeId],
+            [talentId]: currentRank + 1,
+          },
+        },
+      },
+    };
+  },
+
+  UNLEARN_TALENT: (state, { treeId, talentId }) => {
+    const currentRank = state.player.talents[treeId]?.[talentId] || 0;
+    const newRank = Math.max(0, currentRank - 1);
+    
+    const newTreeTalents = { ...state.player.talents[treeId] };
+    if (newRank === 0) {
+      delete newTreeTalents[talentId];
+    } else {
+      newTreeTalents[talentId] = newRank;
+    }
+
+    return {
+      player: {
+        ...state.player,
+        talents: {
+          ...state.player.talents,
+          [treeId]: newTreeTalents,
+        },
+      },
+    };
+  },
+
+  RESET_TALENTS: (state, { cost = 0 }) => {
+    return {
+      player: {
+        ...state.player,
+        gold: cost > 0 ? state.player.gold - cost : state.player.gold,
+        talents: {
+          tree1: {},
+          tree2: {},
+          tree3: {},
+        },
+      },
+      ui: {
+        ...state.ui,
+        notification: {
+          message: '✨ Talents reset successfully!',
+          type: 'success',
+          visible: true,
+        },
+      },
+    };
+  },
+};
+
+/**
  * Combine all reducers
  */
 export const reducers = {
@@ -516,5 +582,6 @@ export const reducers = {
   ...statsReducers,
   ...settingsReducers,
   ...achievementReducers,
+  ...talentReducers,
   ...uiReducers,
 };

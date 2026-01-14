@@ -20,6 +20,13 @@ export class NavigationBar extends BaseComponent {
         requiresCharacter: true,
       },
       {
+        id: 'talents',
+        label: '⭐ Talents',
+        icon: '⭐',
+        path: RoutePaths.TALENTS,
+        requiresCharacter: true,
+      },
+      {
         id: 'achievements',
         label: '🏅 Achievements',
         icon: '🏅',

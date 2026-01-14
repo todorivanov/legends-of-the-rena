@@ -14,10 +14,46 @@
 
 .profile-header {
   @include screen-header;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
 }
 
 .profile-title {
   @include screen-title;
+  margin: 0;
+}
+
+.quick-actions {
+  display: flex;
+  gap: 15px;
+  animation: fadeIn 0.6s ease;
+}
+
+.action-btn {
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 700;
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 167, 38, 0.2));
+  border: 2px solid rgba(255, 215, 0, 0.5);
+  border-radius: 12px;
+  color: #ffd700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2);
+
+  &:hover {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.3), rgba(255, 167, 38, 0.3));
+    border-color: #ffd700;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
 }
 
 .back-btn {
