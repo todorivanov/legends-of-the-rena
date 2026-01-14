@@ -30,7 +30,10 @@ export class ActionQueue {
     this.queue.push(queuedAction);
     this.sortByPriority();
 
-    ConsoleLogger.info(LogCategory.ACTION_QUEUE, `📥 Enqueued: ${action.type} (priority: ${queuedAction.priority})`);
+    ConsoleLogger.info(
+      LogCategory.ACTION_QUEUE,
+      `📥 Enqueued: ${action.type} (priority: ${queuedAction.priority})`
+    );
     return queuedAction.id;
   }
 

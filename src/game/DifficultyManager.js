@@ -5,7 +5,6 @@
 import { SaveManagerV2 as SaveManager } from '../utils/SaveManagerV2.js';
 import { ConsoleLogger, LogCategory } from '../utils/ConsoleLogger.js';
 
-
 export const DIFFICULTY_LEVELS = {
   EASY: 'easy',
   NORMAL: 'normal',
@@ -118,7 +117,10 @@ export class DifficultyManager {
     }
 
     SaveManager.update('settings.difficulty', difficulty);
-    ConsoleLogger.info(LogCategory.GENERAL, `⚙️ Difficulty set to: ${DIFFICULTY_CONFIG[difficulty].name}`);
+    ConsoleLogger.info(
+      LogCategory.GENERAL,
+      `⚙️ Difficulty set to: ${DIFFICULTY_CONFIG[difficulty].name}`
+    );
     return true;
   }
 
@@ -145,20 +147,28 @@ export class DifficultyManager {
       fighter.maxHealth = Math.floor(fighter.maxHealth * config.modifiers.playerHealthMultiplier);
       fighter.strength = Math.floor(fighter.strength * config.modifiers.playerStrengthMultiplier);
 
-      ConsoleLogger.info(LogCategory.GENERAL, `💪 Player difficulty modifiers applied (${config.name}):`, {
-        hp: `x${config.modifiers.playerHealthMultiplier}`,
-        str: `x${config.modifiers.playerStrengthMultiplier}`,
-      });
+      ConsoleLogger.info(
+        LogCategory.GENERAL,
+        `💪 Player difficulty modifiers applied (${config.name}):`,
+        {
+          hp: `x${config.modifiers.playerHealthMultiplier}`,
+          str: `x${config.modifiers.playerStrengthMultiplier}`,
+        }
+      );
     } else {
       // Apply enemy modifiers
       fighter.health = Math.floor(fighter.health * config.modifiers.enemyHealthMultiplier);
       fighter.maxHealth = Math.floor(fighter.maxHealth * config.modifiers.enemyHealthMultiplier);
       fighter.strength = Math.floor(fighter.strength * config.modifiers.enemyStrengthMultiplier);
 
-      ConsoleLogger.info(LogCategory.GENERAL, `👹 Enemy difficulty modifiers applied (${config.name}):`, {
-        hp: `x${config.modifiers.enemyHealthMultiplier}`,
-        str: `x${config.modifiers.enemyStrengthMultiplier}`,
-      });
+      ConsoleLogger.info(
+        LogCategory.GENERAL,
+        `👹 Enemy difficulty modifiers applied (${config.name}):`,
+        {
+          hp: `x${config.modifiers.enemyHealthMultiplier}`,
+          str: `x${config.modifiers.enemyStrengthMultiplier}`,
+        }
+      );
     }
 
     return fighter;

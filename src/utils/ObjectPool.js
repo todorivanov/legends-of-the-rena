@@ -64,7 +64,10 @@ export class ObjectPool {
    */
   release(obj) {
     if (!this.active.has(obj)) {
-      ConsoleLogger.warn(LogCategory.PERFORMANCE, 'Attempting to release object not from this pool');
+      ConsoleLogger.warn(
+        LogCategory.PERFORMANCE,
+        'Attempting to release object not from this pool'
+      );
       return;
     }
 

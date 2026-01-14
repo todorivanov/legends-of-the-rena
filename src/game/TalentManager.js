@@ -1,6 +1,6 @@
 /**
  * TalentManager - Manages talent trees, talent point allocation, and talent effects
- * 
+ *
  * Features:
  * - 3 talent trees per class
  * - Talent dependencies and prerequisites
@@ -37,12 +37,12 @@ export class TalentManager {
    */
   static getTalentTrees(characterClass) {
     const trees = TALENT_TREES[characterClass];
-    
+
     if (!trees) {
       ConsoleLogger.warn(LogCategory.SYSTEM, `No talent trees found for class: ${characterClass}`);
       return null;
     }
-    
+
     return trees;
   }
 
@@ -57,7 +57,7 @@ export class TalentManager {
     const trees = this.getTalentTrees(characterClass);
     if (!trees || !trees[treeId]) return null;
 
-    return trees[treeId].talents.find(t => t.id === talentId) || null;
+    return trees[treeId].talents.find((t) => t.id === talentId) || null;
   }
 
   /**
@@ -76,7 +76,7 @@ export class TalentManager {
   static getTotalTalentPoints() {
     const state = gameStore.getState();
     const level = state.player?.level || 1;
-    
+
     // Gain 1 talent point per level starting at level 2
     return Math.max(0, level - 1);
   }
@@ -89,8 +89,8 @@ export class TalentManager {
     const talents = this.getPlayerTalents();
     let spent = 0;
 
-    Object.keys(talents).forEach(treeId => {
-      Object.keys(talents[treeId]).forEach(talentId => {
+    Object.keys(talents).forEach((treeId) => {
+      Object.keys(talents[treeId]).forEach((talentId) => {
         spent += talents[treeId][talentId];
       });
     });
@@ -147,9 +147,9 @@ export class TalentManager {
     // Check if required points in tree are met
     const pointsInTree = this.getTreePoints(treeId);
     if (pointsInTree < talent.requiresPoints) {
-      return { 
-        canLearn: false, 
-        reason: `Requires ${talent.requiresPoints} points in this tree` 
+      return {
+        canLearn: false,
+        reason: `Requires ${talent.requiresPoints} points in this tree`,
       };
     }
 
@@ -158,11 +158,11 @@ export class TalentManager {
       for (const requiredTalentId of talent.requires) {
         const requiredTalent = this.getTalentNode(characterClass, treeId, requiredTalentId);
         const requiredRank = talents[treeId]?.[requiredTalentId] || 0;
-        
+
         if (requiredRank < (requiredTalent?.maxRank || 1)) {
-          return { 
-            canLearn: false, 
-            reason: `Requires ${requiredTalent?.name || 'prerequisite talent'}` 
+          return {
+            canLearn: false,
+            reason: `Requires ${requiredTalent?.name || 'prerequisite talent'}`,
           };
         }
       }
@@ -200,8 +200,8 @@ export class TalentManager {
 
     const talent = this.getTalentNode(characterClass, treeId, talentId);
     ConsoleLogger.info(
-      LogCategory.SYSTEM, 
-      `✨ Learned talent: ${talent.name} (Rank ${(this.getPlayerTalents()[treeId]?.[talentId] || 0)}/${talent.maxRank})`
+      LogCategory.SYSTEM,
+      `✨ Learned talent: ${talent.name} (Rank ${this.getPlayerTalents()[treeId]?.[talentId] || 0}/${talent.maxRank})`
     );
 
     return true;
@@ -218,7 +218,7 @@ export class TalentManager {
     const state = gameStore.getState();
     const characterClass = state.player?.character?.class;
     const talents = this.getPlayerTalents();
-    
+
     const currentRank = talents[treeId]?.[talentId] || 0;
     if (currentRank === 0) {
       ConsoleLogger.warn(LogCategory.SYSTEM, 'Talent not learned');
@@ -233,7 +233,7 @@ export class TalentManager {
           const otherRank = talents[treeId]?.[otherTalent.id] || 0;
           if (otherRank > 0) {
             ConsoleLogger.warn(
-              LogCategory.SYSTEM, 
+              LogCategory.SYSTEM,
               `Cannot unlearn: ${otherTalent.name} depends on this talent`
             );
             return false;
@@ -299,8 +299,8 @@ export class TalentManager {
       passives: [],
     };
 
-    Object.keys(talents).forEach(treeId => {
-      Object.keys(talents[treeId]).forEach(talentId => {
+    Object.keys(talents).forEach((treeId) => {
+      Object.keys(talents[treeId]).forEach((talentId) => {
         const rank = talents[treeId][talentId];
         if (rank === 0) return;
 
@@ -309,10 +309,10 @@ export class TalentManager {
 
         // Apply stat modifiers
         if (talent.effects.stats) {
-          Object.keys(talent.effects.stats).forEach(stat => {
+          Object.keys(talent.effects.stats).forEach((stat) => {
             const value = talent.effects.stats[stat];
             // Multiply by rank if it's a per-rank effect
-            effects.stats[stat] = (effects.stats[stat] || 0) + (value * rank);
+            effects.stats[stat] = (effects.stats[stat] || 0) + value * rank;
           });
         }
 
@@ -342,7 +342,7 @@ export class TalentManager {
     const effects = this.getActiveTalentEffects();
 
     // Apply stat bonuses
-    Object.keys(effects.stats).forEach(stat => {
+    Object.keys(effects.stats).forEach((stat) => {
       const bonus = effects.stats[stat];
       if (bonus > 0) {
         fighter[stat] = (fighter[stat] || 0) + bonus;
@@ -353,7 +353,7 @@ export class TalentManager {
     fighter.talentPassives = effects.passives;
 
     ConsoleLogger.debug(
-      LogCategory.SYSTEM, 
+      LogCategory.SYSTEM,
       `Applied talents to fighter: +${effects.stats.strength} STR, +${effects.stats.health} HP, ${effects.passives.length} passives`
     );
 
@@ -380,9 +380,8 @@ export class TalentManager {
       icon: tree.icon,
       pointsSpent: pointsInTree,
       totalTalents: tree.talents.length,
-      learnedTalents: Object.keys(talents[treeId] || {}).filter(
-        id => talents[treeId][id] > 0
-      ).length,
+      learnedTalents: Object.keys(talents[treeId] || {}).filter((id) => talents[treeId][id] > 0)
+        .length,
     };
   }
 

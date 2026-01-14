@@ -5,7 +5,6 @@
 import LZString from 'lz-string';
 import { ConsoleLogger, LogCategory } from '../utils/ConsoleLogger.js';
 
-
 /**
  * Compress a string using LZ compression
  * @param {string} str - String to compress

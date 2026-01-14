@@ -32,12 +32,18 @@ export class EquipmentManager {
     const playerClass = state.player.class;
 
     if (equipment.requirements.level > playerLevel) {
-      ConsoleLogger.warn(LogCategory.EQUIPMENT, `❌ Level ${equipment.requirements.level} required (you are ${playerLevel})`);
+      ConsoleLogger.warn(
+        LogCategory.EQUIPMENT,
+        `❌ Level ${equipment.requirements.level} required (you are ${playerLevel})`
+      );
       return false;
     }
 
     if (equipment.requirements.class && !equipment.requirements.class.includes(playerClass)) {
-      ConsoleLogger.warn(LogCategory.EQUIPMENT, `❌ Class requirement not met: ${equipment.requirements.class.join(', ')}`);
+      ConsoleLogger.warn(
+        LogCategory.EQUIPMENT,
+        `❌ Class requirement not met: ${equipment.requirements.class.join(', ')}`
+      );
       return false;
     }
 
@@ -128,7 +134,7 @@ export class EquipmentManager {
 
     // All 8 equipment slots
     const slots = ['weapon', 'head', 'torso', 'arms', 'trousers', 'shoes', 'coat', 'accessory'];
-    
+
     slots.forEach((slotName) => {
       if (equipped[slotName]) {
         const item = getEquipmentById(equipped[slotName]);
@@ -157,7 +163,7 @@ export class EquipmentManager {
 
     // Check all 8 equipped slots for movement modifiers
     const slots = ['weapon', 'head', 'torso', 'arms', 'trousers', 'shoes', 'coat', 'accessory'];
-    
+
     slots.forEach((slotName) => {
       const itemId = equipped[slotName];
       if (itemId) {
@@ -214,7 +220,7 @@ export class EquipmentManager {
       '+DEF': stats.defense,
       '+Crit': stats.critChance,
       '+Move': movementMods.bonus,
-      'Special': movementMods.specialTypes.join(', ') || 'none',
+      Special: movementMods.specialTypes.join(', ') || 'none',
     });
 
     return fighter;

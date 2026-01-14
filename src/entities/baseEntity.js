@@ -197,7 +197,10 @@ export class BaseEntity {
 
     // Ensure health is a valid number before subtracting
     if (isNaN(this.health)) {
-      ConsoleLogger.error(LogCategory.COMBAT, `${this.name} has NaN health! Resetting to maxHealth.`);
+      ConsoleLogger.error(
+        LogCategory.COMBAT,
+        `${this.name} has NaN health! Resetting to maxHealth.`
+      );
       this.health = this.maxHealth || 100;
     }
 

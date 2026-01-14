@@ -139,13 +139,19 @@ export class GridManager {
   placeFighter(fighter, x, y) {
     const cell = this.getCell(x, y);
     if (!cell || cell.isOccupied()) {
-      ConsoleLogger.warn(LogCategory.GRID, `Cannot place fighter at (${x}, ${y}): cell occupied or invalid`);
+      ConsoleLogger.warn(
+        LogCategory.GRID,
+        `Cannot place fighter at (${x}, ${y}): cell occupied or invalid`
+      );
       return false;
     }
 
     // Validate terrain is passable (prevent spawning on walls/pits)
     if (!cell.isPassable()) {
-      ConsoleLogger.warn(LogCategory.GRID, `Cannot place fighter at (${x}, ${y}): terrain '${cell.terrain}' is impassable`);
+      ConsoleLogger.warn(
+        LogCategory.GRID,
+        `Cannot place fighter at (${x}, ${y}): terrain '${cell.terrain}' is impassable`
+      );
       return false;
     }
 

@@ -28,7 +28,8 @@ export class AIManager {
     const behaviorRoot = getBehaviorForPersonality(this.personality);
     this.behaviorTree = new BehaviorTree(`${fighter.name}_AI`, behaviorRoot);
 
-    ConsoleLogger.info(LogCategory.AI, 
+    ConsoleLogger.info(
+      LogCategory.AI,
       `🤖 AI Created for ${fighter.name}: ${this.personality.archetype.name} (${difficulty})`
     );
   }

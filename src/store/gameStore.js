@@ -207,16 +207,16 @@ function getInitialState() {
         mana_potion: 3,
       },
     },
-        equipped: {
-          weapon: saveData.equipped?.weapon || null,
-          head: saveData.equipped?.head || null,
-          torso: saveData.equipped?.torso || saveData.equipped?.armor || null, // Backward compat: armor -> torso
-          arms: saveData.equipped?.arms || null,
-          trousers: saveData.equipped?.trousers || null,
-          shoes: saveData.equipped?.shoes || null,
-          coat: saveData.equipped?.coat || null,
-          accessory: saveData.equipped?.accessory || null,
-        },
+    equipped: {
+      weapon: saveData.equipped?.weapon || null,
+      head: saveData.equipped?.head || null,
+      torso: saveData.equipped?.torso || saveData.equipped?.armor || null, // Backward compat: armor -> torso
+      arms: saveData.equipped?.arms || null,
+      trousers: saveData.equipped?.trousers || null,
+      shoes: saveData.equipped?.shoes || null,
+      coat: saveData.equipped?.coat || null,
+      accessory: saveData.equipped?.accessory || null,
+    },
     equipmentDurability: saveData.equipmentDurability || {},
 
     // Statistics
@@ -373,5 +373,8 @@ export default gameStore;
 // Make store available globally for debugging
 if (typeof window !== 'undefined') {
   window.__GAME_STORE__ = gameStore;
-  ConsoleLogger.info(LogCategory.STORE, '🎮 Game Store initialized. Access via window.__GAME_STORE__');
+  ConsoleLogger.info(
+    LogCategory.STORE,
+    '🎮 Game Store initialized. Access via window.__GAME_STORE__'
+  );
 }

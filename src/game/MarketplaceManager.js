@@ -172,7 +172,10 @@ export class MarketplaceManager {
     SaveManager.update('marketplace.currentInventory', inventory);
     SaveManager.update('marketplace.lastRefresh', Date.now());
 
-    ConsoleLogger.info(LogCategory.MARKETPLACE, `🏪 Shop inventory refreshed! ${inventory.length} items available.`);
+    ConsoleLogger.info(
+      LogCategory.MARKETPLACE,
+      `🏪 Shop inventory refreshed! ${inventory.length} items available.`
+    );
 
     return inventory;
   }
@@ -212,7 +215,10 @@ export class MarketplaceManager {
 
     // Check if player can afford
     if (!EconomyManager.canAfford(price)) {
-      ConsoleLogger.warn(LogCategory.MARKETPLACE, `❌ Cannot afford ${equipment.name}. Need ${price} gold.`);
+      ConsoleLogger.warn(
+        LogCategory.MARKETPLACE,
+        `❌ Cannot afford ${equipment.name}. Need ${price} gold.`
+      );
       return false;
     }
 
@@ -448,7 +454,10 @@ export class MarketplaceManager {
         </div>
       `;
       Logger.log(message);
-      ConsoleLogger.warn(LogCategory.MARKETPLACE, `❌ Cannot afford shop refresh. Need ${cost} gold.`);
+      ConsoleLogger.warn(
+        LogCategory.MARKETPLACE,
+        `❌ Cannot afford shop refresh. Need ${cost} gold.`
+      );
       return false;
     }
 
@@ -511,7 +520,10 @@ export class MarketplaceManager {
     const totalCost = price * quantity;
 
     if (!EconomyManager.canAfford(totalCost)) {
-      ConsoleLogger.warn(LogCategory.MARKETPLACE, `❌ Cannot afford ${quantity}x ${type}. Need ${totalCost} gold.`);
+      ConsoleLogger.warn(
+        LogCategory.MARKETPLACE,
+        `❌ Cannot afford ${quantity}x ${type}. Need ${totalCost} gold.`
+      );
       return false;
     }
 
@@ -523,7 +535,10 @@ export class MarketplaceManager {
     const current = SaveManager.get(`inventory.consumables.${type}`) || 0;
     SaveManager.update(`inventory.consumables.${type}`, current + quantity);
 
-    ConsoleLogger.info(LogCategory.MARKETPLACE, `✅ Purchased ${quantity}x ${type} for ${totalCost} gold`);
+    ConsoleLogger.info(
+      LogCategory.MARKETPLACE,
+      `✅ Purchased ${quantity}x ${type} for ${totalCost} gold`
+    );
 
     const message = `
       <div class="consumable-purchased" style="

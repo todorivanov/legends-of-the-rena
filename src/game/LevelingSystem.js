@@ -197,10 +197,14 @@ export class LevelingSystem {
     fighter.maxHealth = Math.floor(fighter.maxHealth * hpBonus);
     fighter.strength = Math.floor(fighter.strength * strBonus);
 
-    ConsoleLogger.info(LogCategory.LEVELING, `💪 Applied level ${level} bonuses to ${fighter.name}:`, {
-      hp: `${originalHealth} → ${fighter.health}`,
-      str: `${originalStrength} → ${fighter.strength}`,
-    });
+    ConsoleLogger.info(
+      LogCategory.LEVELING,
+      `💪 Applied level ${level} bonuses to ${fighter.name}:`,
+      {
+        hp: `${originalHealth} → ${fighter.health}`,
+        str: `${originalStrength} → ${fighter.strength}`,
+      }
+    );
 
     return fighter;
   }

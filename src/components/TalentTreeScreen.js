@@ -23,7 +23,7 @@ export class TalentTreeScreen extends BaseComponent {
     const state = gameStore.getState();
     const characterClass = state.player?.character?.class || 'WARRIOR';
     const trees = TalentManager.getTalentTrees(characterClass);
-    
+
     if (!trees) {
       return '<div class="error">No talent trees available for your class</div>';
     }
@@ -60,12 +60,13 @@ export class TalentTreeScreen extends BaseComponent {
   renderTreeTabs(trees, characterClass) {
     return `
       <div class="tree-tabs">
-        ${Object.keys(trees).map(treeId => {
-          const tree = trees[treeId];
-          const summary = TalentManager.getTreeSummary(characterClass, treeId);
-          const isActive = treeId === this.selectedTree;
+        ${Object.keys(trees)
+          .map((treeId) => {
+            const tree = trees[treeId];
+            const summary = TalentManager.getTreeSummary(characterClass, treeId);
+            const isActive = treeId === this.selectedTree;
 
-          return `
+            return `
             <button 
               class="tree-tab ${isActive ? 'active' : ''}"
               data-tree="${treeId}"
@@ -76,7 +77,8 @@ export class TalentTreeScreen extends BaseComponent {
               <div class="tree-tab-description">${tree.description}</div>
             </button>
           `;
-        }).join('')}
+          })
+          .join('')}
       </div>
     `;
   }
@@ -86,19 +88,19 @@ export class TalentTreeScreen extends BaseComponent {
 
     // Group talents by row
     const talentsByRow = {};
-    tree.talents.forEach(talent => {
+    tree.talents.forEach((talent) => {
       if (!talentsByRow[talent.row]) {
         talentsByRow[talent.row] = [];
       }
       talentsByRow[talent.row].push(talent);
     });
 
-    const maxRow = Math.max(...tree.talents.map(t => t.row));
+    const maxRow = Math.max(...tree.talents.map((t) => t.row));
 
     return `
       <div class="talent-tree-container">
         <div class="talent-tree">
-          ${Array.from({ length: maxRow + 1 }, (_, row) => 
+          ${Array.from({ length: maxRow + 1 }, (_, row) =>
             this.renderTalentRow(talentsByRow[row] || [], row, characterClass)
           ).join('')}
         </div>
@@ -109,13 +111,15 @@ export class TalentTreeScreen extends BaseComponent {
   renderTalentRow(talents, row, characterClass) {
     // Sort by column
     talents.sort((a, b) => a.column - b.column);
-    
-    const maxCol = Math.max(...talents.map(t => t.column), 2);
-    const gridTemplate = Array(maxCol + 1).fill('1fr').join(' ');
+
+    const maxCol = Math.max(...talents.map((t) => t.column), 2);
+    const gridTemplate = Array(maxCol + 1)
+      .fill('1fr')
+      .join(' ');
 
     return `
       <div class="talent-row" style="grid-template-columns: ${gridTemplate}">
-        ${talents.map(talent => this.renderTalentNode(talent, characterClass)).join('')}
+        ${talents.map((talent) => this.renderTalentNode(talent, characterClass)).join('')}
       </div>
     `;
   }
@@ -124,7 +128,7 @@ export class TalentTreeScreen extends BaseComponent {
     const state = gameStore.getState();
     const playerTalents = state.player?.talents || {};
     const currentRank = playerTalents[this.selectedTree]?.[talent.id] || 0;
-    
+
     const canLearn = TalentManager.canLearnTalent(characterClass, this.selectedTree, talent.id);
     const isMaxed = currentRank >= talent.maxRank;
     const isLearned = currentRank > 0;
@@ -147,9 +151,13 @@ export class TalentTreeScreen extends BaseComponent {
           <div class="talent-icon">${talent.icon}</div>
           <div class="talent-name">${talent.name}</div>
           <div class="talent-rank">${currentRank}/${talent.maxRank}</div>
-          ${!canLearn.canLearn && !isLearned ? `
+          ${
+            !canLearn.canLearn && !isLearned
+              ? `
             <div class="talent-requirement">${canLearn.reason}</div>
-          ` : ''}
+          `
+              : ''
+          }
         </div>
         ${this.renderTalentConnections(talent, playerTalents)}
       </div>
@@ -161,10 +169,10 @@ export class TalentTreeScreen extends BaseComponent {
 
     // Render connection line from this talent upward to prerequisites
     const isUnlocked = playerTalents[this.selectedTree]?.[talent.id] > 0;
-    const hasPrereqMet = talent.requires.some(reqId => 
-      playerTalents[this.selectedTree]?.[reqId] > 0
+    const hasPrereqMet = talent.requires.some(
+      (reqId) => playerTalents[this.selectedTree]?.[reqId] > 0
     );
-    
+
     return `
       <div class="talent-connection-line ${isUnlocked || hasPrereqMet ? 'active' : 'inactive'}"></div>
     `;
@@ -207,7 +215,7 @@ export class TalentTreeScreen extends BaseComponent {
     }
 
     // Tree tabs
-    this.shadowRoot.querySelectorAll('.tree-tab').forEach(tab => {
+    this.shadowRoot.querySelectorAll('.tree-tab').forEach((tab) => {
       tab.addEventListener('click', (e) => {
         this.selectedTree = tab.dataset.tree;
         this.render();
@@ -215,11 +223,11 @@ export class TalentTreeScreen extends BaseComponent {
     });
 
     // Talent nodes - left click to learn
-    this.shadowRoot.querySelectorAll('.talent-node').forEach(node => {
+    this.shadowRoot.querySelectorAll('.talent-node').forEach((node) => {
       node.addEventListener('click', (e) => {
         const talentId = node.dataset.talentId;
         const treeId = node.dataset.treeId;
-        
+
         const success = TalentManager.learnTalent(treeId, talentId);
         if (success) {
           this.render();
@@ -232,7 +240,7 @@ export class TalentTreeScreen extends BaseComponent {
         e.preventDefault();
         const talentId = node.dataset.talentId;
         const treeId = node.dataset.treeId;
-        
+
         const success = TalentManager.unlearnTalent(treeId, talentId);
         if (success) {
           this.render();
@@ -258,7 +266,7 @@ export class TalentTreeScreen extends BaseComponent {
         const confirmed = confirm(
           `Reset all talents for ${cost} gold?\n\nThis will refund all talent points.`
         );
-        
+
         if (confirmed) {
           const success = TalentManager.resetAllTalents(cost);
           if (success) {
@@ -275,7 +283,7 @@ export class TalentTreeScreen extends BaseComponent {
     const characterClass = state.player?.character?.class;
     const talentId = node.dataset.talentId;
     const treeId = node.dataset.treeId;
-    
+
     const talent = TalentManager.getTalentNode(characterClass, treeId, talentId);
     if (!talent) return;
 
@@ -288,23 +296,33 @@ export class TalentTreeScreen extends BaseComponent {
       </div>
       <div class="tooltip-description">${talent.description}</div>
       ${this.renderTalentEffects(talent)}
-      ${talent.requires && talent.requires.length > 0 ? `
+      ${
+        talent.requires && talent.requires.length > 0
+          ? `
         <div class="tooltip-requires">
-          Requires: ${talent.requires.map(id => {
-            const req = TalentManager.getTalentNode(characterClass, treeId, id);
-            return req?.name || id;
-          }).join(', ')}
+          Requires: ${talent.requires
+            .map((id) => {
+              const req = TalentManager.getTalentNode(characterClass, treeId, id);
+              return req?.name || id;
+            })
+            .join(', ')}
         </div>
-      ` : ''}
-      ${talent.requiresPoints > 0 ? `
+      `
+          : ''
+      }
+      ${
+        talent.requiresPoints > 0
+          ? `
         <div class="tooltip-points-required">
           Requires ${talent.requiresPoints} points in ${TalentManager.getTalentTrees(characterClass)[treeId].name}
         </div>
-      ` : ''}
+      `
+          : ''
+      }
     `;
 
     this.shadowRoot.appendChild(tooltip);
-    
+
     // Position tooltip near cursor
     const rect = node.getBoundingClientRect();
     tooltip.style.left = `${rect.right + 10}px`;

@@ -1,6 +1,6 @@
 /**
  * Talent Trees Data
- * 
+ *
  * Each character class has 3 talent trees
  * Each tree contains multiple talent nodes with dependencies and effects
  */
@@ -284,7 +284,7 @@ const WARRIOR_TALENTS = {
         effects: {
           passive: {
             type: 'block',
-            chance: 0.10, // 10% per rank
+            chance: 0.1, // 10% per rank
             reduction: 0.5,
           },
         },
@@ -499,7 +499,7 @@ const MAGE_TALENTS = {
         effects: {
           passive: {
             type: 'freeze',
-            chance: 0.20,
+            chance: 0.2,
             duration: 1,
           },
         },
@@ -594,7 +594,7 @@ const MAGE_TALENTS = {
         effects: {
           passive: {
             type: 'surge',
-            damageBonus: 0.10, // 10% per rank
+            damageBonus: 0.1, // 10% per rank
             maxStacks: 4,
           },
         },

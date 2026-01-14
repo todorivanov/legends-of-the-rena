@@ -6,7 +6,6 @@
 import { StatusEffect } from './StatusEffect.js';
 import { ConsoleLogger, LogCategory } from '../utils/ConsoleLogger.js';
 
-
 /**
  * Status Effect Categories
  */
@@ -461,7 +460,10 @@ export class StatusEffectManager {
       if (template.stackable) {
         const stacked = existing.stack();
         if (stacked) {
-          ConsoleLogger.info(LogCategory.STATUS_EFFECT, `📚 ${effectKey} stacked on ${fighter.name} (${existing.stacks} stacks)`);
+          ConsoleLogger.info(
+            LogCategory.STATUS_EFFECT,
+            `📚 ${effectKey} stacked on ${fighter.name} (${existing.stacks} stacks)`
+          );
         }
         return stacked;
       } else {
@@ -636,7 +638,10 @@ export class StatusEffectManager {
           const shatterDamage = 30;
           fighter.takeDamage(shatterDamage);
           this.removeEffect(fighter, 'frozen');
-          ConsoleLogger.info(LogCategory.STATUS_EFFECT, `💥 Shatter! ${shatterDamage} bonus damage`);
+          ConsoleLogger.info(
+            LogCategory.STATUS_EFFECT,
+            `💥 Shatter! ${shatterDamage} bonus damage`
+          );
         }
         break;
       }

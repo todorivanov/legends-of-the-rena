@@ -106,7 +106,7 @@ export class Fighter extends BaseEntity {
    */
   applyTalents() {
     if (!this.isPlayer) return this; // Only apply to player fighter
-    
+
     TalentManager.applyTalentsToFighter(this);
     return this;
   }
@@ -118,7 +118,7 @@ export class Fighter extends BaseEntity {
    */
   getTalentPassive(passiveType) {
     if (!this.talentPassives) return null;
-    return this.talentPassives.find(p => p.type === passiveType) || null;
+    return this.talentPassives.find((p) => p.type === passiveType) || null;
   }
 
   /**
@@ -129,12 +129,12 @@ export class Fighter extends BaseEntity {
   shouldProcTalentPassive(passiveType) {
     const passive = this.getTalentPassive(passiveType);
     if (!passive) return false;
-    
+
     // Check chance-based passives
     if (passive.chance) {
       return Math.random() < passive.chance;
     }
-    
+
     return true;
   }
 

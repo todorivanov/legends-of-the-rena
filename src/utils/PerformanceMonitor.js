@@ -347,12 +347,16 @@ export class PerformanceMonitor {
     const { min: minFps, max: maxFps } = this.getMinMax('fps');
 
     console.group('📊 Performance Summary');
-    ConsoleLogger.info(LogCategory.PERFORMANCE, `FPS: ${fps} (avg: ${avgFps}, min: ${minFps}, max: ${maxFps})`);
+    ConsoleLogger.info(
+      LogCategory.PERFORMANCE,
+      `FPS: ${fps} (avg: ${avgFps}, min: ${minFps}, max: ${maxFps})`
+    );
     ConsoleLogger.info(LogCategory.PERFORMANCE, `Frame Time: ${this.metrics.frameTime}ms`);
 
     if (this.metrics.memory.limit > 0) {
       const memPercent = ((this.metrics.memory.used / this.metrics.memory.limit) * 100).toFixed(1);
-      ConsoleLogger.info(LogCategory.PERFORMANCE, 
+      ConsoleLogger.info(
+        LogCategory.PERFORMANCE,
         `Memory: ${this.metrics.memory.used}MB / ${this.metrics.memory.limit}MB (${memPercent}%)`
       );
     }

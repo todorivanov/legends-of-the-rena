@@ -144,7 +144,10 @@ export class SaveManagerV2 {
       if (useCompression) {
         const compressed = compress(dataString);
         localStorage.setItem(saveKey, compressed);
-        ConsoleLogger.info(LogCategory.SAVE_SYSTEM, `💾 Save compressed: ${getSizeKB(dataString)}KB → ${getSizeKB(compressed)}KB`);
+        ConsoleLogger.info(
+          LogCategory.SAVE_SYSTEM,
+          `💾 Save compressed: ${getSizeKB(dataString)}KB → ${getSizeKB(compressed)}KB`
+        );
       } else {
         localStorage.setItem(saveKey, dataString);
         ConsoleLogger.info(LogCategory.SAVE_SYSTEM, `💾 Save stored: ${getSizeKB(dataString)}KB`);
@@ -251,7 +254,10 @@ export class SaveManagerV2 {
       const backupData = localStorage.getItem(backup.key);
       localStorage.setItem(saveKey, backupData);
 
-      ConsoleLogger.info(LogCategory.SAVE_SYSTEM, `✅ Restored backup from ${new Date(backup.timestamp).toLocaleString()}`);
+      ConsoleLogger.info(
+        LogCategory.SAVE_SYSTEM,
+        `✅ Restored backup from ${new Date(backup.timestamp).toLocaleString()}`
+      );
       return true;
     } catch (error) {
       ConsoleLogger.error(LogCategory.SAVE_SYSTEM, '❌ Backup restore failed:', error);
@@ -399,7 +405,10 @@ export class SaveManagerV2 {
       const saveData = this.load(fromSlot);
       saveData.saveMetadata.slot = toSlot;
       this.save(saveData, toSlot);
-      ConsoleLogger.info(LogCategory.SAVE_SYSTEM, `✅ Save copied from slot ${fromSlot} to slot ${toSlot}`);
+      ConsoleLogger.info(
+        LogCategory.SAVE_SYSTEM,
+        `✅ Save copied from slot ${fromSlot} to slot ${toSlot}`
+      );
       return true;
     } catch (error) {
       ConsoleLogger.error(LogCategory.SAVE_SYSTEM, '❌ Copy failed:', error);
@@ -541,7 +550,10 @@ export class SaveManagerV2 {
       completedMissions = Object.keys(completedMissions).filter(
         (key) => completedMissions[key] === true
       );
-      ConsoleLogger.info(LogCategory.SAVE_SYSTEM, '🔄 Converted completedMissions from object to array');
+      ConsoleLogger.info(
+        LogCategory.SAVE_SYSTEM,
+        '🔄 Converted completedMissions from object to array'
+      );
     }
 
     // Ensure story has the correct structure
@@ -582,7 +594,10 @@ export class SaveManagerV2 {
     // Ensure completedMissions is an array
     if (data.story?.completedMissions && !Array.isArray(data.story.completedMissions)) {
       data.story.completedMissions = Object.keys(data.story.completedMissions);
-      ConsoleLogger.info(LogCategory.SAVE_SYSTEM, '🔄 Converted story.completedMissions from object to array');
+      ConsoleLogger.info(
+        LogCategory.SAVE_SYSTEM,
+        '🔄 Converted story.completedMissions from object to array'
+      );
     }
 
     if (
@@ -590,7 +605,10 @@ export class SaveManagerV2 {
       !Array.isArray(data.storyProgress.completedMissions)
     ) {
       data.storyProgress.completedMissions = Object.keys(data.storyProgress.completedMissions);
-      ConsoleLogger.info(LogCategory.SAVE_SYSTEM, '🔄 Converted storyProgress.completedMissions from object to array');
+      ConsoleLogger.info(
+        LogCategory.SAVE_SYSTEM,
+        '🔄 Converted storyProgress.completedMissions from object to array'
+      );
     }
 
     return {

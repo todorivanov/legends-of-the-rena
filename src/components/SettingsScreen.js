@@ -142,7 +142,9 @@ export class SettingsScreen extends BaseComponent {
           </div>
         </div>
 
-        ${loggerSettings.enabled ? `
+        ${
+          loggerSettings.enabled
+            ? `
           <!-- Log Levels -->
           <div class="logger-levels">
             <h3 class="logger-subsection-title">Log Levels</h3>
@@ -175,12 +177,15 @@ export class SettingsScreen extends BaseComponent {
             <div class="logger-category-grid">
               ${Object.entries(categoryStates)
                 .sort((a, b) => a[0].localeCompare(b[0]))
-                .map(([category, enabled]) => `
+                .map(
+                  ([category, enabled]) => `
                   <div class="logger-category-item">
                     <span class="logger-category-label">${this.getCategoryIcon(category)} ${category}</span>
                     <div class="toggle-switch ${enabled ? 'active' : ''}" data-logger-category="${category}"></div>
                   </div>
-                `).join('')}
+                `
+                )
+                .join('')}
             </div>
           </div>
 
@@ -190,35 +195,37 @@ export class SettingsScreen extends BaseComponent {
             <button class="logger-action-btn" data-logger-action="disable-all">❌ Disable All</button>
             <button class="logger-action-btn" data-logger-action="reset">🔄 Reset to Defaults</button>
           </div>
-        ` : ''}
+        `
+            : ''
+        }
       </div>
     `;
   }
 
   getCategoryIcon(category) {
     const icons = {
-      'Combat': '⚔️',
-      'Economy': '💰',
-      'ActionQueue': '📥',
-      'AI': '🤖',
-      'Equipment': '🛡️',
-      'SaveSystem': '💾',
-      'UI': '🖼️',
-      'Performance': '⚡',
-      'Story': '📖',
-      'Tournament': '🏆',
-      'Achievement': '🎖️',
-      'Grid': '🎯',
-      'StatusEffect': '✨',
-      'Skill': '🎓',
-      'Leveling': '📈',
-      'Marketplace': '🏪',
-      'Durability': '🔧',
-      'Terrain': '🗺️',
-      'Sound': '🔊',
-      'Router': '🧭',
-      'Store': '🗄️',
-      'General': '📝',
+      Combat: '⚔️',
+      Economy: '💰',
+      ActionQueue: '📥',
+      AI: '🤖',
+      Equipment: '🛡️',
+      SaveSystem: '💾',
+      UI: '🖼️',
+      Performance: '⚡',
+      Story: '📖',
+      Tournament: '🏆',
+      Achievement: '🎖️',
+      Grid: '🎯',
+      StatusEffect: '✨',
+      Skill: '🎓',
+      Leveling: '📈',
+      Marketplace: '🏪',
+      Durability: '🔧',
+      Terrain: '🗺️',
+      Sound: '🔊',
+      Router: '🧭',
+      Store: '🗄️',
+      General: '📝',
     };
     return icons[category] || '📌';
   }

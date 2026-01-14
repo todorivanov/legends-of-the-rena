@@ -71,7 +71,10 @@ export class DurabilityManager {
         Logger.log(message);
       } else if (newDurability <= equipment.durability.max * 0.25) {
         // Warn when durability is low
-        ConsoleLogger.info(LogCategory.DURABILITY, `⚠️ ${equipment.name} durability: ${newDurability}%`);
+        ConsoleLogger.info(
+          LogCategory.DURABILITY,
+          `⚠️ ${equipment.name} durability: ${newDurability}%`
+        );
       }
     });
 
@@ -141,7 +144,10 @@ export class DurabilityManager {
 
     // Check if player can afford
     if (!EconomyManager.canAfford(repairCost)) {
-      ConsoleLogger.info(LogCategory.DURABILITY, `❌ Cannot afford repair. Need ${repairCost} gold.`);
+      ConsoleLogger.info(
+        LogCategory.DURABILITY,
+        `❌ Cannot afford repair. Need ${repairCost} gold.`
+      );
       return false;
     }
 
@@ -156,7 +162,10 @@ export class DurabilityManager {
     // Track repair statistics
     gameStore.dispatch(incrementStat('itemsRepaired'));
 
-    ConsoleLogger.info(LogCategory.DURABILITY, `🔧 Repaired ${equipment.name} to ${finalTarget}/${maxDurability}`);
+    ConsoleLogger.info(
+      LogCategory.DURABILITY,
+      `🔧 Repaired ${equipment.name} to ${finalTarget}/${maxDurability}`
+    );
 
     const message = `
       <div class="item-repaired" style="

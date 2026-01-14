@@ -810,7 +810,7 @@ export const EQUIPMENT_DATABASE = {
       degradationRate: 3,
       repairCostBase: 100,
     },
-    description: 'Divine armor that doesn\'t hinder movement.',
+    description: "Divine armor that doesn't hinder movement.",
     icon: '⭐',
   },
 

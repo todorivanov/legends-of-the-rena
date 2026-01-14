@@ -96,7 +96,11 @@ export default class Game {
     // Create AI for opponent
     if (!secondFighter.isPlayer) {
       aiManagers[secondFighter.id] = createAI(secondFighter, difficulty);
-      ConsoleLogger.info(LogCategory.COMBAT, '🤖 Enemy AI Personality:', aiManagers[secondFighter.id].getPersonalityInfo());
+      ConsoleLogger.info(
+        LogCategory.COMBAT,
+        '🤖 Enemy AI Personality:',
+        aiManagers[secondFighter.id].getPersonalityInfo()
+      );
     }
 
     Logger.clearLog();

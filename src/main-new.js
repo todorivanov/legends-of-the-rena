@@ -868,7 +868,8 @@ function createPlayerFighter(characterData) {
   // Apply difficulty modifiers (modifies fighter in place)
   DifficultyManager.applyDifficultyModifiers(fighter, true); // true = isPlayer
 
-  ConsoleLogger.info(LogCategory.UI, 
+  ConsoleLogger.info(
+    LogCategory.UI,
     `⚔️ Player Character: ${fighter.name} (Lvl ${SaveManager.get('profile.level')}, ${DifficultyManager.formatDifficultyDisplay()}) - HP: ${fighter.health}, STR: ${fighter.strength}`
   );
 
@@ -914,7 +915,11 @@ function startBattle(fighters, tournamentInfo = null) {
         // Initialize Logger with arena's auto-scroll state
         Logger.setAutoScroll(arena.autoScroll);
         ConsoleLogger.info(LogCategory.UI, '✅ Logger initialized for combat arena');
-        ConsoleLogger.info(LogCategory.UI, '📜 Auto-scroll:', arena.autoScroll ? 'ENABLED' : 'DISABLED');
+        ConsoleLogger.info(
+          LogCategory.UI,
+          '📜 Auto-scroll:',
+          arena.autoScroll ? 'ENABLED' : 'DISABLED'
+        );
         ConsoleLogger.info(LogCategory.UI, 'Log element:', logElement);
 
         // Log tournament round info if this is a tournament battle
@@ -952,7 +957,13 @@ function startBattle(fighters, tournamentInfo = null) {
         (appState.gameMode === 'single' || appState.gameMode === 'tournament') &&
         fighters.length >= 2
       ) {
-        ConsoleLogger.info(LogCategory.UI, '🎮 Starting single fight:', fighters[0].name, 'vs', fighters[1].name);
+        ConsoleLogger.info(
+          LogCategory.UI,
+          '🎮 Starting single fight:',
+          fighters[0].name,
+          'vs',
+          fighters[1].name
+        );
         Game.startGame(fighters[0], fighters[1]);
       }
     });

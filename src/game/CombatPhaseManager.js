@@ -168,7 +168,10 @@ export class CombatPhaseManager {
     await this.executePhaseHooks(CombatPhase.TURN_START, eventData);
     this.emit(CombatEvent.TURN_STARTED, eventData);
 
-    ConsoleLogger.info(LogCategory.COMBAT, `🎯 Turn ${this.turnCount}: ${activeFighter.name}'s turn`);
+    ConsoleLogger.info(
+      LogCategory.COMBAT,
+      `🎯 Turn ${this.turnCount}: ${activeFighter.name}'s turn`
+    );
   }
 
   /**
@@ -317,7 +320,10 @@ export class CombatPhaseManager {
     // Sort by priority (descending)
     this.hooks.get(phase).sort((a, b) => b.priority - a.priority);
 
-    ConsoleLogger.debug(LogCategory.COMBAT, `🪝 Registered hook for ${phase} (priority: ${priority})`);
+    ConsoleLogger.debug(
+      LogCategory.COMBAT,
+      `🪝 Registered hook for ${phase} (priority: ${priority})`
+    );
     return hookId;
   }
 

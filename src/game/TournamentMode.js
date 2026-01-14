@@ -42,7 +42,10 @@ export class TournamentMode {
 
     ConsoleLogger.info(LogCategory.TOURNAMENT, '🏆 Tournament Started!');
     ConsoleLogger.info(LogCategory.TOURNAMENT, `📋 Difficulty: ${difficulty}`);
-    ConsoleLogger.info(LogCategory.TOURNAMENT, `👥 Opponents: ${opponents.map((f) => f.name).join(', ')}`);
+    ConsoleLogger.info(
+      LogCategory.TOURNAMENT,
+      `👥 Opponents: ${opponents.map((f) => f.name).join(', ')}`
+    );
 
     // Apply difficulty modifiers to opponents
     this.applyDifficultyModifiers();
@@ -192,7 +195,10 @@ export class TournamentMode {
    */
   recordDefeat() {
     const defeatedAt = this.getCurrentRoundName();
-    ConsoleLogger.info(LogCategory.TOURNAMENT, `💔 Tournament ended at ${defeatedAt} (${this.playerWins}/3 wins)`);
+    ConsoleLogger.info(
+      LogCategory.TOURNAMENT,
+      `💔 Tournament ended at ${defeatedAt} (${this.playerWins}/3 wins)`
+    );
 
     const message = `
       <div class="tournament-defeat" style="

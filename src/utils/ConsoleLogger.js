@@ -1,7 +1,7 @@
 /**
  * ConsoleLogger - Centralized logging system with granular control
  * Singleton pattern for consistent logging throughout the application
- * 
+ *
  * Features:
  * - Multiple log levels (DEBUG, INFO, WARN, ERROR)
  * - Category-based filtering (e.g., ActionQueue, EconomyManager)

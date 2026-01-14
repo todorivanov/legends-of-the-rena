@@ -456,7 +456,7 @@ export class ProfileScreen extends BaseComponent {
           ${totalStats.movementBonus > 0 ? `<div class="stat-row"><span class="stat-label">⚡ Movement</span><span class="stat-value highlight">+${totalStats.movementBonus}</span></div>` : ''}
         </div>
       `
-        : ''
+          : ''
       }
 
       <div class="character-equipment-layout">

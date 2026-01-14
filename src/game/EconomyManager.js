@@ -32,7 +32,10 @@ export class EconomyManager {
     gameStore.dispatch(addGoldAction(amount));
     gameStore.dispatch(incrementStat('totalGoldEarned', amount));
 
-    ConsoleLogger.info(LogCategory.ECONOMY, `💰 +${amount} gold earned from ${source} (Total: ${newGold})`);
+    ConsoleLogger.info(
+      LogCategory.ECONOMY,
+      `💰 +${amount} gold earned from ${source} (Total: ${newGold})`
+    );
 
     // Log to combat log
     const message = `
@@ -70,7 +73,10 @@ export class EconomyManager {
     const currentGold = state.player.gold || 0;
 
     if (currentGold < amount) {
-      ConsoleLogger.warn(LogCategory.ECONOMY, `❌ Insufficient gold. Need ${amount}, have ${currentGold}`);
+      ConsoleLogger.warn(
+        LogCategory.ECONOMY,
+        `❌ Insufficient gold. Need ${amount}, have ${currentGold}`
+      );
 
       // Log error message
       const message = `
@@ -96,7 +102,10 @@ export class EconomyManager {
     gameStore.dispatch(spendGoldAction(amount));
     gameStore.dispatch(incrementStat('totalGoldSpent', amount));
 
-    ConsoleLogger.info(LogCategory.ECONOMY, `💸 -${amount} gold spent on ${purpose} (Remaining: ${newGold})`);
+    ConsoleLogger.info(
+      LogCategory.ECONOMY,
+      `💸 -${amount} gold spent on ${purpose} (Remaining: ${newGold})`
+    );
 
     return true;
   }

@@ -510,7 +510,7 @@ export const uiReducers = {
 export const talentReducers = {
   LEARN_TALENT: (state, { treeId, talentId }) => {
     const currentRank = state.player.talents[treeId]?.[talentId] || 0;
-    
+
     return {
       player: {
         ...state.player,
@@ -528,7 +528,7 @@ export const talentReducers = {
   UNLEARN_TALENT: (state, { treeId, talentId }) => {
     const currentRank = state.player.talents[treeId]?.[talentId] || 0;
     const newRank = Math.max(0, currentRank - 1);
-    
+
     const newTreeTalents = { ...state.player.talents[treeId] };
     if (newRank === 0) {
       delete newTreeTalents[talentId];

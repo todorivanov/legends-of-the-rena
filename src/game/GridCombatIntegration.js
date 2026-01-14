@@ -341,7 +341,10 @@ export class GridCombatIntegration {
     // Deal damage
     target.takeDamage(baseDamage);
 
-    ConsoleLogger.info(LogCategory.GRID, `⚔️ ${attacker.name} attacked ${target.name} for ${baseDamage} damage`);
+    ConsoleLogger.info(
+      LogCategory.GRID,
+      `⚔️ ${attacker.name} attacked ${target.name} for ${baseDamage} damage`
+    );
 
     return {
       attacker,
