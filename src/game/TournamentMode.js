@@ -301,20 +301,37 @@ export class TournamentMode {
 
   /**
    * Get championship rewards description
+   * Note: Battle XP (100 per battle) is awarded separately during each fight in game.js
+   * This method displays the total XP including both battle XP and championship bonus
    */
   getChampionshipRewards() {
     const rewards = [];
 
-    // Base rewards
-    rewards.push('🎁 <strong>+300 XP</strong>');
+    // Calculate total XP: 3 battles (100 each) + championship bonus
+    // Battle XP is awarded separately in game.js during each tournament fight
+    const battleXP = 300; // 3 battles × 100 XP
+    let championshipBonusXP = 300;
 
     // Difficulty bonuses
     if (this.difficulty === 'hard') {
-      rewards.push('💎 <strong>+150 Bonus XP</strong> (Hard)');
-      rewards.push('⚔️ <strong>Guaranteed Epic Equipment</strong>');
+      championshipBonusXP = 450; // 300 base + 150 bonus
     } else if (this.difficulty === 'nightmare') {
-      rewards.push('💎 <strong>+300 Bonus XP</strong> (Nightmare)');
+      championshipBonusXP = 600; // 300 base + 300 bonus
+    }
+
+    const totalXP = battleXP + championshipBonusXP;
+
+    // Show total XP earned from entire tournament
+    rewards.push(`🎁 <strong>+${totalXP} Total XP</strong>`);
+    rewards.push(
+      `<span style="font-size: 12px; color: #ffd;">(${battleXP} from battles + ${championshipBonusXP} championship bonus)</span>`
+    );
+
+    // Equipment rewards
+    if (this.difficulty === 'nightmare') {
       rewards.push('🌟 <strong>Guaranteed Legendary Equipment</strong>');
+    } else if (this.difficulty === 'hard') {
+      rewards.push('⚔️ <strong>Guaranteed Epic Equipment</strong>');
     } else {
       rewards.push('⚔️ <strong>Guaranteed Rare Equipment</strong>');
     }
