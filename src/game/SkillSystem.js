@@ -6,7 +6,7 @@ import { createStatusEffect } from './StatusEffect.js';
  * Skill - Represents a special ability
  */
 export class Skill {
-  constructor(name, manaCost, cooldown, type, power, statusEffect = null) {
+  constructor(name, manaCost, cooldown, type, power, statusEffect = null, range = null) {
     this.name = name;
     this.manaCost = manaCost;
     this.cooldown = cooldown; // Turns until can use again
@@ -15,6 +15,7 @@ export class Skill {
     this.type = type; // 'damage', 'heal', 'buff', 'debuff'
     this.power = power; // Effect magnitude
     this.statusEffect = statusEffect; // Optional status effect to apply
+    this.range = range; // Attack range (null = uses weapon range, number = specific range)
   }
 
   /**
@@ -130,39 +131,39 @@ export class Skill {
  */
 export const CLASS_SKILLS = {
   TANK: [
-    new Skill('Tactical Reposition', 15, 2, 'movement', 0, null),
-    new Skill('Iron Wall', 30, 3, 'buff', 0, 'STRENGTH_BOOST'),
-    new Skill('Taunt Strike', 20, 2, 'damage', 40, null),
+    new Skill('Tactical Reposition', 15, 2, 'movement', 0, null, null),
+    new Skill('Iron Wall', 30, 3, 'buff', 0, 'STRENGTH_BOOST', null),
+    new Skill('Taunt Strike', 20, 2, 'damage', 40, null, 1),
   ],
   BALANCED: [
-    new Skill('Reposition', 10, 1, 'movement', 0, null),
-    new Skill('Power Slash', 25, 2, 'damage', 50, null),
-    new Skill('Second Wind', 30, 4, 'heal', 60, null),
+    new Skill('Reposition', 10, 1, 'movement', 0, null, null),
+    new Skill('Power Slash', 25, 2, 'damage', 50, null, 1),
+    new Skill('Second Wind', 30, 4, 'heal', 60, null, null),
   ],
   AGILE: [
-    new Skill('Quick Step', 10, 1, 'movement', 0, null),
-    new Skill('Swift Strike', 20, 1, 'damage', 35, null),
-    new Skill('Poison Dart', 25, 3, 'debuff', 0, 'POISON'),
+    new Skill('Quick Step', 10, 1, 'movement', 0, null, null),
+    new Skill('Swift Strike', 20, 1, 'damage', 35, null, 1),
+    new Skill('Poison Dart', 25, 3, 'debuff', 0, 'POISON', 3),
   ],
   MAGE: [
-    new Skill('Arcane Step', 15, 2, 'movement', 0, null),
-    new Skill('Fireball', 35, 2, 'damage', 70, null),
-    new Skill('Mana Surge', 15, 3, 'buff', 0, 'MANA_REGEN'),
+    new Skill('Arcane Step', 15, 2, 'movement', 0, null, null),
+    new Skill('Fireball', 35, 2, 'damage', 70, null, 4),
+    new Skill('Mana Surge', 15, 3, 'buff', 0, 'MANA_REGEN', null),
   ],
   HYBRID: [
-    new Skill('Tactical Movement', 10, 1, 'movement', 0, null),
-    new Skill('Versatile Strike', 25, 2, 'damage', 45, null),
-    new Skill('Rejuvenate', 30, 3, 'buff', 0, 'REGENERATION'),
+    new Skill('Tactical Movement', 10, 1, 'movement', 0, null, null),
+    new Skill('Versatile Strike', 25, 2, 'damage', 45, null, 1),
+    new Skill('Rejuvenate', 30, 3, 'buff', 0, 'REGENERATION', null),
   ],
   ASSASSIN: [
-    new Skill('Shadow Step', 10, 0, 'movement', 0, null),
-    new Skill('Shadow Strike', 40, 3, 'damage', 90, null),
-    new Skill('Weaken', 25, 2, 'debuff', 0, 'STRENGTH_DEBUFF'),
+    new Skill('Shadow Step', 10, 0, 'movement', 0, null, null),
+    new Skill('Shadow Strike', 40, 3, 'damage', 90, null, 1),
+    new Skill('Weaken', 25, 2, 'debuff', 0, 'STRENGTH_DEBUFF', 2),
   ],
   BRAWLER: [
-    new Skill('Advance', 10, 1, 'movement', 0, null),
-    new Skill('Haymaker', 30, 2, 'damage', 65, null),
-    new Skill('Adrenaline', 20, 3, 'buff', 0, 'STRENGTH_BOOST'),
+    new Skill('Advance', 10, 1, 'movement', 0, null, null),
+    new Skill('Haymaker', 30, 2, 'damage', 65, null, 1),
+    new Skill('Adrenaline', 20, 3, 'buff', 0, 'STRENGTH_BOOST', null),
   ],
 };
 

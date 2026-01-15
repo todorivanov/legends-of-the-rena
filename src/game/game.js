@@ -755,6 +755,24 @@ export default class Game {
       }
     }
 
+    // Check skill range before executing skill
+    if (action === 'skill' && actionData.skillIndex !== undefined) {
+      const skill = attacker.skills[actionData.skillIndex];
+      if (skill && skill.range !== null && skill.range !== undefined) {
+        // Skill has a specific range - validate it
+        const skillRange = skill.range;
+        if (!gridManager.isInAttackRange(attacker.id, defender.id, skillRange)) {
+          Logger.log(
+            `<div class="attack-div missed-attack text-center">⚠️ <strong>${attacker.name}</strong> cannot use ${skill.name} - target out of range! (Range: ${skillRange})</div>`
+          );
+          Logger.log(`<div class="system-message">💡 Use your movement skill to get closer!</div>`);
+          turnManager.nextTurn();
+          setTimeout(callback, 1200);
+          return;
+        }
+      }
+    }
+
     // Queue action in phase manager
     const queuedAction = {
       type: action,
