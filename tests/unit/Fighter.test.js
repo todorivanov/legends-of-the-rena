@@ -202,4 +202,62 @@ describe('Fighter', () => {
       expect(fighter.skills[0].tick).toHaveBeenCalled();
     });
   });
+
+  describe('fullRestore()', () => {
+    it('should restore fighter to full health and mana', () => {
+      // Damage the fighter
+      fighter.health = 50;
+      fighter.mana = 30;
+
+      fighter.fullRestore();
+
+      expect(fighter.health).toBe(fighter.maxHealth);
+      expect(fighter.mana).toBe(fighter.maxMana);
+    });
+
+    it('should clear all status effects', () => {
+      fighter.statusEffects = [
+        { name: 'poison', damage: 10 },
+        { name: 'burn', damage: 5 },
+      ];
+
+      fighter.fullRestore();
+
+      expect(fighter.statusEffects).toEqual([]);
+    });
+
+    it('should reset defending state', () => {
+      fighter.isDefending = true;
+
+      fighter.fullRestore();
+
+      expect(fighter.isDefending).toBe(false);
+    });
+
+    it('should reset combo counter', () => {
+      fighter.combo = 5;
+
+      fighter.fullRestore();
+
+      expect(fighter.combo).toBe(0);
+    });
+
+    it('should fully restore fighter after taking damage and applying effects', () => {
+      // Setup damaged fighter with various states
+      fighter.health = 10;
+      fighter.mana = 20;
+      fighter.statusEffects = [{ name: 'stun' }];
+      fighter.isDefending = true;
+      fighter.combo = 3;
+
+      fighter.fullRestore();
+
+      // Verify all states are reset
+      expect(fighter.health).toBe(fighter.maxHealth);
+      expect(fighter.mana).toBe(fighter.maxMana);
+      expect(fighter.statusEffects).toEqual([]);
+      expect(fighter.isDefending).toBe(false);
+      expect(fighter.combo).toBe(0);
+    });
+  });
 });
