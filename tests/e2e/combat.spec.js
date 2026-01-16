@@ -25,6 +25,15 @@ async function startCombatFromTitleScreen(page) {
   await startBattleBtn.click();
   await page.waitForTimeout(2000);
   
+  // NEW: Wait for face-off screen to appear
+  await expect(page.locator('face-off-component')).toBeVisible({ timeout: 10000 });
+  
+  // NEW: Click "Enter Arena" button on face-off screen
+  const enterArenaBtn = page.locator('face-off-component').locator('button').filter({ hasText: /Enter Arena/i });
+  await expect(enterArenaBtn).toBeVisible({ timeout: 5000 });
+  await enterArenaBtn.click();
+  await page.waitForTimeout(2000);
+  
   // Wait for combat arena
   await expect(page.locator('combat-arena')).toBeVisible({ timeout: 10000 });
 }
@@ -144,8 +153,99 @@ test.describe('Combat System E2E', () => {
     await startBattleBtn.click();
     await page.waitForTimeout(2000);
     
+    // NEW: Should display face-off screen
+    await expect(page.locator('face-off-component')).toBeVisible({ timeout: 10000 });
+    
+    // NEW: Click Enter Arena button
+    const enterArenaBtn = page.locator('face-off-component').locator('button').filter({ hasText: /Enter Arena/i });
+    await expect(enterArenaBtn).toBeVisible({ timeout: 5000 });
+    await enterArenaBtn.click();
+    await page.waitForTimeout(2000);
+    
     // Should now be in combat
     await expect(page.locator('combat-arena')).toBeVisible({ timeout: 5000 });
+  });
+
+  test('should display face-off screen with stat comparison', async ({ page }) => {
+    // Click Single Combat button on title screen
+    const singleCombatBtn = page.locator('title-screen').locator('button').filter({ hasText: /Single Combat/i });
+    await singleCombatBtn.click();
+    await page.waitForTimeout(2000);
+    
+    // Wait for fighter gallery
+    await expect(page.locator('fighter-gallery')).toBeVisible({ timeout: 10000 });
+    
+    // Select first opponent
+    const firstOpponent = page.locator('fighter-gallery').locator('button, .opponent-card, .fighter-card').first();
+    await firstOpponent.click();
+    await page.waitForTimeout(1000);
+    
+    // Click Start Battle
+    const startBattleBtn = page.locator('fighter-gallery').locator('button').filter({ hasText: /Start Battle|Begin|Fight/i });
+    await expect(startBattleBtn).toBeVisible({ timeout: 5000 });
+    await startBattleBtn.click();
+    await page.waitForTimeout(2000);
+    
+    // Verify face-off component is visible
+    const faceOff = page.locator('face-off-component');
+    await expect(faceOff).toBeVisible({ timeout: 10000 });
+    
+    // Check for key elements in face-off screen
+    const hasRequiredElements = await page.evaluate(() => {
+      const component = document.querySelector('face-off-component');
+      if (!component?.shadowRoot) return { success: false, message: 'No shadow root' };
+      
+      const sr = component.shadowRoot;
+      const enterArena = sr.querySelector('button[id="enter-arena-btn"]');
+      const editLoadout = sr.querySelector('button[id="edit-loadout-btn"]');
+      const backBtn = sr.querySelector('button[id="back-btn"]');
+      const vsLogo = sr.querySelector('.vs-logo');
+      const statsComparison = sr.querySelector('.stats-comparison');
+      const difficultyBadge = sr.querySelector('.difficulty-badge');
+      
+      return {
+        success: !!(enterArena && editLoadout && backBtn && vsLogo && statsComparison && difficultyBadge),
+        enterArena: !!enterArena,
+        editLoadout: !!editLoadout,
+        backBtn: !!backBtn,
+        vsLogo: !!vsLogo,
+        statsComparison: !!statsComparison,
+        difficultyBadge: !!difficultyBadge
+      };
+    });
+    
+    expect(hasRequiredElements.success).toBe(true);
+  });
+
+  test('should navigate back from face-off screen', async ({ page }) => {
+    // Navigate to face-off screen
+    const singleCombatBtn = page.locator('title-screen').locator('button').filter({ hasText: /Single Combat/i });
+    await singleCombatBtn.click();
+    await page.waitForTimeout(1500);
+    await expect(page.locator('fighter-gallery')).toBeVisible({ timeout: 10000 });
+    
+    const firstOpponent = page.locator('fighter-gallery').locator('button, .fighter-card, .opponent-card').first();
+    await firstOpponent.click();
+    await page.waitForTimeout(1000);
+    
+    const startBattleBtn = page.locator('fighter-gallery').locator('button').filter({ hasText: /Start Battle|Begin|Fight/i });
+    await startBattleBtn.click();
+    await page.waitForTimeout(2000);
+    await expect(page.locator('face-off-component')).toBeVisible({ timeout: 10000 });
+    
+    // Click back button
+    const backBtn = await page.evaluate(() => {
+      const component = document.querySelector('face-off-component');
+      const btn = component?.shadowRoot?.querySelector('button[id="back-btn"]');
+      btn?.click();
+      return !!btn;
+    });
+    
+    expect(backBtn).toBe(true);
+    await page.waitForTimeout(1000);
+    
+    // Should return to fighter gallery
+    await expect(page.locator('fighter-gallery')).toBeVisible({ timeout: 5000 });
   });
 
   test('should display fighter health bars in combat', async ({ page }) => {

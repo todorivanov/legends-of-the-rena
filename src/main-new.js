@@ -115,6 +115,7 @@ function initializeRouter() {
     showSettingsScreen,
     showWikiScreen,
     showOpponentSelection,
+    showFaceOffScreen,
     showCombat: () => {
       // Combat is handled separately as it needs more context
       ConsoleLogger.info(LogCategory.UI, 'Combat route accessed - needs battle setup first');
@@ -821,8 +822,8 @@ function showOpponentSelection() {
     const opponent = e.detail.fighters[0];
     DifficultyManager.applyDifficultyModifiers(opponent, false); // false = isEnemy
 
-    // Start battle: Player vs Opponent
-    startBattle([playerCharacter, opponent]);
+    // Show face-off screen instead of going directly to battle
+    showFaceOffScreen(playerCharacter, opponent);
   });
 
   gallery.addEventListener('back-to-menu', () => {
@@ -832,6 +833,51 @@ function showOpponentSelection() {
 
   root.appendChild(gallery);
   appState.currentScreen = 'opponent-selection';
+}
+
+/**
+ * Show face-off screen (Versus Lobby)
+ */
+function showFaceOffScreen(playerCharacter, opponent) {
+  ConsoleLogger.info(LogCategory.UI, '🎭 Showing face-off screen');
+  ConsoleLogger.info(LogCategory.UI, 'Player:', playerCharacter);
+  ConsoleLogger.info(LogCategory.UI, 'Opponent:', opponent);
+  
+  const root = document.getElementById('root');
+  root.innerHTML = '';
+
+  const faceOff = document.createElement('face-off-component');
+  
+  // Set properties after a small delay to ensure component is ready
+  requestAnimationFrame(() => {
+    faceOff.player = playerCharacter;
+    faceOff.opponent = opponent;
+    ConsoleLogger.info(LogCategory.UI, '✅ Face-off component properties set');
+  });
+
+  faceOff.addEventListener('start-battle', (e) => {
+    ConsoleLogger.info(LogCategory.UI, '⚔️ Starting battle from face-off screen');
+    soundManager.play('action');
+    // Start battle: Player vs Opponent
+    startBattle([e.detail.player, e.detail.opponent]);
+  });
+
+  faceOff.addEventListener('edit-loadout', () => {
+    ConsoleLogger.info(LogCategory.UI, '🎒 Opening equipment screen');
+    soundManager.play('event');
+    // Navigate to equipment screen
+    router.navigate(RoutePaths.EQUIPMENT);
+  });
+
+  faceOff.addEventListener('back', () => {
+    ConsoleLogger.info(LogCategory.UI, '← Returning to opponent selection');
+    soundManager.play('back');
+    // Go back to opponent selection
+    showOpponentSelection();
+  });
+
+  root.appendChild(faceOff);
+  appState.currentScreen = 'face-off';
 }
 
 /**

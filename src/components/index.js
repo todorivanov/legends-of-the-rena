@@ -34,6 +34,7 @@ export { ComboHint } from './ComboHint.js'; // v4.2 - Combo System
 export { PerformanceMonitorUI } from './PerformanceMonitorUI.js'; // v4.6 - Performance
 export { GridCombatUI } from './GridCombatUI.js'; // v4.7 - Grid Combat
 export { TalentTreeScreen } from './TalentTreeScreen.js'; // v4.11 - Talent System
+export { FaceOffComponent } from './FaceOffComponent.js'; // v4.x - Face-Off Screen
 
 // Auto-register all components by importing this file
 ConsoleLogger.info(LogCategory.UI, '✅ All Web Components registered');
