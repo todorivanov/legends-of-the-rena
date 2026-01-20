@@ -7,6 +7,60 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added - Arena Face-Off: Single Fight UI Overhaul ⚔️✨
+
+**Major Feature: Immersive Pre-Battle Experience**
+
+The Single Fight mode now features a dramatic **"Versus" Lobby** that appears after selecting an opponent, completely transforming the pre-combat experience.
+
+**Core Features:**
+- 🎭 **Split-Screen Presentation** - Player vs Opponent with dynamic glows
+  - Player section (left) with blue glow effect
+  - Opponent section (right) with red/orange glow effect
+  - Animated fighter displays with float effects
+- 📊 **Live Stat Comparison** - Side-by-side stat bars with animations
+  - ❤️ Health (HP) comparison
+  - ⚔️ Attack (STR) comparison
+  - ⚡ Speed comparison
+  - 📏 Range comparison
+  - Animated fill effects with shimmer
+- 🎯 **Difficulty Rating System** - Dynamic power level assessment
+  - 😎 Easy Victory (Green)
+  - 💪 Favorable (Light Green)
+  - ⚔️ Fair Fight (Yellow)
+  - 🔥 Challenging (Orange)
+  - ⚠️ Dangerous (Red)
+  - 💀 Lethal (Dark Red)
+- 🎨 **Glassmorphism Design** - Modern, lightweight UI aesthetic
+  - Frosted glass panels with backdrop blur
+  - Smooth animations and transitions
+  - Rotating VS logo with dual-colored glow
+- 🎮 **Quick Actions** - Convenient pre-battle options
+  - ⚔️ ENTER ARENA - Primary action with pulse animation
+  - 🎒 Edit Loadout - Quick access to equipment
+  - ← Back - Return to opponent selection
+
+**UI Flow Changes:**
+```
+Before: Title Screen → Opponent Selection → Combat Arena
+Now:    Title Screen → Opponent Selection → Face-Off Screen → Combat Arena
+                                                 ↓
+                                           Edit Loadout (Optional)
+```
+
+**Game Balance Impact:**
+- No direct combat changes - all mathematical balance preserved
+- Prevents accidental "impossible" fights through clear warnings
+- Empowers players with full information for strategic decisions
+
+**Technical Implementation:**
+- New `FaceOffComponent` Web Component
+- Responsive design (desktop, tablet, mobile)
+- Comprehensive animation library
+- Updated E2E tests for new flow
+
+See [Arena Face-Off Guide](./guides/ARENA_FACE_OFF_GUIDE.md) for complete documentation.
+
 ---
 
 ## [4.11.0] - 2026-01-14
