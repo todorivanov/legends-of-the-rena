@@ -1,0 +1,82 @@
+.class-card {
+  position: relative;
+  text-align: center;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+  cursor: pointer;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  }
+
+  &--selected {
+    border-color: #667eea;
+    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+
+    .ant-card-body {
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+    }
+  }
+
+  .ant-card-body {
+    padding: 20px 16px;
+  }
+
+  &__check {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    color: #667eea;
+    font-size: 24px;
+    z-index: 1;
+  }
+
+  &__icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+  }
+
+  &__name {
+    font-size: 18px;
+    font-weight: 700;
+    color: #262626;
+    margin-bottom: 8px;
+  }
+
+  &__difficulty {
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+
+  &__description {
+    font-size: 13px;
+    color: #595959;
+    margin-bottom: 12px;
+    line-height: 1.5;
+  }
+
+  &__passive {
+    font-size: 12px;
+    color: #667eea;
+    padding: 8px;
+    background: rgba(102, 126, 234, 0.1);
+    border-radius: 6px;
+
+    strong {
+      font-weight: 600;
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .class-card {
+    &__icon {
+      font-size: 36px;
+    }
+
+    &__name {
+      font-size: 16px;
+    }
+  }
+}

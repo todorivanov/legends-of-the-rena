@@ -1,0 +1,196 @@
+.marketplace-screen {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 24px;
+
+  &__header {
+    max-width: 1600px;
+    margin: 0 auto 24px;
+  }
+
+  &__back {
+    height: 40px;
+    margin-bottom: 16px;
+  }
+
+  &__title-area {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    background: white;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  &__title {
+    margin: 0 !important;
+    color: #262626;
+  }
+
+  &__gold {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #fff7e6 0%, #fffbe6 100%);
+    border-radius: 8px;
+    border: 2px solid #ffd666;
+  }
+
+  &__content {
+    max-width: 1600px;
+    margin: 0 auto;
+  }
+}
+
+.marketplace-section {
+  margin-bottom: 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+  .ant-card-head {
+    background: linear-gradient(135deg, #f0f2f5 0%, #fafafa 100%);
+    border-radius: 12px 12px 0 0;
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  .ant-card-body {
+    padding: 24px;
+  }
+}
+
+.marketplace-item {
+  position: relative;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  }
+
+  &--unaffordable {
+    opacity: 0.7;
+    background: linear-gradient(135deg, rgba(255, 77, 79, 0.05) 0%, rgba(255, 77, 79, 0.02) 100%);
+  }
+
+  &__owned-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 1;
+  }
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+  }
+
+  &__name {
+    font-size: 16px;
+    font-weight: 700;
+    flex: 1;
+    margin-right: 8px;
+  }
+
+  &__description {
+    font-size: 13px;
+    color: #595959;
+    margin-bottom: 12px;
+    min-height: 40px;
+  }
+
+  &__requirements {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-top: 8px;
+    border-top: 1px solid #f0f0f0;
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+    padding-top: 8px;
+  }
+
+  &__price {
+    display: flex;
+    align-items: center;
+  }
+}
+
+.item-details {
+  &__header {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+
+  &__description {
+    padding: 16px;
+    background: #fafafa;
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
+    margin-bottom: 24px;
+  }
+
+  &__section {
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #f0f0f0;
+
+    &:last-of-type {
+      border-bottom: none;
+    }
+  }
+
+  &__actions {
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid #f0f0f0;
+  }
+}
+
+@media (max-width: 768px) {
+  .marketplace-screen {
+    padding: 16px;
+
+    &__title-area {
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    &__gold {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  .marketplace-section {
+    .ant-card-body {
+      padding: 16px;
+    }
+  }
+
+  .marketplace-item {
+    &__name {
+      font-size: 14px;
+    }
+
+    &__description {
+      font-size: 12px;
+    }
+  }
+}

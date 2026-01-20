@@ -1,59 +1,23 @@
-import globals from 'globals';
-import js from '@eslint/js';
+import js from '@eslint/js'
+import globals from 'globals'
+import reactHooks from 'eslint-plugin-react-hooks'
+import reactRefresh from 'eslint-plugin-react-refresh'
+import tseslint from 'typescript-eslint'
+import { defineConfig, globalIgnores } from 'eslint/config'
 
-export default [
+export default defineConfig([
+  globalIgnores(['dist']),
   {
-    ignores: [
-      'dist/**',
-      'build/**',
-      '*.bundle.js',
-      'node_modules/**',
-      'coverage/**',
-      'test-results/**',
-      'playwright-report/**'
-    ]
-  },
-  js.configs.recommended,
-  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      js.configs.recommended,
+      tseslint.configs.recommended,
+      reactHooks.configs.flat.recommended,
+      reactRefresh.configs.vite,
+    ],
     languageOptions: {
-      ecmaVersion: 2022,
-      sourceType: 'module',
-      globals: {
-        ...globals.browser,
-        ...globals.es2021
-      }
+      ecmaVersion: 2020,
+      globals: globals.browser,
     },
-    rules: {
-      'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
-      'no-console': 'off',
-      'prefer-const': 'warn',
-      'no-var': 'error'
-    }
   },
-  {
-    files: ['vite.config.js', 'vitest.config.js', 'playwright.config.js'],
-    languageOptions: {
-      globals: {
-        ...globals.node
-      }
-    }
-  },
-  {
-    files: ['tests/**/*.js', 'tests/**/*.test.js', 'tests/**/*.spec.js'],
-    languageOptions: {
-      globals: {
-        ...globals.node,
-        ...globals.browser,
-        vi: 'readonly',
-        describe: 'readonly',
-        it: 'readonly',
-        expect: 'readonly',
-        beforeEach: 'readonly',
-        afterEach: 'readonly',
-        beforeAll: 'readonly',
-        afterAll: 'readonly',
-        test: 'readonly'
-      }
-    }
-  }
-];
+])

@@ -1,0 +1,342 @@
+.combat-screen {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #434343 0%, #000000 100%);
+  padding: 24px;
+
+  &__header {
+    max-width: 1400px;
+    margin: 0 auto 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__back {
+    height: 40px;
+  }
+
+  &__round {
+    padding: 8px 16px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+  }
+
+  &__round-text {
+    color: white;
+    font-weight: 600;
+    font-size: 16px;
+  }
+
+  &__content {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  &__arena {
+    position: relative;
+  }
+}
+
+// Combo Banner
+.combo-banner {
+  position: absolute;
+  top: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  animation: comboSlideIn 0.5s ease-out, comboFadeOut 0.5s ease-in 1.5s;
+  pointer-events: none;
+
+  &__content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: linear-gradient(135deg, #ffd700 0%, #ff8c00 100%);
+    padding: 16px 32px;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(255, 215, 0, 0.5);
+    border: 3px solid #fff;
+  }
+
+  &__icon {
+    font-size: 48px;
+    animation: comboIconPulse 0.6s ease-in-out infinite;
+  }
+
+  &__text {
+    text-align: left;
+  }
+
+  &__name {
+    margin: 0;
+    color: #000;
+    font-weight: 800;
+    text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.5);
+  }
+
+  &__description {
+    color: #333;
+    font-weight: 600;
+    font-size: 14px;
+  }
+}
+
+@keyframes comboSlideIn {
+  0% {
+    transform: translateX(-50%) translateY(-100px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes comboFadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes comboIconPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+.fighters-row {
+  margin-bottom: 24px;
+}
+
+.fighter-card {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+
+  &--player {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+    .ant-card-body {
+      padding: 24px;
+      background: transparent;
+    }
+  }
+
+  &--opponent {
+    background: linear-gradient(135deg, #f5222d 0%, #cf1322 100%);
+
+    .ant-card-body {
+      padding: 24px;
+      background: transparent;
+    }
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  &__icon {
+    font-size: 56px;
+    line-height: 1;
+  }
+
+  &__info {
+    flex: 1;
+  }
+
+  &__stats {
+    margin-bottom: 20px;
+  }
+
+  &__status {
+    &-label {
+      display: block;
+      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+  }
+}
+
+.stat-bar {
+  margin-bottom: 16px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  &__label {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    color: white;
+  }
+}
+
+.status-effects {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.status-tag {
+  font-size: 13px;
+  padding: 4px 12px;
+  margin: 0;
+}
+
+.actions-row {
+  margin-bottom: 24px;
+}
+
+.action-button {
+  height: 56px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+
+  &--attack {
+    background: linear-gradient(135deg, #f5222d 0%, #cf1322 100%);
+    border: none;
+
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(245, 34, 45, 0.4);
+    }
+  }
+
+  &--defend {
+    background: linear-gradient(135deg, #52c41a 0%, #389e0d 100%);
+    color: white;
+    border: none;
+
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(82, 196, 26, 0.4);
+    }
+  }
+
+  &--skills {
+    background: linear-gradient(135deg, #722ed1 0%, #531dab 100%);
+    color: white;
+    border: none;
+
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(114, 46, 209, 0.4);
+    }
+  }
+
+  &--items {
+    background: linear-gradient(135deg, #fa8c16 0%, #d46b08 100%);
+    color: white;
+    border: none;
+
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(250, 140, 22, 0.4);
+    }
+  }
+}
+
+.combat-log {
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+
+  .ant-card-head {
+    background: transparent;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  &__messages {
+    max-height: 200px;
+    overflow-y: auto;
+  }
+
+  &__message {
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+}
+
+.skills-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.skill-card {
+  border-radius: 8px;
+  transition: all 0.3s ease;
+
+  &--disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+
+    &:hover {
+      box-shadow: none;
+    }
+  }
+
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+
+  &__icon {
+    font-size: 32px;
+  }
+
+  &__info {
+    flex: 1;
+  }
+
+  &__cost {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  &__description {
+    margin: 0;
+    color: #595959;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 768px) {
+  .combat-screen {
+    padding: 16px;
+  }
+
+  .fighter-card {
+    &__icon {
+      font-size: 40px;
+    }
+  }
+
+  .action-button {
+    height: 48px;
+    font-size: 14px;
+  }
+}

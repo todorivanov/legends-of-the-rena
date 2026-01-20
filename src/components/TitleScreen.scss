@@ -1,0 +1,177 @@
+.title-screen {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+
+  &__background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    z-index: 0;
+  }
+
+  &__overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+      radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+    animation: shimmer 3s ease-in-out infinite;
+  }
+
+  &__content {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 500px;
+  }
+
+  &__card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    
+    .ant-card-body {
+      padding: 40px;
+    }
+  }
+
+  &__header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  &__title {
+    margin-bottom: 8px !important;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-size: 2.5rem !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.5px;
+  }
+
+  &__subtitle {
+    color: #595959;
+    font-size: 1rem;
+    margin-bottom: 0 !important;
+  }
+
+  &__menu {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  &__button {
+    height: 48px;
+    font-size: 16px;
+    font-weight: 500;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+
+    &.ant-btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+
+      &:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+      }
+    }
+
+    &--secondary {
+      margin-top: 8px;
+      border-color: #d9d9d9;
+      color: #8c8c8c;
+
+      &:hover {
+        border-color: #667eea;
+        color: #667eea;
+      }
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  &__stats {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid #f0f0f0;
+  }
+
+  &__stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+
+  &__stat-label {
+    font-size: 12px;
+    color: #8c8c8c;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  &__stat-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: #262626;
+  }
+
+  &__footer {
+    margin-top: 24px;
+    text-align: center;
+  }
+
+  &__version {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 14px;
+    margin-bottom: 0 !important;
+  }
+}
+
+@keyframes shimmer {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@media (max-width: 576px) {
+  .title-screen {
+    padding: 16px;
+
+    &__card .ant-card-body {
+      padding: 24px;
+    }
+
+    &__title {
+      font-size: 2rem !important;
+    }
+
+    &__button {
+      height: 44px;
+      font-size: 15px;
+    }
+  }
+}

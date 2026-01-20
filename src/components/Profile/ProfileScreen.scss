@@ -1,0 +1,219 @@
+.profile-screen {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 24px;
+
+  &__header {
+    max-width: 1400px;
+    margin: 0 auto 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  &__back {
+    height: 40px;
+  }
+
+  &__title {
+    margin: 0 !important;
+    color: #262626;
+  }
+
+  &__content {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+}
+
+.profile-card {
+  margin-bottom: 24px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+  &--character {
+    .ant-card-body {
+      padding: 32px;
+    }
+  }
+
+  .ant-card-head {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 12px 12px 0 0;
+
+    .ant-card-head-title {
+      color: white;
+      font-weight: 600;
+    }
+  }
+}
+
+.character-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+
+  &__icon {
+    font-size: 72px;
+    line-height: 1;
+  }
+
+  &__info {
+    flex: 1;
+  }
+
+  &__class {
+    font-size: 16px;
+    color: #8c8c8c;
+  }
+}
+
+.xp-section {
+  &__label {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: #fafafa;
+  border-radius: 8px;
+
+  &__icon {
+    font-size: 24px;
+
+    &--health {
+      color: #f5222d;
+    }
+
+    &--mana {
+      color: #1890ff;
+    }
+
+    &--strength {
+      color: #fa8c16;
+    }
+
+    &--defense {
+      color: #52c41a;
+    }
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  &__label {
+    font-size: 12px;
+    color: #8c8c8c;
+  }
+
+  &__value {
+    font-size: 20px;
+    font-weight: 700;
+    color: #262626;
+  }
+}
+
+.equipment-slots {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.equipment-slot {
+  &__label {
+    display: block;
+    font-size: 12px;
+    color: #8c8c8c;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  &__item {
+    padding: 12px;
+    border: 2px solid #d9d9d9;
+    border-radius: 8px;
+    background: white;
+
+    .ant-typography {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .ant-tag {
+      margin-bottom: 8px;
+    }
+  }
+
+  &__empty {
+    padding: 16px;
+    text-align: center;
+    border: 2px dashed #d9d9d9;
+    border-radius: 8px;
+    color: #8c8c8c;
+    background: #fafafa;
+  }
+}
+
+.class-passive {
+  &__name {
+    display: block;
+    font-size: 16px;
+    color: #667eea;
+    margin-bottom: 8px;
+  }
+
+  &__description {
+    margin: 0;
+    color: #595959;
+  }
+}
+
+.class-skills {
+  &__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .skill-tag {
+    font-size: 13px;
+    padding: 4px 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .profile-screen {
+    padding: 16px;
+
+    &__title {
+      font-size: 24px !important;
+    }
+  }
+
+  .character-header {
+    &__icon {
+      font-size: 56px;
+    }
+  }
+
+  .stat-item {
+    &__icon {
+      font-size: 20px;
+    }
+
+    &__value {
+      font-size: 18px;
+    }
+  }
+}

@@ -1,0 +1,181 @@
+.achievements-screen {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 24px;
+  overflow-y: auto;
+
+  &__header {
+    margin-bottom: 24px;
+  }
+
+  &__back {
+    margin-bottom: 16px;
+  }
+
+  &__title-area {
+    text-align: center;
+  }
+
+  &__title {
+    color: white;
+    margin: 0;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+
+    .anticon {
+      margin-right: 12px;
+    }
+  }
+
+  &__content {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+}
+
+.achievements-summary {
+  margin-bottom: 24px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+  .ant-statistic-title {
+    font-weight: 500;
+  }
+
+  .ant-statistic-content-value {
+    font-weight: bold;
+  }
+}
+
+.achievement-card {
+  height: 100%;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  opacity: 0.7;
+  filter: grayscale(70%);
+
+  &--unlocked {
+    opacity: 1;
+    filter: grayscale(0%);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+  }
+
+  .ant-card-body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  &__icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+  }
+
+  &__tier {
+    margin-bottom: 12px;
+
+    .ant-tag {
+      font-weight: bold;
+      text-transform: uppercase;
+      font-size: 10px;
+      letter-spacing: 0.5px;
+    }
+  }
+
+  &__name {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+  }
+
+  &__description {
+    margin-bottom: 12px;
+    font-size: 13px;
+    color: #666;
+    min-height: 40px;
+  }
+
+  &__progress {
+    width: 100%;
+    margin-bottom: 12px;
+
+    .ant-progress {
+      margin-top: 4px;
+    }
+  }
+
+  &__unlocked {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  &__reward {
+    width: 100%;
+    padding-top: 12px;
+    border-top: 1px solid #f0f0f0;
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .achievements-screen {
+    padding: 16px;
+
+    &__title {
+      font-size: 24px;
+    }
+  }
+
+  .achievement-card {
+    &__icon {
+      font-size: 36px;
+    }
+
+    &__name {
+      font-size: 14px;
+    }
+
+    &__description {
+      font-size: 12px;
+      min-height: 36px;
+    }
+
+    .ant-card-body {
+      padding: 16px;
+    }
+  }
+
+  .achievements-summary {
+    .ant-col {
+      text-align: center;
+    }
+  }
+}
+
+// Tier colors
+.achievement-card {
+  &[data-tier="bronze"] {
+    border-color: #cd7f32;
+  }
+
+  &[data-tier="silver"] {
+    border-color: #c0c0c0;
+  }
+
+  &[data-tier="gold"] {
+    border-color: #ffd700;
+  }
+
+  &[data-tier="platinum"] {
+    border-color: #e5e4e2;
+  }
+}

@@ -1,0 +1,465 @@
+.story-screen {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  padding: 2rem;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--color-border);
+
+    h1 {
+      margin: 0;
+      font-size: 2.5rem;
+      color: var(--color-text);
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+  }
+
+  &__progress {
+    display: flex;
+    gap: 2rem;
+    font-size: 1.125rem;
+  }
+
+  &__missions,
+  &__stars {
+    color: var(--color-text-secondary);
+    font-weight: 500;
+  }
+
+  &__content {
+    display: grid;
+    grid-template-columns: 280px 1fr 400px;
+    gap: 2rem;
+    align-items: start;
+  }
+
+  &__regions,
+  &__missions,
+  &__details {
+    background: var(--color-background-secondary);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+
+    h2 {
+      margin: 0 0 1rem 0;
+      font-size: 1.5rem;
+      color: var(--color-primary);
+    }
+  }
+}
+
+.regions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.region-card {
+  background: var(--color-background-tertiary);
+  border: 2px solid var(--color-border);
+  border-radius: 8px;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  text-align: left;
+  width: 100%;
+
+  &:hover:not(.locked) {
+    background: var(--color-background);
+    border-color: var(--color-primary);
+    transform: translateX(4px);
+  }
+
+  &.active {
+    background: var(--color-primary);
+    border-color: var(--color-primary-dark);
+    color: white;
+
+    .region-card__progress {
+      color: rgba(255, 255, 255, 0.9);
+    }
+  }
+
+  &.locked {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &__icon {
+    font-size: 2rem;
+    min-width: 40px;
+    text-align: center;
+  }
+
+  &__info {
+    flex: 1;
+  }
+
+  &__name {
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+  }
+
+  &__progress {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+  }
+
+  &__lock {
+    font-size: 0.875rem;
+    color: var(--color-warning);
+  }
+}
+
+.region-description {
+  color: var(--color-text-secondary);
+  margin-bottom: 1.5rem;
+  font-style: italic;
+}
+
+.missions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-height: 600px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: var(--color-background-tertiary);
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--color-primary);
+    border-radius: 3px;
+  }
+}
+
+.mission-card {
+  background: var(--color-background-tertiary);
+  border: 2px solid var(--color-border);
+  border-radius: 8px;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+  width: 100%;
+  position: relative;
+
+  &:hover:not(.locked) {
+    background: var(--color-background);
+    border-color: var(--color-primary);
+    transform: translateY(-2px);
+  }
+
+  &.selected {
+    background: var(--color-primary);
+    border-color: var(--color-primary-dark);
+    color: white;
+
+    .mission-card__info,
+    .mission-card__stars {
+      color: rgba(255, 255, 255, 0.9);
+    }
+  }
+
+  &.completed {
+    border-left: 4px solid #4caf50;
+  }
+
+  &.locked {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 0.5rem;
+  }
+
+  &__name {
+    font-weight: 600;
+    font-size: 1rem;
+  }
+
+  &__type {
+    font-size: 1.25rem;
+  }
+
+  &__info {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+  }
+
+  &__level {
+    background: var(--color-primary);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 500;
+  }
+
+  &__stars {
+    display: flex;
+    gap: 0.25rem;
+    font-size: 1rem;
+
+    span {
+      opacity: 0.3;
+
+      &.earned {
+        opacity: 1;
+      }
+    }
+  }
+
+  &__lock {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 0.875rem;
+    font-weight: bold;
+    color: var(--color-warning);
+    background: rgba(0, 0, 0, 0.8);
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+  }
+}
+
+.mission-details {
+  &--empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    color: var(--color-text-secondary);
+    font-style: italic;
+  }
+
+  h2 {
+    margin: 0 0 1rem 0;
+    font-size: 1.75rem;
+    color: var(--color-primary);
+  }
+
+  h3 {
+    margin: 1.5rem 0 0.75rem 0;
+    font-size: 1.125rem;
+    color: var(--color-text);
+  }
+
+  &__badges {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+
+  &__description {
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+
+  &__opponent {
+    background: var(--color-background-tertiary);
+    border-radius: 8px;
+    padding: 1rem;
+  }
+
+  &__objectives {
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+
+      li {
+        padding: 0.5rem;
+        background: var(--color-background-tertiary);
+        border-left: 3px solid var(--color-primary);
+        margin-bottom: 0.5rem;
+        border-radius: 4px;
+      }
+    }
+
+    .stars {
+      float: right;
+      color: var(--color-warning);
+      font-weight: bold;
+    }
+  }
+
+  &__rewards {
+    background: var(--color-background-tertiary);
+    border-radius: 8px;
+    padding: 1rem;
+  }
+
+  &__warning {
+    color: var(--color-warning);
+    font-size: 0.875rem;
+    margin-top: 1rem;
+    text-align: center;
+    font-weight: 500;
+  }
+}
+
+.badge {
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+
+  &-standard {
+    background: #2196f3;
+    color: white;
+  }
+
+  &-survival {
+    background: #ff9800;
+    color: white;
+  }
+
+  &-boss {
+    background: #9c27b0;
+    color: white;
+  }
+
+  &-level,
+  &-difficulty {
+    background: var(--color-background);
+    color: var(--color-text);
+  }
+}
+
+.opponent-info {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+
+  &__name {
+    font-weight: 600;
+    font-size: 1.125rem;
+  }
+
+  &__class {
+    background: var(--color-primary);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 0.875rem;
+  }
+
+  &__level {
+    color: var(--color-text-secondary);
+  }
+}
+
+.rewards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.reward-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: var(--color-background);
+  padding: 0.75rem;
+  border-radius: 6px;
+
+  &__icon {
+    font-size: 1.5rem;
+  }
+
+  &__value {
+    font-weight: 500;
+    color: var(--color-text);
+  }
+}
+
+.btn-large {
+  width: 100%;
+  padding: 1rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-top: 1.5rem;
+}
+
+// Responsive adjustments
+@media (max-width: 1200px) {
+  .story-screen__content {
+    grid-template-columns: 1fr;
+    
+    .story-screen__regions {
+      order: 1;
+    }
+
+    .story-screen__missions {
+      order: 2;
+    }
+
+    .story-screen__details {
+      order: 3;
+    }
+  }
+
+  .regions-list {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .region-card {
+    flex: 1;
+    min-width: 200px;
+  }
+}
+
+@media (max-width: 768px) {
+  .story-screen {
+    padding: 1rem;
+
+    &__header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+
+      h1 {
+        font-size: 2rem;
+      }
+    }
+
+    &__progress {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+  }
+
+  .mission-details h2 {
+    font-size: 1.5rem;
+  }
+}

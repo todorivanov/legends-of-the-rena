@@ -1,0 +1,311 @@
+.talent-screen {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+
+    h1 {
+      margin: 0;
+      font-size: 2.5rem;
+      color: var(--color-text);
+    }
+  }
+
+  &__points {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.5rem;
+  }
+
+  &__points-available {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--color-primary);
+  }
+
+  &__points-spent {
+    font-size: 1rem;
+    color: var(--color-text-secondary);
+  }
+
+  &__trees {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  &__tree-button {
+    flex: 1;
+    padding: 1rem;
+    background: var(--color-background-secondary);
+    border: 2px solid var(--color-border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+
+    &:hover {
+      background: var(--color-background-tertiary);
+      transform: translateY(-2px);
+    }
+
+    &.active {
+      background: var(--color-primary);
+      border-color: var(--color-primary-dark);
+      color: white;
+    }
+  }
+
+  &__tree-icon {
+    font-size: 2rem;
+  }
+
+  &__tree-name {
+    font-weight: bold;
+  }
+
+  &__tree-points {
+    font-size: 0.875rem;
+    opacity: 0.8;
+  }
+
+  &__tree-info {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: var(--color-background-secondary);
+    border-radius: 8px;
+
+    h2 {
+      margin: 0 0 0.5rem 0;
+      color: var(--color-primary);
+    }
+
+    p {
+      margin: 0;
+      color: var(--color-text-secondary);
+    }
+  }
+
+  &__grid {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+    margin-bottom: 2rem;
+  }
+
+  &__row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    position: relative;
+    
+    // Center single talents
+    &:has(.talent-node:only-child) {
+      .talent-node {
+        grid-column: 2;
+      }
+    }
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    padding-top: 2rem;
+    border-top: 2px solid var(--color-border);
+  }
+}
+
+.talent-node {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  background: var(--color-background-tertiary);
+  border: 3px solid var(--color-border);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  opacity: 0.4;
+
+  &__icon {
+    font-size: 2rem;
+  }
+
+  &__rank {
+    position: absolute;
+    bottom: -8px;
+    right: -8px;
+    background: var(--color-background-secondary);
+    border: 2px solid var(--color-border);
+    border-radius: 12px;
+    padding: 2px 6px;
+    font-size: 0.75rem;
+    font-weight: bold;
+  }
+
+  &--available {
+    opacity: 1;
+    border-color: var(--color-primary);
+    cursor: pointer;
+
+    &:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 20px var(--color-primary);
+    }
+  }
+
+  &--learned {
+    opacity: 1;
+    border-color: #4caf50;
+    background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+    box-shadow: 0 0 15px rgba(76, 175, 80, 0.5);
+  }
+
+  &--maxed {
+    opacity: 1;
+    border-color: #ffd700;
+    background: linear-gradient(135deg, #ffd700 0%, #ff8c00 100%);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+    cursor: default;
+
+    .talent-node__rank {
+      border-color: #ffd700;
+      background: #ffd700;
+      color: #000;
+    }
+  }
+}
+
+.talent-tooltip {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 1rem;
+  background: rgba(20, 20, 30, 0.98);
+  border: 2px solid var(--color-primary);
+  border-radius: 8px;
+  padding: 1rem;
+  min-width: 250px;
+  max-width: 300px;
+  z-index: 1000;
+  pointer-events: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--color-border);
+
+    strong {
+      color: var(--color-primary);
+      font-size: 1rem;
+    }
+
+    span {
+      color: var(--color-text-secondary);
+      font-size: 0.875rem;
+    }
+  }
+
+  &__description {
+    color: var(--color-text);
+    margin-bottom: 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.4;
+  }
+
+  &__effects {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    margin-bottom: 0.5rem;
+  }
+
+  &__stat {
+    color: #4caf50;
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  &__passive {
+    color: #9c27b0;
+    font-size: 0.875rem;
+    font-weight: 500;
+    font-style: italic;
+    margin-bottom: 0.5rem;
+  }
+
+  &__requires {
+    color: #ff9800;
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
+  }
+
+  &__warning {
+    color: #f44336;
+    font-size: 0.8rem;
+    font-weight: bold;
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid rgba(244, 67, 54, 0.3);
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .talent-screen {
+    padding: 1rem;
+
+    &__header h1 {
+      font-size: 2rem;
+    }
+
+    &__trees {
+      flex-direction: column;
+    }
+
+    &__grid {
+      gap: 2rem;
+    }
+
+    &__row {
+      gap: 1rem;
+    }
+  }
+
+  .talent-node {
+    width: 60px;
+    height: 60px;
+
+    &__icon {
+      font-size: 1.5rem;
+    }
+  }
+
+  .talent-tooltip {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 90vw;
+  }
+}
