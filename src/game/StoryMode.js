@@ -13,10 +13,7 @@ import {
   updatePathProgress as updatePathProgressAction,
 } from '../store/actions.js';
 
-import {
-  SLAVE_GLADIATOR_MISSIONS,
-  getAllSlaveMissions,
-} from '../data/slave_gladiator_missions.js';
+import { SLAVE_GLADIATOR_MISSIONS, getAllSlaveMissions } from '../data/slave_gladiator_missions.js';
 import {
   ROMAN_LEGIONNAIRE_MISSIONS,
   getAllLegionMissions,
@@ -405,9 +402,7 @@ export class StoryMode {
       if (mission.pathMechanicEffects.freedomMeter !== undefined) {
         const currentFreedom = state.story.pathProgress.freedomMeter || 0;
         const newFreedom = Math.min(100, currentFreedom + mission.pathMechanicEffects.freedomMeter);
-        gameStore.dispatch(
-          updatePathProgressAction('freedomMeter', newFreedom)
-        );
+        gameStore.dispatch(updatePathProgressAction('freedomMeter', newFreedom));
         rewards.pathProgress.freedomMeter = mission.pathMechanicEffects.freedomMeter;
         ConsoleLogger.info(
           LogCategory.STORY,

@@ -17,7 +17,7 @@ export class EnemyIconMapper {
     const name = fighter.name.toLowerCase();
 
     // ========== SLAVE GLADIATOR PATH ENEMIES ==========
-    
+
     // Specific named enemies first (most specific matches)
     if (name.includes('brutus')) {
       return '🧔'; // Brutus - bearded strong man
@@ -34,7 +34,7 @@ export class EnemyIconMapper {
     if (name.includes('marcus')) {
       return '👨'; // Fellow slave Marcus
     }
-    
+
     // Prison/Arena fighters
     if (name.includes('condemned') || name.includes('prisoner')) {
       return '⛓️'; // Chained prisoner
@@ -51,7 +51,7 @@ export class EnemyIconMapper {
     if (name.includes('imperial champion') || name.includes("emperor's")) {
       return '👑'; // Imperial champion - crowned
     }
-    
+
     // Raiders and bandits
     if (name.includes('desert raider') || name.includes('raider')) {
       return '🧕'; // Desert raider (turbaned figure)
@@ -59,7 +59,7 @@ export class EnemyIconMapper {
     if (name.includes('bandit') || name.includes('thief')) {
       return '🥷'; // Bandit/thief (ninja-style)
     }
-    
+
     // Special fighters
     if (name.includes('executioner')) {
       return '🪓'; // The Executioner - axe
@@ -73,14 +73,14 @@ export class EnemyIconMapper {
     if (name.includes('rival') && name.includes('master')) {
       return '🤺'; // Rival master's champion - fencer
     }
-    
+
     // Legendary/Freedom fighters
     if (name.includes('freedom') || name.includes('liberator')) {
       return '🕊️'; // Symbol of freedom
     }
 
     // ========== ROMAN LEGIONNAIRE PATH ENEMIES ==========
-    
+
     // Barbarians (more specific icons)
     if (name.includes('warchief') || name.includes('chieftain')) {
       return '👑'; // Tribal leader with crown
@@ -91,7 +91,7 @@ export class EnemyIconMapper {
     if (name.includes('berserker')) {
       return '😡'; // Berserker (angry face)
     }
-    
+
     // Rebels
     if (name.includes('rebel leader') || name.includes('insurgent leader')) {
       return '🔥'; // Rebel leader with fire
@@ -102,7 +102,7 @@ export class EnemyIconMapper {
     if (name.includes('partisan')) {
       return '🗡️'; // Partisan rebel
     }
-    
+
     // Roman military hierarchy
     if (name.includes('emperor') || name.includes('caesar')) {
       return '👑'; // Imperial ruler
@@ -119,7 +119,7 @@ export class EnemyIconMapper {
     if (name.includes('legionnaire') || name.includes('soldier')) {
       return '⚔️'; // Roman soldier
     }
-    
+
     // Foreign enemies
     if (name.includes('numidian') || name.includes('carthaginian')) {
       return '🐫'; // North African cavalry
@@ -135,7 +135,7 @@ export class EnemyIconMapper {
     }
 
     // ========== LANISTA PATH ENEMIES ==========
-    
+
     // Business rivals
     if (name.includes('rival lanista') || name.includes('competitor')) {
       return '🤵'; // Business rival (man in suit)
@@ -146,7 +146,7 @@ export class EnemyIconMapper {
     if (name.includes('senator') || name.includes('noble')) {
       return '👔'; // Noble/politician
     }
-    
+
     // Rogue gladiators
     if (name.includes('rogue gladiator') || name.includes('deserter')) {
       return '🥷'; // Rogue fighter (ninja)
@@ -157,7 +157,7 @@ export class EnemyIconMapper {
     if (name.includes('mercenary')) {
       return '💰'; // Mercenary (money bag)
     }
-    
+
     // Criminals
     if (name.includes('crime lord') || name.includes('syndicate boss')) {
       return '🦹'; // Crime boss (villain)
@@ -171,7 +171,7 @@ export class EnemyIconMapper {
     if (name.includes('enforcer') || name.includes('thug')) {
       return '👊'; // Enforcer
     }
-    
+
     // Arena legends
     if (name.includes('legend') || name.includes('legendary')) {
       return '⭐'; // Legendary fighter (star)
@@ -184,7 +184,7 @@ export class EnemyIconMapper {
     }
 
     // ========== BARBARIAN TRAVELLER PATH ENEMIES ==========
-    
+
     // Hostile tribes (more specific)
     if (name.includes('blood warrior') || name.includes('blood tribe')) {
       return '🩸'; // Blood warrior
@@ -204,7 +204,7 @@ export class EnemyIconMapper {
     if (name.includes('berserker')) {
       return '😡'; // Berserker
     }
-    
+
     // Wildlife
     if (name.includes('dire wolf') || name.includes('alpha wolf')) {
       return '🐺'; // Wolf
@@ -218,7 +218,7 @@ export class EnemyIconMapper {
     if (name.includes('boar') || name.includes('wild boar')) {
       return '🐗'; // Boar
     }
-    
+
     // Romans (invaders from barbarian perspective)
     if (name.includes('roman patrol') || name.includes('roman scout')) {
       return '🛡️'; // Roman patrol
@@ -229,7 +229,7 @@ export class EnemyIconMapper {
     if (name.includes('roman')) {
       return '⚔️'; // Roman soldier
     }
-    
+
     // Warlords and conquerors
     if (name.includes('warlord') || name.includes('conqueror')) {
       return '👹'; // Warlord (demon face)
@@ -237,7 +237,7 @@ export class EnemyIconMapper {
     if (name.includes('tyrant') || name.includes('despot')) {
       return '😈'; // Tyrant
     }
-    
+
     // Mystical/Ancient enemies
     if (name.includes('ancient guardian') || name.includes('ancient protector')) {
       return '🗿'; // Ancient statue
@@ -253,7 +253,7 @@ export class EnemyIconMapper {
     }
 
     // ========== DESERT NOMAD PATH ENEMIES ==========
-    
+
     // Desert enemies (more specific)
     if (name.includes('scavenger') || name.includes('looter')) {
       return '🦎'; // Desert scavenger (lizard)
@@ -264,7 +264,7 @@ export class EnemyIconMapper {
     if (name.includes('dune') || name.includes('desert walker')) {
       return '🧕'; // Desert walker (turbaned figure)
     }
-    
+
     // Raiders and pirates
     if (name.includes('caravan raider') || name.includes('highway')) {
       return '🐫'; // Caravan raider (camel)
@@ -278,7 +278,7 @@ export class EnemyIconMapper {
     if (name.includes('raider') && !name.includes('caravan')) {
       return '⚔️'; // Generic raider
     }
-    
+
     // Mystical desert enemies
     if (name.includes('djinn') || name.includes('genie')) {
       return '🧞'; // Djinn (genie)
@@ -292,7 +292,7 @@ export class EnemyIconMapper {
     if (name.includes('mystic') || name.includes('oracle')) {
       return '🔮'; // Mystic
     }
-    
+
     // Rival nomads
     if (name.includes('rival chief') || name.includes('competing chief')) {
       return '👳'; // Rival chief (turbaned person)
@@ -300,7 +300,7 @@ export class EnemyIconMapper {
     if (name.includes('rival nomad') || name.includes('competing')) {
       return '🧕'; // Rival nomad
     }
-    
+
     // Desert creatures
     if (name.includes('giant scorpion') || name.includes('scorpion king')) {
       return '🦂'; // Scorpion
@@ -314,7 +314,7 @@ export class EnemyIconMapper {
     if (name.includes('scarab') || name.includes('beetle')) {
       return '🪲'; // Scarab beetle
     }
-    
+
     // Final bosses and legends
     if (name.includes('tyrant') || name.includes('oppressor')) {
       return '😈'; // Desert tyrant
@@ -330,9 +330,9 @@ export class EnemyIconMapper {
     }
 
     // ========== CLASS-BASED FALLBACKS ==========
-    
+
     const fighterClass = fighter.class || fighter.fighterClass;
-    
+
     switch (fighterClass) {
       case 'WARRIOR':
         return '🗡️'; // Sword warrior
@@ -370,11 +370,11 @@ export class EnemyIconMapper {
    */
   static getIconWithBossIndicator(fighter) {
     const baseIcon = this.getEnemyIcon(fighter);
-    
+
     if (fighter.isBoss) {
       return `${baseIcon}👑`; // Add crown for bosses
     }
-    
+
     return baseIcon;
   }
 
