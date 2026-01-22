@@ -159,7 +159,8 @@ export class TalentManager {
         const requiredTalent = this.getTalentNode(characterClass, treeId, requiredTalentId);
         const requiredRank = talents[treeId]?.[requiredTalentId] || 0;
 
-        if (requiredRank < (requiredTalent?.maxRank || 1)) {
+        // Only need at least 1 point in prerequisite, not full max rank
+        if (requiredRank < 1) {
           return {
             canLearn: false,
             reason: `Requires ${requiredTalent?.name || 'prerequisite talent'}`,

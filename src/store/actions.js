@@ -33,6 +33,12 @@ export const ActionTypes = {
   UNLOCK_REGION: 'UNLOCK_REGION',
   UNLOCK_MISSION: 'UNLOCK_MISSION',
 
+  // v5.0 - Story Path System Actions
+  SELECT_STORY_PATH: 'SELECT_STORY_PATH',
+  UPDATE_PATH_PROGRESS: 'UPDATE_PATH_PROGRESS',
+  UPDATE_PATH_MECHANIC: 'UPDATE_PATH_MECHANIC',
+  RESET_PATH_PROGRESS: 'RESET_PATH_PROGRESS',
+
   // Inventory Actions
   ADD_ITEM: 'ADD_ITEM',
   REMOVE_ITEM: 'REMOVE_ITEM',
@@ -179,6 +185,27 @@ export const unlockRegion = (regionId) => ({
 export const unlockMission = (missionId) => ({
   type: ActionTypes.UNLOCK_MISSION,
   payload: { missionId },
+});
+
+// v5.0 - Story Path System Actions
+export const selectStoryPath = (pathId, startingBonus) => ({
+  type: ActionTypes.SELECT_STORY_PATH,
+  payload: { pathId, startingBonus },
+});
+
+export const updatePathProgress = (progressType, value) => ({
+  type: ActionTypes.UPDATE_PATH_PROGRESS,
+  payload: { progressType, value },
+});
+
+export const updatePathMechanic = (mechanicKey, value) => ({
+  type: ActionTypes.UPDATE_PATH_MECHANIC,
+  payload: { mechanicKey, value },
+});
+
+export const resetPathProgress = () => ({
+  type: ActionTypes.RESET_PATH_PROGRESS,
+  payload: {},
 });
 
 // Inventory Actions

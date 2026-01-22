@@ -297,6 +297,101 @@ export const storyReducers = {
       unlockedMissions: [...(state.story.unlockedMissions || []), missionId],
     },
   }),
+
+  // v5.0 - Story Path System Reducers
+  [ActionTypes.SELECT_STORY_PATH]: (state, { pathId, startingBonus }) => {
+    const updates = {
+      player: {
+        ...state.player,
+        storyPath: pathId,
+        pathSelected: true,
+      },
+      story: {
+        ...state.story,
+        pathProgress: {
+          freedomMeter: 0,
+          currentRank: 'legionnaire',
+          controlledTerritories: [],
+          gladiatorRoster: [],
+          reputation: 0,
+          discoveredLocations: [],
+          tribalReputation: {},
+          waterCurrent: 100,
+          oasesDiscovered: [],
+          caravansDefended: 0,
+        },
+      },
+    };
+
+    // Apply starting bonus if provided
+    if (startingBonus) {
+      if (startingBonus.gold) {
+        updates.player.gold = state.player.gold + startingBonus.gold;
+      }
+      if (startingBonus.equipment && startingBonus.equipment.length > 0) {
+        updates.inventory = {
+          ...state.inventory,
+          equipment: [...state.inventory.equipment, ...startingBonus.equipment],
+        };
+      }
+      if (startingBonus.stats) {
+        Object.keys(startingBonus.stats).forEach((statKey) => {
+          if (statKey === 'health') {
+            updates.player.maxHealth = state.player.maxHealth + startingBonus.stats[statKey];
+            updates.player.health = state.player.health + startingBonus.stats[statKey];
+          } else {
+            updates.player[statKey] = (state.player[statKey] || 0) + startingBonus.stats[statKey];
+          }
+        });
+      }
+    }
+
+    return updates;
+  },
+
+  [ActionTypes.UPDATE_PATH_PROGRESS]: (state, { progressType, value }) => ({
+    story: {
+      ...state.story,
+      pathProgress: {
+        ...state.story.pathProgress,
+        [progressType]: value,
+      },
+    },
+  }),
+
+  [ActionTypes.UPDATE_PATH_MECHANIC]: (state, { mechanicKey, value }) => ({
+    story: {
+      ...state.story,
+      pathMechanics: {
+        ...state.story.pathMechanics,
+        [mechanicKey]: value,
+      },
+    },
+  }),
+
+  [ActionTypes.RESET_PATH_PROGRESS]: (state) => ({
+    player: {
+      ...state.player,
+      storyPath: null,
+      pathSelected: false,
+    },
+    story: {
+      ...state.story,
+      pathProgress: {
+        freedomMeter: 0,
+        currentRank: 'legionnaire',
+        controlledTerritories: [],
+        gladiatorRoster: [],
+        reputation: 0,
+        discoveredLocations: [],
+        tribalReputation: {},
+        waterCurrent: 100,
+        oasesDiscovered: [],
+        caravansDefended: 0,
+      },
+      pathMechanics: {},
+    },
+  }),
 };
 
 /**

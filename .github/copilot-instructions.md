@@ -48,7 +48,10 @@ A browser-based RPG fighting game built with **vanilla JavaScript and native Web
 ### Data Loading
 - **Static data**: Import directly from `src/data/*.js` (classes, equipment, missions)
 - **Game state**: Always read from `gameStore.getState()`, never cache locally
-- Mission data: `getMissionById(id)` from [src/data/storyMissions.js](../src/data/storyMissions.js)
+- **Mission data**: Use `StoryMode` from [src/game/StoryMode.js](../src/game/StoryMode.js)
+  - Path-aware mission loading: Automatically routes to correct story path
+  - Available methods: `getMissionById(id)`, `getAllPathMissions()`, `getAvailablePathMissions()`, `getMissionsByAct(act)`
+  - 5 story paths: slave_gladiator, roman_legionnaire, lanista, barbarian_traveller, desert_nomad
 
 ### Event System
 - Web Component events: `emit('event-name', { detail })` bubbles up DOM

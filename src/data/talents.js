@@ -46,6 +46,20 @@ const WARRIOR_TALENTS = {
         },
       },
       {
+        id: 'war_arms_deadly',
+        name: 'Deadly Precision',
+        description: 'Increase critical damage',
+        icon: '💀',
+        maxRank: 3,
+        row: 1,
+        column: 1,
+        requires: ['war_arms_dmg_1'],
+        requiresPoints: 5,
+        effects: {
+          stats: { critDamage: 10 }, // +10% crit damage per rank
+        },
+      },
+      {
         id: 'war_arms_hp_1',
         name: 'Battle Hardened',
         description: 'Increase maximum health',
@@ -61,6 +75,23 @@ const WARRIOR_TALENTS = {
       },
       // Row 2 - Major talent
       {
+        id: 'war_arms_overpower',
+        name: 'Overpower',
+        description: 'Your attacks ignore 15% of enemy defense',
+        icon: '🔨',
+        maxRank: 1,
+        row: 2,
+        column: 0,
+        requires: ['war_arms_crit_1'],
+        requiresPoints: 8,
+        effects: {
+          passive: {
+            type: 'armor_penetration',
+            penetration: 0.15,
+          },
+        },
+      },
+      {
         id: 'war_arms_execute',
         name: 'Execute',
         description: 'Deal 50% more damage to enemies below 20% health',
@@ -69,12 +100,30 @@ const WARRIOR_TALENTS = {
         row: 2,
         column: 1,
         requires: ['war_arms_dmg_1'],
-        requiresPoints: 10,
+        requiresPoints: 8,
         effects: {
           passive: {
             type: 'execute',
             damageBonus: 0.5,
             threshold: 0.2,
+          },
+        },
+      },
+      {
+        id: 'war_arms_impale',
+        name: 'Impale',
+        description: 'Critical strikes deal an additional 20 damage over 3 turns',
+        icon: '🗡️',
+        maxRank: 1,
+        row: 2,
+        column: 2,
+        requires: ['war_arms_hp_1'],
+        requiresPoints: 8,
+        effects: {
+          passive: {
+            type: 'crit_bleed',
+            damage: 20,
+            duration: 3,
           },
         },
       },
@@ -87,13 +136,31 @@ const WARRIOR_TALENTS = {
         maxRank: 1,
         row: 3,
         column: 0,
-        requires: ['war_arms_crit_1', 'war_arms_execute'],
-        requiresPoints: 15,
+        requires: ['war_arms_overpower', 'war_arms_execute'],
+        requiresPoints: 12,
         effects: {
           passive: {
             type: 'bleed',
             chance: 0.25,
             damage: 5,
+            duration: 3,
+          },
+        },
+      },
+      {
+        id: 'war_arms_warcry',
+        name: 'War Cry',
+        description: 'Grant yourself +10 strength for 3 turns when you critical strike',
+        icon: '📣',
+        maxRank: 1,
+        row: 3,
+        column: 1,
+        requires: ['war_arms_execute'],
+        requiresPoints: 12,
+        effects: {
+          passive: {
+            type: 'crit_buff',
+            strengthBonus: 10,
             duration: 3,
           },
         },
@@ -106,8 +173,8 @@ const WARRIOR_TALENTS = {
         maxRank: 1,
         row: 3,
         column: 2,
-        requires: ['war_arms_execute'],
-        requiresPoints: 15,
+        requires: ['war_arms_impale'],
+        requiresPoints: 12,
         effects: {
           passive: {
             type: 'cleave',
@@ -126,7 +193,7 @@ const WARRIOR_TALENTS = {
         row: 4,
         column: 1,
         requires: ['war_arms_bleed', 'war_arms_cleave'],
-        requiresPoints: 20,
+        requiresPoints: 14,
         effects: {
           stats: { critDamage: 50 },
           passive: {
@@ -160,6 +227,20 @@ const WARRIOR_TALENTS = {
       },
       // Row 1
       {
+        id: 'war_fury_battle_frenzy',
+        name: 'Battle Frenzy',
+        description: 'Increase attack speed',
+        icon: '⚡',
+        maxRank: 3,
+        row: 1,
+        column: 0,
+        requires: [],
+        requiresPoints: 5,
+        effects: {
+          stats: { critChance: 3 }, // Simulated as crit
+        },
+      },
+      {
         id: 'war_fury_enrage',
         name: 'Enrage',
         description: 'Critical hits grant temporary strength',
@@ -177,6 +258,24 @@ const WARRIOR_TALENTS = {
           },
         },
       },
+      {
+        id: 'war_fury_berserker',
+        name: 'Berserker Rage',
+        description: 'Deal more damage when below 50% health',
+        icon: '😡',
+        maxRank: 2,
+        row: 1,
+        column: 2,
+        requires: [],
+        requiresPoints: 5,
+        effects: {
+          passive: {
+            type: 'low_hp_damage',
+            damageBonus: 0.15, // +15% per rank
+            threshold: 0.5,
+          },
+        },
+      },
       // Row 2
       {
         id: 'war_fury_rampage',
@@ -187,7 +286,7 @@ const WARRIOR_TALENTS = {
         row: 2,
         column: 0,
         requires: ['war_fury_enrage'],
-        requiresPoints: 10,
+        requiresPoints: 6,
         effects: {
           passive: {
             type: 'rampage',
@@ -205,7 +304,7 @@ const WARRIOR_TALENTS = {
         row: 2,
         column: 2,
         requires: ['war_fury_enrage'],
-        requiresPoints: 10,
+        requiresPoints: 6,
         effects: {
           passive: {
             type: 'lifesteal',
@@ -223,7 +322,7 @@ const WARRIOR_TALENTS = {
         row: 3,
         column: 1,
         requires: ['war_fury_rampage', 'war_fury_bloodthirst'],
-        requiresPoints: 15,
+        requiresPoints: 12,
         effects: {
           stats: { strength: 20, critChance: 30 },
           passive: {
@@ -316,7 +415,7 @@ const WARRIOR_TALENTS = {
         row: 3,
         column: 1,
         requires: ['war_prot_block', 'war_prot_taunt'],
-        requiresPoints: 15,
+        requiresPoints: 14,
         effects: {
           stats: { defense: 50 },
           passive: {
@@ -356,6 +455,24 @@ const MAGE_TALENTS = {
       },
       // Row 1
       {
+        id: 'mage_fire_shield',
+        name: 'Fire Shield',
+        description: 'Gain fire resistance and reflect damage',
+        icon: '🔥',
+        maxRank: 2,
+        row: 1,
+        column: 0,
+        requires: [],
+        requiresPoints: 5,
+        effects: {
+          stats: { defense: 5 },
+          passive: {
+            type: 'fire_reflect',
+            reflectDamage: 5,
+          },
+        },
+      },
+      {
         id: 'mage_fire_crit_1',
         name: 'Critical Mass',
         description: 'Increase critical strike chance',
@@ -369,6 +486,24 @@ const MAGE_TALENTS = {
           stats: { critChance: 3 },
         },
       },
+      {
+        id: 'mage_fire_intensity',
+        name: 'Fire Intensity',
+        description: 'Burn effects last longer and deal more damage',
+        icon: '🌋',
+        maxRank: 2,
+        row: 1,
+        column: 2,
+        requires: [],
+        requiresPoints: 5,
+        effects: {
+          passive: {
+            type: 'burn_amplify',
+            damageBonus: 0.25, // +25% per rank
+            durationBonus: 1,
+          },
+        },
+      },
       // Row 2
       {
         id: 'mage_fire_ignite',
@@ -379,12 +514,30 @@ const MAGE_TALENTS = {
         row: 2,
         column: 0,
         requires: ['mage_fire_crit_1'],
-        requiresPoints: 10,
+        requiresPoints: 8,
         effects: {
           passive: {
             type: 'ignite',
             damage: 8,
             duration: 4,
+          },
+        },
+      },
+      {
+        id: 'mage_fire_meteor',
+        name: 'Living Bomb',
+        description: 'Your fire damage has a chance to spread to nearby enemies',
+        icon: '💣',
+        maxRank: 1,
+        row: 2,
+        column: 1,
+        requires: ['mage_fire_crit_1'],
+        requiresPoints: 8,
+        effects: {
+          passive: {
+            type: 'fire_spread',
+            chance: 0.2,
+            spreadRadius: 2,
           },
         },
       },
@@ -397,7 +550,7 @@ const MAGE_TALENTS = {
         row: 2,
         column: 2,
         requires: ['mage_fire_crit_1'],
-        requiresPoints: 10,
+        requiresPoints: 8,
         effects: {
           passive: {
             type: 'pyroblast',
@@ -416,7 +569,7 @@ const MAGE_TALENTS = {
         row: 3,
         column: 1,
         requires: ['mage_fire_ignite', 'mage_fire_blast'],
-        requiresPoints: 15,
+        requiresPoints: 10,
         effects: {
           stats: { critDamage: 40 },
           passive: {
@@ -451,6 +604,20 @@ const MAGE_TALENTS = {
       },
       // Row 1
       {
+        id: 'mage_frost_armor',
+        name: 'Frost Armor',
+        description: 'Increase defense and chill attackers',
+        icon: '🧊',
+        maxRank: 3,
+        row: 1,
+        column: 0,
+        requires: [],
+        requiresPoints: 5,
+        effects: {
+          stats: { defense: 4 },
+        },
+      },
+      {
         id: 'mage_frost_slow',
         name: 'Frost Nova',
         description: 'Attacks slow enemy movement',
@@ -468,6 +635,23 @@ const MAGE_TALENTS = {
           },
         },
       },
+      {
+        id: 'mage_frost_pierce',
+        name: 'Ice Lance',
+        description: 'Deal bonus damage to frozen targets',
+        icon: '🔱',
+        maxRank: 2,
+        row: 1,
+        column: 2,
+        requires: [],
+        requiresPoints: 5,
+        effects: {
+          passive: {
+            type: 'frozen_damage',
+            damageBonus: 0.3, // +30% per rank
+          },
+        },
+      },
       // Row 2
       {
         id: 'mage_frost_shield',
@@ -478,11 +662,28 @@ const MAGE_TALENTS = {
         row: 2,
         column: 0,
         requires: ['mage_frost_slow'],
-        requiresPoints: 10,
+        requiresPoints: 6,
         effects: {
           passive: {
             type: 'shield',
             absorbAmount: 20, // per rank
+          },
+        },
+      },
+      {
+        id: 'mage_frost_shatter',
+        name: 'Shatter',
+        description: 'Frozen enemies take 40% more damage from your next attack',
+        icon: '💎',
+        maxRank: 1,
+        row: 2,
+        column: 1,
+        requires: ['mage_frost_slow'],
+        requiresPoints: 6,
+        effects: {
+          passive: {
+            type: 'shatter',
+            damageBonus: 0.4,
           },
         },
       },
@@ -495,7 +696,7 @@ const MAGE_TALENTS = {
         row: 2,
         column: 2,
         requires: ['mage_frost_slow'],
-        requiresPoints: 10,
+        requiresPoints: 6,
         effects: {
           passive: {
             type: 'freeze',
@@ -514,7 +715,7 @@ const MAGE_TALENTS = {
         row: 3,
         column: 1,
         requires: ['mage_frost_shield', 'mage_frost_freeze'],
-        requiresPoints: 15,
+        requiresPoints: 10,
         effects: {
           stats: { defense: 30 },
           passive: {
@@ -549,6 +750,23 @@ const MAGE_TALENTS = {
       },
       // Row 1
       {
+        id: 'mage_arcane_concentration',
+        name: 'Arcane Concentration',
+        description: 'Reduce mana costs',
+        icon: '💫',
+        maxRank: 3,
+        row: 1,
+        column: 0,
+        requires: [],
+        requiresPoints: 5,
+        effects: {
+          passive: {
+            type: 'mana_cost_reduction',
+            reduction: 0.05, // 5% per rank
+          },
+        },
+      },
+      {
         id: 'mage_arcane_mana',
         name: 'Arcane Intellect',
         description: 'Increase mana regeneration',
@@ -562,6 +780,23 @@ const MAGE_TALENTS = {
           stats: { manaRegen: 2 },
         },
       },
+      {
+        id: 'mage_arcane_echo',
+        name: 'Spell Echo',
+        description: 'Chance to cast spells twice',
+        icon: '🌀',
+        maxRank: 1,
+        row: 1,
+        column: 2,
+        requires: [],
+        requiresPoints: 5,
+        effects: {
+          passive: {
+            type: 'spell_echo',
+            chance: 0.15,
+          },
+        },
+      },
       // Row 2
       {
         id: 'mage_arcane_missiles',
@@ -572,12 +807,30 @@ const MAGE_TALENTS = {
         row: 2,
         column: 0,
         requires: ['mage_arcane_mana'],
-        requiresPoints: 10,
+        requiresPoints: 8,
         effects: {
           passive: {
             type: 'missiles',
             extraHits: 2,
             damagePerHit: 0.3,
+          },
+        },
+      },
+      {
+        id: 'mage_arcane_explosion',
+        name: 'Arcane Explosion',
+        description: 'Your critical strikes hit nearby enemies',
+        icon: '💥',
+        maxRank: 1,
+        row: 2,
+        column: 1,
+        requires: ['mage_arcane_mana'],
+        requiresPoints: 8,
+        effects: {
+          passive: {
+            type: 'crit_aoe',
+            radius: 2,
+            damagePercent: 0.5,
           },
         },
       },
@@ -590,7 +843,7 @@ const MAGE_TALENTS = {
         row: 2,
         column: 2,
         requires: ['mage_arcane_mana'],
-        requiresPoints: 10,
+        requiresPoints: 8,
         effects: {
           passive: {
             type: 'surge',
@@ -609,7 +862,7 @@ const MAGE_TALENTS = {
         row: 3,
         column: 1,
         requires: ['mage_arcane_missiles', 'mage_arcane_surge'],
-        requiresPoints: 15,
+        requiresPoints: 12,
         effects: {
           stats: { strength: 25, manaRegen: 5, critChance: 15 },
           passive: {

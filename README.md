@@ -47,11 +47,12 @@
 
 ### 🗺️ **Tactical Grid Combat**
 - **5x5 tactical grid** with 10 distinct terrain types
+- **Story-aware enemy icons** - 68+ unique icons based on enemy type and storyline
 - **Strategic positioning** - terrain provides bonuses/penalties
 - **Movement skills** - class-specific movement abilities
 - **Weapon ranges** - melee (1 cell) vs ranged (2-4 cells)
 - **Line of sight** mechanics and flanking bonuses
-- **Enhanced visuals** - animated terrains, gradients, patterns
+- **Enhanced visuals** - animated terrains, gradients, patterns, colored glows
 
 ### 🎮 **Game Modes**
 - **Story Mode** - 25-mission campaign across 5 regions

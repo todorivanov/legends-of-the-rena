@@ -23,11 +23,18 @@ import { EquipmentManager } from './game/EquipmentManager.js';
 import { tournamentMode } from './game/TournamentMode.js';
 import { AchievementManager } from './game/AchievementManager.js';
 import { DifficultyManager } from './game/DifficultyManager.js';
-import { getMissionById } from './data/storyMissions.js';
+import { StoryMode } from './game/StoryMode.js';
 import { router } from './utils/Router.js';
+
+// Helper to get mission by ID from current path
+function getMissionById(missionId) {
+  // Use StoryMode's path-aware mission lookup
+  const allMissions = [1, 2, 3].flatMap((act) => StoryMode.getMissionsByAct(act));
+  return allMissions.find((m) => m.id === missionId);
+}
 import { getRouteConfig, RouteGuards, RoutePaths } from './config/routes.js';
 import { gameStore, setGameMode, setScreen, startAutoSave } from './store/index.js';
-import { incrementStat } from './store/actions.js';
+import { incrementStat, selectStoryPath } from './store/actions.js';
 
 // Make bootstrap available globally if needed
 window.bootstrap = bootstrap;
@@ -122,6 +129,7 @@ function initializeRouter() {
     },
     showTournamentBracketScreen,
     showCampaignMapScreen,
+    showStoryPathSelection, // v5.0 - Story Path System
     showMissionBriefing: (data) => {
       if (data.missionId) {
         showMissionBriefing(data.missionId);
@@ -193,10 +201,11 @@ function showCharacterCreation() {
     // Start auto-save now that character is created
     startAutoSave();
 
+    // v5.0 - Navigate to story path selection instead of home
     // Reload app after character creation
     getFighters().then((fighters) => {
       appState.fighters = fighters;
-      router.navigate(RoutePaths.HOME);
+      router.navigate(RoutePaths.STORY_PATH_SELECTION);
     });
   });
 
@@ -305,6 +314,30 @@ function showWikiScreen() {
 
   root.appendChild(wiki);
   appState.currentScreen = 'wiki';
+}
+
+/**
+ * Show story path selection screen (v5.0)
+ */
+function showStoryPathSelection() {
+  const root = document.getElementById('root');
+  root.innerHTML = '';
+
+  const pathSelection = document.createElement('story-path-selection');
+
+  pathSelection.addEventListener('journey-started', (e) => {
+    const { pathId, startingBonus } = e.detail;
+    ConsoleLogger.info(LogCategory.UI, `✨ Journey started on path: ${pathId}`, startingBonus);
+
+    // Dispatch action to select path and apply starting bonus
+    gameStore.dispatch(selectStoryPath(pathId, startingBonus));
+
+    // Navigate to campaign map
+    router.navigate(RoutePaths.STORY_MODE);
+  });
+
+  root.appendChild(pathSelection);
+  appState.currentScreen = 'story-path-selection';
 }
 
 /**
@@ -849,12 +882,12 @@ function showFaceOffScreen(playerCharacter, opponent) {
   ConsoleLogger.info(LogCategory.UI, '🎭 Showing face-off screen');
   ConsoleLogger.info(LogCategory.UI, 'Player:', playerCharacter);
   ConsoleLogger.info(LogCategory.UI, 'Opponent:', opponent);
-  
+
   const root = document.getElementById('root');
   root.innerHTML = '';
 
   const faceOff = document.createElement('face-off-component');
-  
+
   // Set properties after a small delay to ensure component is ready
   requestAnimationFrame(() => {
     faceOff.player = playerCharacter;

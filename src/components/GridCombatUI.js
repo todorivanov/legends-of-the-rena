@@ -1,5 +1,6 @@
 import { BaseComponent } from './BaseComponent.js';
 import { TerrainEffectProcessor } from '../game/TerrainSystem.js';
+import { EnemyIconMapper } from '../utils/EnemyIconMapper.js';
 import styles from '../styles/components/GridCombatUI.scss?inline';
 
 /**
@@ -210,10 +211,12 @@ export class GridCombatUI extends BaseComponent {
     if (!cell.occupant) return '';
 
     const fighter = cell.occupant;
-    const icon = fighter.isPlayer ? '🦸' : '👹';
+    const icon = EnemyIconMapper.getIconWithBossIndicator(fighter);
     const className = fighter.isPlayer ? 'player' : 'enemy';
+    const color = EnemyIconMapper.getEnemyColor(fighter);
+    const style = `color: ${color}; text-shadow: 0 0 8px ${color}aa;`;
 
-    return `<div class="fighter-icon ${className}">${icon}</div>`;
+    return `<div class="fighter-icon ${className}" style="${style}">${icon}</div>`;
   }
 
   getCellTooltip(cell) {

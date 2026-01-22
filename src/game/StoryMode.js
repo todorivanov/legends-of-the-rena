@@ -10,9 +10,20 @@ import {
   completeMission as completeMissionAction,
   unlockRegion as unlockRegionAction,
   incrementStat,
+  updatePathProgress as updatePathProgressAction,
 } from '../store/actions.js';
-import { getMissionById } from '../data/storyMissions.js';
-import { getRegionById, isRegionUnlocked } from '../data/storyRegions.js';
+
+import { SLAVE_GLADIATOR_MISSIONS, getAllSlaveMissions } from '../data/slave_gladiator_missions.js';
+import {
+  ROMAN_LEGIONNAIRE_MISSIONS,
+  getAllLegionMissions,
+} from '../data/roman_legionnaire_missions.js';
+import { LANISTA_MISSIONS, getAllLanistaMissions } from '../data/lanista_missions.js';
+import {
+  BARBARIAN_TRAVELLER_MISSIONS,
+  getAllBarbarianMissions,
+} from '../data/barbarian_traveller_missions.js';
+import { DESERT_NOMAD_MISSIONS, getAllDesertMissions } from '../data/desert_nomad_missions.js';
 import { EconomyManager } from './EconomyManager.js';
 import { LevelingSystem } from './LevelingSystem.js';
 import { EquipmentManager } from './EquipmentManager.js';
@@ -20,6 +31,66 @@ import { DurabilityManager } from './DurabilityManager.js';
 import { Logger } from '../utils/logger.js';
 import { AchievementManager } from './AchievementManager.js';
 import { ConsoleLogger, LogCategory } from '../utils/ConsoleLogger.js';
+
+// Path-to-missions mapping
+const PATH_MISSIONS = {
+  slave_gladiator: SLAVE_GLADIATOR_MISSIONS,
+  roman_legionnaire: ROMAN_LEGIONNAIRE_MISSIONS,
+  lanista: LANISTA_MISSIONS,
+  barbarian_traveller: BARBARIAN_TRAVELLER_MISSIONS,
+  desert_nomad: DESERT_NOMAD_MISSIONS,
+};
+
+/**
+ * Get mission by ID from appropriate path
+ * @param {string} missionId - Mission ID
+ * @returns {Object|null} - Mission data
+ */
+function getMissionById(missionId) {
+  const state = gameStore.getState();
+  const currentPath = state.player.storyPath;
+
+  // If no path selected, fall back to old missions
+  if (!currentPath) {
+    ConsoleLogger.warn(LogCategory.STORY, 'No story path selected');
+    return null;
+  }
+
+  // Get missions for current path
+  const pathMissions = PATH_MISSIONS[currentPath];
+  if (!pathMissions) {
+    ConsoleLogger.warn(LogCategory.STORY, `Unknown path: ${currentPath}`);
+    return null;
+  }
+
+  return pathMissions[missionId] || null;
+}
+
+/**
+ * Get all missions for current path
+ * @returns {Array} - All missions for active path
+ */
+function getAllPathMissions() {
+  const state = gameStore.getState();
+  const currentPath = state.player.storyPath;
+
+  if (!currentPath) return [];
+
+  switch (currentPath) {
+    case 'slave_gladiator':
+      return getAllSlaveMissions();
+    case 'roman_legionnaire':
+      return getAllLegionMissions();
+    case 'lanista':
+      return getAllLanistaMissions();
+    case 'barbarian_traveller':
+      return getAllBarbarianMissions();
+    case 'desert_nomad':
+      return getAllDesertMissions();
+    default:
+      return [];
+  }
+}
 
 export class StoryMode {
   /**
@@ -31,17 +102,6 @@ export class StoryMode {
     const mission = getMissionById(missionId);
     if (!mission) {
       ConsoleLogger.error(LogCategory.STORY, 'Mission not found:', missionId);
-      return null;
-    }
-
-    // Check if region is unlocked
-    const state = gameStore.getState();
-    const storyProgress = {
-      completedMissions: state.story.completedMissions || {},
-      unlockedRegions: state.story.unlockedRegions || [],
-    };
-    if (!isRegionUnlocked(mission.region, storyProgress)) {
-      ConsoleLogger.warn(LogCategory.STORY, '❌ Region not unlocked yet');
       return null;
     }
 
@@ -307,6 +367,7 @@ export class StoryMode {
       gold: 0,
       xp: 0,
       equipment: [],
+      pathProgress: {},
     };
 
     // Base rewards
@@ -330,6 +391,27 @@ export class StoryMode {
           rewards.equipment.push(equipmentId);
         }
       });
+    }
+
+    // Path-specific mechanic effects (v5.0.0)
+    if (mission.pathMechanicEffects) {
+      const state = gameStore.getState();
+      const currentPath = state.player.storyPath;
+
+      // Apply path-specific progress updates
+      if (mission.pathMechanicEffects.freedomMeter !== undefined) {
+        const currentFreedom = state.story.pathProgress.freedomMeter || 0;
+        const newFreedom = Math.min(100, currentFreedom + mission.pathMechanicEffects.freedomMeter);
+        gameStore.dispatch(updatePathProgressAction('freedomMeter', newFreedom));
+        rewards.pathProgress.freedomMeter = mission.pathMechanicEffects.freedomMeter;
+        ConsoleLogger.info(
+          LogCategory.STORY,
+          `⛓️ Freedom Meter: ${currentFreedom} → ${newFreedom} (+${mission.pathMechanicEffects.freedomMeter})`
+        );
+      }
+
+      // Additional path mechanics can be added here as needed
+      // Example: Rank progression, territory control, reputation, etc.
     }
 
     return rewards;
@@ -403,5 +485,32 @@ export class StoryMode {
     const total = count * 3; // 3 stars per mission
 
     return { earned, total };
+  }
+
+  /**
+   * Get all available missions for current path
+   * @returns {Array} - Available missions based on path progress
+   */
+  static getAvailablePathMissions() {
+    const state = gameStore.getState();
+    const currentPath = state.player.storyPath;
+
+    if (!currentPath) return [];
+
+    const allMissions = getAllPathMissions();
+    const completedMissions = state.story.completedMissions || {};
+
+    // Filter out completed missions
+    return allMissions.filter((mission) => !completedMissions[mission.id]);
+  }
+
+  /**
+   * Get missions by act for current path
+   * @param {number} act - Act number (1, 2, or 3)
+   * @returns {Array} - Missions in that act
+   */
+  static getMissionsByAct(act) {
+    const allMissions = getAllPathMissions();
+    return allMissions.filter((mission) => mission.act === act);
   }
 }

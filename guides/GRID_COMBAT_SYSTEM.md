@@ -754,15 +754,42 @@ console.log(spawnInfo);
 
 ## Version
 
-- **Version**: 4.11.0
-- **Date**: 2026-01-14
+- **Version**: 4.11.0 → 5.0.1
+- **Date**: 2026-01-14 → 2026-01-22
 - **Grid Size**: 5x5
 - **Terrain Types**: 10
 - **Battlefield Layouts**: 6
 - **Spawn System**: ✅ Validated Zones
+- **Enemy Icons**: ✅ 68+ Story-Aware Icons (v5.0.1)
 - **Status**: ✅ Complete
 
 ---
 
-**Master the grid to master combat!** ⚔️🗺️
+## 🎭 Enemy Icon Quick Reference (v5.0.1)
+
+### Story-Aware Enemy Icons
+The tactical grid now displays **context-aware enemy icons** that change based on enemy type, story path, and character name.
+
+**Icon Categories:**
+- 🦸 **Player** (Green glow) - Your character
+- 👹 **Default Enemy** (Red glow) - Unrecognized enemy type
+- 👑 **Boss Indicator** (Orange glow) - Crown suffix on boss enemies
+
+**Story Path Icons:**
+- ⛓️ **Slave Gladiator**: Prisoner, Slave, Champion, Brutus, Raider, Noble, Guard
+- 🦅 **Roman Legionnaire**: Barbarian, Centurion, Chieftain, Praetorian, General
+- 💼 **Lanista**: Rival, Corrupt Official, Rogue Gladiator, Mercenary
+- 🪓 **Barbarian Traveller**: Tribal, Shaman, Wild Beast, Spirit, Warlord
+- 🏜️ **Desert Nomad**: Scavenger, Sand Creature, Raider, Spirit, Warlord
+
+**Class-Based Fallbacks:**
+- ⚔️ Warrior | 🛡️ Tank | 🗡️ Assassin | 🔮 Mage | ⚖️ Balanced
+- 💥 Glass Cannon | 👊 Brawler/Bruiser | 🪓 Berserker
+- ⚜️ Paladin | 💀 Necromancer
+
+See [Enemy Icon System Guide](./ENEMY_ICON_SYSTEM.md) for complete icon catalog.
+
+---
+
+**Master the grid to master combat!** ⚔️🗺️🎭
 

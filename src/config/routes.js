@@ -54,6 +54,23 @@ export const RouteGuards = {
     const state = gameStore.getState();
     return state.player.level >= 5;
   },
+
+  /**
+   * v5.0 - Check if story path has been selected
+   */
+  pathSelected: () => {
+    const state = gameStore.getState();
+    return state.player.pathSelected;
+  },
+
+  /**
+   * v5.0 - Check if character is created but path NOT selected
+   * (For path selection screen access)
+   */
+  readyForPathSelection: () => {
+    const state = gameStore.getState();
+    return state.player.characterCreated && !state.player.pathSelected;
+  },
 };
 
 /**
@@ -74,6 +91,7 @@ export const RoutePaths = {
   TOURNAMENT: '/tournament',
   TOURNAMENT_BRACKET: '/tournament/bracket',
   STORY_MODE: '/story',
+  STORY_PATH_SELECTION: '/story-path-selection', // v5.0 - Story Path System
   STORY_MISSION: '/story/mission',
   MARKETPLACE: '/marketplace',
   EQUIPMENT: '/equipment',
@@ -162,6 +180,12 @@ export function getRouteConfig(handlers) {
       handler: handlers.showCampaignMapScreen,
       guard: 'characterCreated',
       title: 'Story Mode - Legends of the Arena',
+    },
+    {
+      path: RoutePaths.STORY_PATH_SELECTION,
+      handler: handlers.showStoryPathSelection,
+      guard: 'readyForPathSelection',
+      title: 'Choose Your Path - Legends of the Arena',
     },
     {
       path: RoutePaths.STORY_MISSION,

@@ -9,9 +9,8 @@
 }
 
 .creation-container {
-  @include screen-container(900px);
-  @include center-flex;
-  flex-direction: column;
+    padding: 40px 20px;
+    min-height: 100vh;
 }
 
 .creation-header {
