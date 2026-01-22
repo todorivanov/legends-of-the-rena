@@ -7,6 +7,178 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed - Enhanced Enemy Icon System 🎭✨
+
+**Major Icon Quality Improvement**
+
+The tactical grid enemy icons have been completely overhauled to better represent enemy names and types. Changed from generic symbols to **character-focused, culturally appropriate icons** that match visual identity.
+
+**Philosophy Change:**
+- **Before**: Generic symbols (💪 muscles, 🏜️ landscapes, 🪓 weapons)
+- **After**: Character icons (🧔 people, 😡 emotions, 🧕 cultural attire)
+
+**Key Improvements:**
+
+**1. Named Enemy Support (15+ specific characters)**
+- **Brutus**: 💪 muscle → 🧔 bearded man
+- **Iron Fist Gaius**: (new) → 👊 fist brawler
+- **Swift Blade Helena**: (new) → 🗡️ assassin blade
+- **Mountain Titus**: (new) → 🛡️ tank shield
+- **Fellow Slave Marcus**: (new) → 👨 generic man
+
+**2. Story Path Themes:**
+
+**⛓️ Slave Gladiator** - Arena/Freedom theme:
+- Desert Raider: 🏜️ landscape → 🧕 turbaned figure
+- Veteran: (new) → ⚔️ armored fighter
+- Imperial Champion: (new) → 👑 crowned (vs regular 🏆 trophy)
+- Bandit: 🗡️ → 🥷 ninja
+- Guardian: (new) → 🛡️
+- Shadow: (new) → 👤 silhouette
+- Rival Master's Champion: (new) → 🤺 fencer
+
+**🦅 Roman Legionnaire** - Military hierarchy:
+- Barbarian: 🪓 axe → 🧔 bearded warrior
+- Berserker: (new) → 😡 angry face (rage emotion)
+- Warchief: (new) → 👑 tribal leader
+- Rebel Leader: (new) → 🔥 revolution fire (vs regular rebel ⚔️)
+- Created visual rank system:
+  - Emperor/Caesar: 👑 crown
+  - General/Legatus: ⭐ star
+  - Praetorian: 🛡️ → 🛡️ shield (kept)
+  - Centurion: 🦅 eagle (kept)
+  - Legionnaire: ⚔️ sword
+- Added cultural enemies:
+  - Egyptian: 🐍 serpent
+  - Scythian: 🏇 horse archer
+- Removed: 🏛️ building icon (not character)
+
+**💼 Lanista** - Business/Crime theme:
+- Rival Lanista: 💼 briefcase → 🤵 tuxedo professional
+- Senator: (new) → 👔 suit
+- Rogue Gladiator: 🗡️ → 🥷 ninja deserter
+- Crime Lord/Syndicate Boss: 🦂 scorpion → 🦹 villain icon
+- Syndicate/Gang: (new) → 🔪 knife
+- Enforcer/Thug: (new) → 👊 fist
+- Assassin: 🔪 → 🥷 professional killer
+- Arena Legend: ⭐ star, Master Gladiator: 🏆 trophy, Champion: 👑 crown
+
+**🪓 Barbarian Traveller** - Tribal/Wilderness:
+- Blood Warrior: (new) → 🩸 blood drop
+- War Band: (new) → ⚔️ crossed swords
+- Hostile Tribe: 🪓 axe → 🧔 bearded warrior
+- Shaman: 🔮 crystal ball
+- Elder: (new) → 👴 old man
+- Specific wildlife: Dire Wolf 🐺, Bear 🐻, Boar 🐗, Lion 🦁 (not generic beast)
+- Roman invaders: Patrol 🛡️, Officer 🦅, Soldier ⚔️
+- Warlords: Warlord 👹 demon, Tyrant 😈 devil
+- Mystical: Ancient Guardian 🗿 statue, Cursed 💀 skull, Spirit 👻 ghost, Demon 😈
+
+**🏜️ Desert Nomad** - Arabian/Desert theme:
+- Sand Creature: (new) → 🌪️ tornado
+- Desert Walker: (new) → 🧕 turbaned figure
+- Caravan Raider: 🏴‍☠️ → 🐫 camel
+- Marauder: ⚔️ → 🥷 ninja
+- Djinn/Genie: 🌪️ tornado → 🧞 genie (Arabian mythology)
+- Sand Witch: 🔮 → 🧙 wizard
+- Rival Chief: 🐪 camel → 👳 turbaned chief
+- Rival Nomad: 🐪 camel → 🧕 turbaned figure
+- Creatures: Scorpion 🦂, Serpent 🐍, Vulture 🦅, Scarab 🪲
+- Bosses: Tyrant 😈 devil, Warlord 👹 demon, Eternal 💀 skull
+- Removed: 🏜️ landscape, ☠️ skull and crossbones
+
+**3. Class-Based Fallbacks** - Better variety:
+- WARRIOR: ⚔️ → 🗡️ dagger (for variety)
+- MAGE: 🔮 crystal ball → 🧙 wizard character
+- NECROMANCER: (split from MAGE) → 💀 skull (distinct identity)
+- ASSASSIN: 🗡️ weapon → 🥷 ninja character
+- AGILE: (split from ASSASSIN) → 🤸 acrobat (shows agility)
+- BERSERKER: 🪓 axe → 😡 angry face (rage emotion)
+- BRAWLER: 🥊 gloves → 👊 fist action
+- BRUISER: (new fallback) → 🧔 bearded tough guy
+- BALANCED: (new fallback) → ⚖️ balance scales
+- TANK: 🛡️ (unchanged - perfect)
+- PALADIN: ✨ (unchanged - holiness)
+- GLASS_CANNON: 💥 (unchanged - perfect)
+
+**Visual Design Principles:**
+1. ✅ **Character Over Objects** - People/faces instead of weapons/landscapes
+2. ✅ **Cultural Accuracy** - Turbans 🧕👳 for desert, beards 🧔 for barbarians, eagles 🦅 for Romans
+3. ✅ **Emotional Representation** - Angry 😡 for berserkers, devils 😈 for tyrants
+4. ✅ **Visual Hierarchy** - Crowns 👑 for leaders, stars ⭐ for generals, shields 🛡️ for guards
+5. ✅ **Creature Diversity** - Specific animals (🐺 wolf, 🐻 bear, 🐗 boar, 🦁 lion) not generic beast
+6. ✅ **Mythological Accuracy** - Genie 🧞 for djinn, ghost 👻 for spirits, statue 🗿 for ancients
+
+**Statistics:**
+- **80+ icon mappings** replaced across entire system
+- **15+ named enemies** now have unique icons
+- **5 story paths** completely updated with thematic consistency
+- **13 class fallbacks** improved with better variety
+
+**Files Modified:**
+- `src/utils/EnemyIconMapper.js` - Complete icon overhaul (289 lines)
+- `guides/ENEMY_ICON_SYSTEM.md` - Updated all icon reference tables
+
+**User Experience:**
+- Instantly recognize enemy types at a glance
+- Better visual storytelling during combat
+- Cultural and thematic authenticity
+- Boss enemies clearly distinguished with character + crown
+- Improved tactical awareness on grid
+
+**Developer Impact:**
+- Icon selection now follows: Name → Type → Path → Class → Default
+- Better code maintainability with clear patterns
+- Easier to add new enemies with established themes
+
+---
+
+### Added - Dynamic Enemy Icons on Tactical Grid 🎭 (v5.0.0)
+
+**Story-Aware Enemy Icons System**
+
+The tactical grid displays **context-aware enemy icons** that change based on enemy type, story path, and character name, providing rich visual storytelling during combat.
+
+**Core Features:**
+- 🎭 **68+ Unique Enemy Icons** - Different icons for each enemy type across all 5 story paths
+- 📖 **Story Path Integration** - Slave Gladiator (⛓️👤), Roman Legionnaire (🦅🧔), Lanista (💼🎭), Barbarian (🐺🔮), Desert Nomad (🏜️🦂)
+- 👑 **Boss Indicators** - Boss enemies display with crown suffix (e.g., 🧔👑)
+- 🌈 **Color-Coded Enemies** - Green (player), Red (enemy), Orange (boss), Gold (champion), Purple (mystical), Pink (elite)
+- ✨ **Glow Effects** - Colored halos around icons for enhanced visibility
+- 🎯 **Name-Based Matching** - Intelligent icon selection based on enemy names and keywords
+
+**Enemy Icon Examples:**
+- **Slave Gladiator Path**: ⛓️ Condemned Prisoner, 👤 Fellow Slave, 🏆 Arena Champion, 🧔 Champion Brutus
+- **Roman Legion Path**: 🧔 Barbarian Raider, 🦅 Centurion, 👑 Chieftain, 🛡️ Praetorian Guard
+- **Lanista Path**: 🤵 Rival Lanista, 🎭 Corrupt Official, 🥷 Rogue Gladiator, 💰 Mercenary
+- **Barbarian Path**: 🧔 Tribal Warrior, 🐺 Wild Beast, 🔮 Shaman, 👻 Spirit Enemy
+- **Desert Nomad Path**: 🦎 Scavenger, 🌪️ Sand Creature, 🧞 Desert Spirit, 🦂 Scorpion King
+
+**Technical Implementation:**
+- New `EnemyIconMapper` utility class
+- Name-based keyword matching system
+- Class fallback for unrecognized enemies
+- Priority-based icon resolution (name → type → class → default)
+- Color system with CSS glow effects
+
+**Files Added:**
+- `src/utils/EnemyIconMapper.js` - Core icon mapping system (289 lines)
+- `guides/ENEMY_ICON_SYSTEM.md` - Complete documentation (362 lines)
+
+**Files Modified:**
+- `src/components/GridCombatUI.js` - Integrated EnemyIconMapper with colored glows
+
+**Benefits:**
+- Enhanced visual storytelling during combat
+- Quick enemy identification at a glance
+- Distinct visual identity for each story path
+- Boss fights clearly indicated
+- Improved tactical awareness
+
+See [Enemy Icon System Guide](./guides/ENEMY_ICON_SYSTEM.md) for complete icon catalog and customization instructions.
+
+---
+
 ### Added - Arena Face-Off: Single Fight UI Overhaul ⚔️✨
 
 **Major Feature: Immersive Pre-Battle Experience**
@@ -47,6 +219,243 @@ Now:    Title Screen → Opponent Selection → Face-Off Screen → Combat Arena
                                                  ↓
                                            Edit Loadout (Optional)
 ```
+
+**Game Balance Impact:**
+- No direct combat changes - all mathematical balance preserved
+- Prevents accidental "impossible" fights through clear warnings
+- Empowers players with full information for strategic decisions
+
+**Technical Implementation:**
+- New `FaceOffComponent` Web Component
+- Responsive design (desktop, tablet, mobile)
+- Comprehensive animation library
+- Updated E2E tests for new flow
+
+See [Arena Face-Off Guide](./guides/ARENA_FACE_OFF_GUIDE.md) for complete documentation.
+
+---
+
+## [5.0.0] - 2026-01-22
+
+### Added - Story Path Selection System 📖✨
+
+**MAJOR FEATURE: Five Unique Narrative Paths**
+
+Transformative update introducing **5 distinct story paths** with unique narratives, progression systems, and missions. Players now choose their story at character creation, fundamentally changing their gameplay experience.
+
+### 🛤️ **The Five Story Paths**
+
+#### 1. ⛓️ **Slave Gladiator Path** (12 missions)
+**"Rise from bondage to claim your freedom"**
+- **Core Mechanic**: Freedom Meter (0-100)
+  - Earn freedom through victories and choices
+  - Critical decision at 50% freedom: Escape or Continue
+  - Path splits based on player choice
+- **Narrative**: Captivity → Proving Ground → Choice → Freedom/Champion
+- **Enemies**: Guards, Rival Slaves, Overseers, Champion Gladiators
+- **Final Mission**: Freedom choice or Arena Champion (difficulty 12)
+
+#### 2. 🏛️ **Roman Legionnaire Path** (15 missions)
+**"Conquer the known world for Rome"**
+- **Core Mechanics**: 
+  - Rank System: Legionnaire → Optio → Centurion → Primus Pilus → Prefect → General
+  - Controlled Territories (1-15 provinces)
+  - Legion Morale and Political Power
+- **Narrative**: Training → Barbarian Wars → Conquest → Political Intrigue
+- **Enemies**: Barbarians, Rebels, Rival Legions, Enemy Generals
+- **Final Mission**: "Empire's Glory" - Emperor's Champion (difficulty 15)
+
+#### 3. 🏟️ **Lanista Path** (14 missions)
+**"Build and manage your own gladiator school"**
+- **Core Mechanics**:
+  - Gladiator Roster (1-6 fighters to recruit/train)
+  - Reputation (5-100)
+  - Ludus Profit tracking
+  - Patron relationships
+- **Narrative**: Apprentice → Lanista → Business Growth → Arena Empire
+- **Enemies**: Business Rivals, Corrupt Officials, Rogue Gladiators
+- **Final Mission**: "Ludus Maximus" - Arena Empire (difficulty 14)
+
+#### 4. 🗡️ **Barbarian Traveller Path** (13 missions)  
+**"Journey across untamed lands, forging alliances"**
+- **Core Mechanics**:
+  - Discovered Locations (8 regions: Homeland, Forest, Mountain, Plains, Coast, Swamp, Desert, Rome)
+  - Tribal Reputation (object tracking relations with multiple tribes)
+  - Ancient Knowledge (1-100)
+  - Alliances Made (4 possible)
+- **Narrative**: Exile → Exploration → Alliance Building → United Tribes
+- **Enemies**: Hostile Tribes, Wild Beasts, Roman Patrols, Warlords
+- **Final Mission**: "United Tribes" - Unified Barbarian Alliance (difficulty 13)
+
+#### 5. 🏜️ **Desert Nomad Path** (14 missions)
+**"Master the harsh desert and its secrets"**
+- **Core Mechanics**:
+  - Water Current (100 starting, consumption/replenishment system)
+  - Oases Discovered (6 total: First, Second, Nomad, Hidden, Prosperity, Eternal)
+  - Caravans Defended (4 total)
+  - Desert Reputation (5-100)
+  - Trade Routes Established (3)
+- **Narrative**: Survival → Prosperity → Desert Kingdom → Eternal Master
+- **Enemies**: Desert Scavengers, Raiders, Sand Spirits, Desert Warlords
+- **Final Mission**: "Master of Eternal Waters" - Spirit of the Desert (difficulty 15)
+
+### 🎮 **System Features**
+
+**Path Selection:**
+- New `StoryPathSelection` component at character creation
+- Interactive path cards with hover effects
+- Detailed path descriptions and starting bonuses
+- One-time choice (permanent per character)
+
+**Mission System:**
+- **68 total missions** across all 5 paths
+- 3-Act structure per path:
+  - Act 1: Introduction (missions 1-5)
+  - Act 2: Development (missions 6-10)
+  - Act 3: Climax (missions 11-15)
+- Mission types: Standard, Boss, Survival (waves)
+- Path-specific objectives and rewards
+
+**Progression Tracking:**
+- Path-specific progress bars and counters
+- Dynamic UI showing path mechanics (freedom meter, rank badges, roster icons, location list, water gauge)
+- Act-based mission display in Campaign Map
+- Path progress saved to player state
+
+**Starting Bonuses:**
+- Slave Gladiator: +20 gold, iron_sword
+- Roman Legionnaire: +50 gold, chainmail, iron_sword
+- Lanista: +100 gold, 1 starter gladiator
+- Barbarian: leather_vest, iron_sword, +10 strength
+- Desert Nomad: +30 gold, leather_vest, +20 health
+
+### 🏗️ **Technical Implementation**
+
+**New Files Created (Phase 1 - Foundation):**
+- `src/data/storyPaths.js` - Path definitions and data
+- `src/components/StoryPathSelection.js` - Path selection UI
+- Path-specific state in gameStore
+- Routing integration with guards
+
+**New Files Created (Phase 2 - Mission Databases, ~4600 lines):**
+- `src/data/slave_gladiator_missions.js` (12 missions, 580+ lines)
+- `src/data/roman_legionnaire_missions.js` (15 missions, 850+ lines)  
+- `src/data/lanista_missions.js` (14 missions, 850+ lines)
+- `src/data/barbarian_traveller_missions.js` (13 missions, 750+ lines)
+- `src/data/desert_nomad_missions.js` (14 missions, 900+ lines)
+
+**Modified Files (Phase 3 - Integration):**
+- `src/game/StoryMode.js` - Path-based mission loading
+- `src/components/CampaignMap.js` - Path-specific UI display
+- `src/components/MissionBriefing.js` - Path-aware mission data
+- `src/main-new.js` - Path integration in game loop
+
+**State Management:**
+```javascript
+player: {
+  storyPath: 'slave_gladiator' | 'roman_legionnaire' | 'lanista' | 'barbarian_traveller' | 'desert_nomad',
+  pathSelected: true/false,
+  pathProgress: {
+    freedomMeter: 0-100,
+    currentRank: 'legionnaire',
+    controlledTerritories: [],
+    gladiatorRoster: [],
+    reputation: 0-100,
+    discoveredLocations: [],
+    tribalReputation: {},
+    waterCurrent: 100,
+    oasesDiscovered: [],
+    caravansDefended: 0,
+  },
+  pathMechanics: {}, // Active path mechanics state
+}
+```
+
+**Action System:**
+- `selectStoryPath(pathId, startingBonus)` - Choose path
+- `updatePathProgress(progressType, value)` - Update path metrics
+- `updatePathMechanic(mechanicKey, value)` - Update mechanics
+- `resetPathProgress()` - Clear path data
+
+### 🎯 **Gameplay Impact**
+
+**Replayability:**
+- 5 completely different story experiences
+- Unique progression systems per path  
+- Path-specific enemies and challenges
+- Different strategic focuses
+
+**Narrative Depth:**
+- Rich backstories and character development
+- Branching narratives (Slave path)
+- Cultural and historical authenticity
+- Emotional story arcs
+
+**Strategic Variety:**
+- Resource management (Desert water)
+- Territory control (Legionnaire conquest)
+- Business simulation (Lanista management)
+- Relationship building (Barbarian alliances)
+- Freedom/morality choices (Slave path)
+
+### 🔧 **Developer Features**
+
+**Path Mission Utilities:**
+Each path file includes 8-10 helper functions:
+- `getAllPathMissions()` - Get all missions
+- `getPathMissionById(id)` - Get specific mission
+- `getAvailablePathMissions(mechanic, progress)` - Filter unlocked
+- `isPathMissionUnlocked(id, completed, mechanic)` - Check availability
+- `getPathMissionsByAct(act)` - Filter by act
+- `getNextPathMission(currentId)` - Get next in sequence
+- Plus path-specific utilities (calculateWaterStatus, getRankRequirements, etc.)
+
+**Extensibility:**
+- Easy to add new paths following established pattern
+- Modular mission structure
+- Path-independent core systems
+- Clear separation of concerns
+
+### 📊 **Statistics**
+
+- **Total Missions**: 68 (up from 25)
+- **Code Added**: ~6000+ lines
+- **New Components**: 2 (StoryPathSelection, path-specific UI elements)
+- **New Data Files**: 6 (1 paths definition + 5 mission databases)
+- **Modified Systems**: 4 (StoryMode, CampaignMap, MissionBriefing, main game loop)
+
+### 🐛 **Fixed**
+- Mission loading now path-specific (no cross-path leakage)
+- Campaign map displays appropriate missions per path
+- Mission briefing works with path missions
+- Save system properly stores path selection and progress
+
+### ⚠️ **Breaking Changes**
+- Story missions now require path selection
+- Old storyMissions.js used only as fallback
+- Campaign Map UI completely redesigned (regions → acts)
+- Mission availability logic path-specific
+
+### 📚 **Documentation**
+- Added inline JSDoc for all path utilities
+- Comprehensive mission descriptions
+- Path mechanics explained in storyPaths.js
+- Updated game guides with path information
+
+### 🎨 **UI/UX Improvements**
+- Beautiful path selection screen with hover effects
+- Path-specific progress visualization
+- Act-based mission navigation
+- Dynamic path mechanics display (meters, badges, counters)
+- Responsive design for all path UI elements
+
+**Version**: 5.0.0  
+**Release Date**: January 22, 2026  
+**Development Time**: ~10 hours (3 phases)
+
+This is a **MAJOR MILESTONE** - the game now has 5× more content and infinite replayability! 🎉🎮
+
+---
 
 **Game Balance Impact:**
 - No direct combat changes - all mathematical balance preserved

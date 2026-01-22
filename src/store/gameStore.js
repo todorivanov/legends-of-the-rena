@@ -37,6 +37,9 @@ function getInitialState() {
           tree2: {},
           tree3: {},
         },
+        // v5.0 - Story Path System
+        storyPath: null, // Path ID: 'slave_gladiator', 'roman_legionnaire', etc.
+        pathSelected: false, // Whether player has chosen their path
       },
       combat: {
         active: false,
@@ -64,6 +67,21 @@ function getInitialState() {
         completedMissions: {},
         unlockedRegions: ['tutorial'],
         unlockedMissions: ['tutorial_1'],
+        // v5.0 - Story Path System
+        pathProgress: {
+          // Path-specific progress tracking
+          freedomMeter: 0, // slave_gladiator
+          currentRank: 'legionnaire', // roman_legionnaire
+          controlledTerritories: [], // roman_legionnaire
+          gladiatorRoster: [], // lanista
+          reputation: 0, // lanista
+          discoveredLocations: [], // barbarian_traveller
+          tribalReputation: {}, // barbarian_traveller
+          waterCurrent: 100, // desert_nomad
+          oasesDiscovered: [], // desert_nomad
+          caravansDefended: 0, // desert_nomad
+        },
+        pathMechanics: {}, // Stores active path mechanics state
       },
       inventory: {
         equipment: [],
@@ -151,6 +169,9 @@ function getInitialState() {
         tree2: {},
         tree3: {},
       },
+      // v5.0 - Story Path System
+      storyPath: saveData.profile.storyPath || null,
+      pathSelected: saveData.profile.pathSelected || false,
     },
 
     // Combat state
@@ -197,6 +218,20 @@ function getInitialState() {
       })(),
       unlockedRegions: saveData.story?.unlockedRegions || ['tutorial'],
       unlockedMissions: saveData.story?.unlockedMissions || ['tutorial_1'],
+      // v5.0 - Story Path System
+      pathProgress: saveData.story?.pathProgress || {
+        freedomMeter: 0,
+        currentRank: 'legionnaire',
+        controlledTerritories: [],
+        gladiatorRoster: [],
+        reputation: 0,
+        discoveredLocations: [],
+        tribalReputation: {},
+        waterCurrent: 100,
+        oasesDiscovered: [],
+        caravansDefended: 0,
+      },
+      pathMechanics: saveData.story?.pathMechanics || {},
     },
 
     // Inventory state

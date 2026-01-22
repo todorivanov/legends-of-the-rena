@@ -1,6 +1,6 @@
 {
   "name": "legends-of-the-arena",
-  "version": "4.11.0",
+  "version": "5.0.0",
   "description": "An epic browser-based RPG fighting game with story mode, turn-based tactical combat, character progression, talent trees, equipment systems, and marketplace economy",
   "type": "module",
   "main": "src/main-new.js",

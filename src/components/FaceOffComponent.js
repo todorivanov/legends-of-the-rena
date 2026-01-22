@@ -52,7 +52,8 @@ export class FaceOffComponent extends BaseComponent {
    * Calculate difficulty rating based on stat comparison
    */
   calculateDifficulty() {
-    if (!this._player || !this._opponent) return { level: 'UNKNOWN', label: 'Unknown', color: '#888' };
+    if (!this._player || !this._opponent)
+      return { level: 'UNKNOWN', label: 'Unknown', color: '#888' };
 
     const playerPower = this._player.health + this._player.strength * 10;
     const opponentPower = this._opponent.health + this._opponent.strength * 10;
@@ -145,8 +146,10 @@ export class FaceOffComponent extends BaseComponent {
     const opponentWeapon = this.getWeaponInfo(this._opponent);
 
     // Get fighter images - use image property or fallback
-    const playerImage = this._player.image || 'https://api.dicebear.com/7.x/avataaars/svg?seed=player';
-    const opponentImage = this._opponent.image || 'https://api.dicebear.com/7.x/avataaars/svg?seed=opponent';
+    const playerImage =
+      this._player.image || 'https://api.dicebear.com/7.x/avataaars/svg?seed=player';
+    const opponentImage =
+      this._opponent.image || 'https://api.dicebear.com/7.x/avataaars/svg?seed=opponent';
 
     // Get speed values
     const playerSpeed = this._player.speed || this._player.agility || 50;
@@ -155,10 +158,7 @@ export class FaceOffComponent extends BaseComponent {
     // Calculate stat percentages for comparison bars
     const hpPercent = this.getStatPercentage(this._player.health, this._opponent.health);
     const strPercent = this.getStatPercentage(this._player.strength, this._opponent.strength);
-    const spdPercent = this.getStatPercentage(
-      playerSpeed,
-      opponentSpeed
-    );
+    const spdPercent = this.getStatPercentage(playerSpeed, opponentSpeed);
     const rngPercent = this.getStatPercentage(
       this._player.getAttackRange ? this._player.getAttackRange() : playerWeapon.range,
       this._opponent.getAttackRange ? this._opponent.getAttackRange() : opponentWeapon.range
@@ -197,21 +197,33 @@ export class FaceOffComponent extends BaseComponent {
                   <span class="detail-icon">⚔️</span>
                   <span class="detail-text">${playerEquipment.weapon ? playerEquipment.weapon.name : 'Unarmed'}</span>
                 </div>
-                ${playerEquipment.head ? `
+                ${
+                  playerEquipment.head
+                    ? `
                 <div class="detail-item">
                   <span class="detail-icon">🪖</span>
                   <span class="detail-text">${playerEquipment.head.name}</span>
-                </div>` : ''}
-                ${playerEquipment.torso ? `
+                </div>`
+                    : ''
+                }
+                ${
+                  playerEquipment.torso
+                    ? `
                 <div class="detail-item">
                   <span class="detail-icon">🛡️</span>
                   <span class="detail-text">${playerEquipment.torso.name}</span>
-                </div>` : ''}
-                ${playerEquipment.coat ? `
+                </div>`
+                    : ''
+                }
+                ${
+                  playerEquipment.coat
+                    ? `
                 <div class="detail-item">
                   <span class="detail-icon">🧥</span>
                   <span class="detail-text">${playerEquipment.coat.name}</span>
-                </div>` : ''}
+                </div>`
+                    : ''
+                }
               </div>
             </div>
           </div>
@@ -330,21 +342,33 @@ export class FaceOffComponent extends BaseComponent {
                   <span class="detail-icon">⚔️</span>
                   <span class="detail-text">${opponentEquipment.weapon ? opponentEquipment.weapon.name : 'Unarmed'}</span>
                 </div>
-                ${opponentEquipment.head ? `
+                ${
+                  opponentEquipment.head
+                    ? `
                 <div class="detail-item">
                   <span class="detail-icon">🪖</span>
                   <span class="detail-text">${opponentEquipment.head.name}</span>
-                </div>` : ''}
-                ${opponentEquipment.torso ? `
+                </div>`
+                    : ''
+                }
+                ${
+                  opponentEquipment.torso
+                    ? `
                 <div class="detail-item">
                   <span class="detail-icon">🛡️</span>
                   <span class="detail-text">${opponentEquipment.torso.name}</span>
-                </div>` : ''}
-                ${opponentEquipment.coat ? `
+                </div>`
+                    : ''
+                }
+                ${
+                  opponentEquipment.coat
+                    ? `
                 <div class="detail-item">
                   <span class="detail-icon">🧥</span>
                   <span class="detail-text">${opponentEquipment.coat.name}</span>
-                </div>` : ''}
+                </div>`
+                    : ''
+                }
               </div>
             </div>
           </div>

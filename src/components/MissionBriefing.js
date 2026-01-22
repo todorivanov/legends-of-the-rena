@@ -1,6 +1,18 @@
 import { BaseComponent } from './BaseComponent.js';
 import briefingStyles from '../styles/components/MissionBriefing.scss?inline';
-import { getMissionById } from '../data/storyMissions.js';
+import { StoryMode } from '../game/StoryMode.js';
+
+// Helper to get mission by ID from current path
+function getMissionById(missionId) {
+  // Use StoryMode's path-aware getMissionById
+  const allMissions = StoryMode.getAvailablePathMissions();
+  const mission = allMissions.find((m) => m.id === missionId);
+  if (mission) return mission;
+
+  // Also check completed missions
+  const completedMissions = [1, 2, 3].flatMap((act) => StoryMode.getMissionsByAct(act));
+  return completedMissions.find((m) => m.id === missionId);
+}
 
 /**
  * MissionBriefing Web Component
