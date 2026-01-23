@@ -46,7 +46,7 @@
 - **Build diversity** - Countless combinations for unique playstyles
 
 ### 🗺️ **Tactical Grid Combat**
-- **5x5 tactical grid** with 10 distinct terrain types
+- **9x9 tactical grid** with 10 distinct terrain types
 - **Story-aware enemy icons** - 68+ unique icons based on enemy type and storyline
 - **Strategic positioning** - terrain provides bonuses/penalties
 - **Movement skills** - class-specific movement abilities

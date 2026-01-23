@@ -307,12 +307,12 @@ export class WikiScreen extends BaseComponent {
         <h1>🗺️ Tactical Grid Combat System</h1>
         
         <div class="info-box">
-          <strong>5x5 Tactical Grid | 10 Terrain Types | Strategic Positioning | Weapon Ranges</strong><br>
+          <strong>9x9 Tactical Grid | 10 Terrain Types | Strategic Positioning | Weapon Ranges</strong><br>
           Master positioning and terrain to dominate every battle!
         </div>
 
         <h2>🎯 Core Mechanics</h2>
-        <p>All combat takes place on a <strong>5x5 tactical grid</strong> where positioning matters! Fighters occupy grid cells, and you must strategically move, position, and attack to win.</p>
+        <p>All combat takes place on a <strong>9x9 tactical grid</strong> where positioning matters! Fighters occupy grid cells, and you must strategically move, position, and attack to win.</p>
 
         <div class="mechanic-card">
           <h3>📍 Grid Positioning</h3>

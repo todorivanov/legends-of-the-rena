@@ -2,14 +2,14 @@
 
 ## Overview
 
-Version 4.7.0 introduces a **tactical 5x5 grid combat system** that adds positional strategy, terrain effects, and tactical depth to battles.
+Version 4.7.0 introduces a **tactical 9x9 grid combat system** that adds positional strategy, terrain effects, and tactical depth to battles.
 
 ---
 
 ## Core Features
 
-### 🎯 5x5 Tactical Grid
-- **25 battlefield cells** arranged in a 5x5 grid
+### 🎯 9x9 Tactical Grid
+- **81 battlefield cells** arranged in a 9x9 grid
 - **Unique positioning** for each fighter
 - **Real-time visualization** with interactive UI
 - **Multiple battlefield layouts** with different terrain types
@@ -487,28 +487,30 @@ Version 4.11.0 introduces **Spawn Zone Validation** to ensure strategic and fair
 
 ### Spawn Zone Layout
 
-**5x5 Grid Rows:**
+**9x9 Grid Rows:**
 ```
 Row 0 ──┐
-Row 1   ├─ Enemy Spawn Zone (Top 2 rows)
-        │
-Row 2   ── Neutral Zone
-        │
-Row 3   ├─ Player Spawn Zone (Bottom 2 rows)
-Row 4 ──┘
+Row 1   ├─ Enemy Spawn Zone (Top 3 rows)
+Row 2 ──┘
+Row 3
+Row 4   ── Neutral Zone
+Row 5
+Row 6 ──┐
+Row 7   ├─ Player Spawn Zone (Bottom 3 rows)
+Row 8 ──┘
 ```
 
 **Player Spawn Zone:**
-- Rows: y=3, y=4 (bottom 2 rows)
-- Columns: x=0-4 (all 5 columns)
-- Total: 10 possible cells
-- Preferred: (0, 4) - bottom-left corner
+- Rows: y=6, y=7, y=8 (bottom 3 rows)
+- Columns: x=0-8 (all 9 columns)
+- Total: 27 possible cells
+- Preferred: (0, 8) - bottom-left corner
 
 **Enemy Spawn Zone:**
-- Rows: y=0, y=1 (top 2 rows)
-- Columns: x=0-4 (all 5 columns)
-- Total: 10 possible cells
-- Preferred: (4, 0) - top-right corner
+- Rows: y=0, y=1, y=2 (top 3 rows)
+- Columns: x=0-8 (all 9 columns)
+- Total: 27 possible cells
+- Preferred: (8, 0) - top-right corner
 
 ### Spawn Validation
 
@@ -756,7 +758,7 @@ console.log(spawnInfo);
 
 - **Version**: 4.11.0 → 5.0.1
 - **Date**: 2026-01-14 → 2026-01-22
-- **Grid Size**: 5x5
+- **Grid Size**: 9x9
 - **Terrain Types**: 10
 - **Battlefield Layouts**: 6
 - **Spawn System**: ✅ Validated Zones

@@ -1,5 +1,5 @@
 /**
- * GridManager - Manages the 5x5 tactical grid for combat
+ * GridManager - Manages the 9x9 tactical grid for combat
  */
 
 import { ConsoleLogger, LogCategory } from '../utils/ConsoleLogger.js';
@@ -187,9 +187,9 @@ export class GridManager {
     const validPositions = [];
 
     // Define spawn zones
-    // Player spawn zone: bottom 2 rows (y=3,4)
-    // Enemy spawn zone: top 2 rows (y=0,1)
-    const rows = side === 'player' ? [3, 4] : [0, 1];
+    // Player spawn zone: bottom 3 rows (y=6,7,8)
+    // Enemy spawn zone: top 3 rows (y=0,1,2)
+    const rows = side === 'player' ? [6, 7, 8] : [0, 1, 2];
 
     for (const y of rows) {
       for (let x = 0; x < this.width; x++) {
@@ -569,4 +569,4 @@ export class GridManager {
 }
 
 // Singleton instance
-export const gridManager = new GridManager(5, 5);
+export const gridManager = new GridManager(9, 9);

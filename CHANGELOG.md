@@ -7,6 +7,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed - Grid Combat Expansion 🗺️⚔️
+
+**Tactical Grid Extended to 9x9**
+
+The tactical combat grid has been expanded from 5x5 (25 cells) to **9x9 (81 cells)** for more strategic depth and tactical possibilities.
+
+**Key Changes:**
+- **Grid Size**: 5x5 → 9x9 (225% more battlefield space)
+- **Total Cells**: 25 → 81 cells
+- **Spawn Zones Expanded**:
+  - Player spawn zone: 3 rows (6-8) with 27 possible positions
+  - Enemy spawn zone: 3 rows (0-2) with 27 possible positions
+- **Battlefield Layouts**: All 6 layouts updated for 9x9 scale
+  - Open Field, Forest Clearing, Ancient Ruins
+  - Treacherous Swamp, Mountain Pass, Combat Arena
+- **Strategic Benefits**:
+  - More room for tactical maneuvering
+  - Better flanking opportunities
+  - Increased importance of positioning
+  - Ranged classes get more utility
+  - Complex terrain patterns possible
+
+**Technical Updates:**
+- `GridManager` singleton updated to 9x9
+- Spawn zone logic updated (top 3 rows, bottom 3 rows)
+- All battlefield generation algorithms scaled
+- Documentation updated across all guides
+
+**Files Modified:**
+- `src/game/GridManager.js` - Grid size and spawn zones
+- `src/game/TerrainSystem.js` - All 6 battlefield layouts
+- `src/components/GridCombatUI.js` - UI rendering
+- Documentation: README, Wiki, Grid Combat Guide, Spawn Zones Guide
+
+---
+
 ### Changed - Enhanced Enemy Icon System 🎭✨
 
 **Major Icon Quality Improvement**

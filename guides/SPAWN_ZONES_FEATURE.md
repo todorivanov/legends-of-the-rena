@@ -17,16 +17,16 @@ The Spawn Zone Validation System ensures that fighters can only spawn on valid, 
 ### 🎯 Designated Spawn Zones
 
 **Player Spawn Zone:**
-- Rows: 3-4 (bottom 2 rows of 5x5 grid)
-- Columns: 0-4 (all columns)
-- Total: Up to 10 possible spawn positions
-- Preferred Position: (0, 4) - bottom-left corner
+- Rows: 6-8 (bottom 3 rows of 9x9 grid)
+- Columns: 0-8 (all columns)
+- Total: Up to 27 possible spawn positions
+- Preferred Position: (0, 8) - bottom-left corner
 
 **Enemy Spawn Zone:**
-- Rows: 0-1 (top 2 rows of 5x5 grid)
-- Columns: 0-4 (all columns)
-- Total: Up to 10 possible spawn positions
-- Preferred Position: (4, 0) - top-right corner
+- Rows: 0-2 (top 3 rows of 9x9 grid)
+- Columns: 0-8 (all columns)
+- Total: Up to 27 possible spawn positions
+- Preferred Position: (8, 0) - top-right corner
 
 ### ✅ Terrain Validation
 

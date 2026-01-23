@@ -32,7 +32,7 @@ let gameState = null;
 let autoBattleEnabled = false;
 let currentStoryMission = null; // Track if we're in a story mission
 let currentPlayerFighter = null; // Track player fighter
-let currentEnemyFighter = null; // Track enemy fighter
+let currentEnemyFighters = []; // Track enemy fighters (CHANGED: now array for multi-enemy support)
 let aiManagers = {}; // Track AI managers for fighters
 
 export default class Game {
@@ -58,12 +58,20 @@ export default class Game {
    * @param {Object} secondFighter - Second fighter (enemy)
    * @param {string} missionId - Optional story mission ID
    */
-  static async startGame(firstFighter, secondFighter, missionId = null) {
+  static async startGame(firstFighter, secondFighterOrEnemies, missionId = null) {
     // Initialize clean state
     this.stopGame();
     gameState = new GameStateManager();
     comboSystem.reset(); // Reset combo tracking for new battle
     const turnManager = new TurnManager();
+
+    // Handle both single enemy and multiple enemies
+    const isSingleEnemy = !Array.isArray(secondFighterOrEnemies);
+    const enemyFighters = isSingleEnemy ? [secondFighterOrEnemies] : secondFighterOrEnemies;
+    currentEnemyFighters = enemyFighters;
+    
+    // For backward compatibility, keep secondFighter reference for single enemy
+    const secondFighter = enemyFighters[0];
 
     // Initialize combat phase manager
     combatPhaseManager.reset();
@@ -72,7 +80,6 @@ export default class Game {
 
     // Store fighter references globally
     currentPlayerFighter = firstFighter;
-    currentEnemyFighter = secondFighter;
 
     // Initialize story mission tracking if provided
     if (missionId) {
@@ -93,30 +100,54 @@ export default class Game {
       aiManagers[firstFighter.id] = createAI(firstFighter, difficulty);
     }
 
-    // Create AI for opponent
-    if (!secondFighter.isPlayer) {
-      aiManagers[secondFighter.id] = createAI(secondFighter, difficulty);
-      ConsoleLogger.info(
-        LogCategory.COMBAT,
-        '🤖 Enemy AI Personality:',
-        aiManagers[secondFighter.id].getPersonalityInfo()
-      );
-    }
+    // Create AI for all enemies
+    enemyFighters.forEach(enemy => {
+      if (!enemy.isPlayer) {
+        aiManagers[enemy.id] = createAI(enemy, difficulty);
+        ConsoleLogger.info(
+          LogCategory.COMBAT,
+          `🤖 Enemy AI Personality (${enemy.name}):`,
+          aiManagers[enemy.id].getPersonalityInfo()
+        );
+      }
+    });
 
     Logger.clearLog();
-    Referee.introduceFighters(firstFighter, secondFighter);
+    
+    // Introduce fighters - different message for multi-enemy
+    if (isSingleEnemy) {
+      Referee.introduceFighters(firstFighter, secondFighter);
+    } else {
+      Logger.log(`<div class="intro-message">⚔️ <strong>${firstFighter.name}</strong> faces <strong>${enemyFighters.length} opponents</strong>!</div>`);
+      enemyFighters.forEach((enemy, index) => {
+        Logger.log(`<div class="intro-message">👹 Opponent ${index + 1}: <strong>${enemy.name}</strong> (${enemy.class}) - HP: ${enemy.health}/${enemy.maxHealth}</div>`);
+      });
+    }
 
-    // Initialize grid combat
-    gridCombatIntegration.initializeBattle(firstFighter, secondFighter);
+    // Initialize grid combat - place all enemies on grid
+    if (isSingleEnemy) {
+      gridCombatIntegration.initializeBattle(firstFighter, secondFighter);
+    } else {
+      // Multi-enemy battle - place all enemies on grid
+      gridCombatIntegration.initializeBattle(firstFighter, enemyFighters);
+    }
     this.initializeGridUI();
 
     // Initialize HUD
-    hudManager.initSingleFight(firstFighter, secondFighter);
+    if (isSingleEnemy) {
+      hudManager.initSingleFight(firstFighter, secondFighter);
+    } else {
+      // Multi-enemy HUD display
+      hudManager.initMultiEnemyFight(firstFighter, enemyFighters);
+    }
 
     let roundCount = 0;
 
     // Start battle with phase system
     await combatPhaseManager.startBattle();
+
+    // Track enemy turn index for round-robin
+    let enemyTurnIndex = 0;
 
     // Main turn-based game loop using phase system
     const processTurn = async () => {
@@ -125,8 +156,89 @@ export default class Game {
         return;
       }
 
-      // Start new round every 2 turns
-      if (turnManager.turnNumber % 2 === 0) {
+      // Filter out defeated enemies
+      const aliveEnemies = currentEnemyFighters.filter(e => e.health > 0);
+      
+      // Check victory condition - all enemies defeated
+      if (aliveEnemies.length === 0) {
+        Logger.log(`<div class="victory-message">🏆 <strong>VICTORY!</strong> All enemies defeated!</div>`);
+        Referee.declareWinner(firstFighter);
+        hudManager.showWinner(firstFighter);
+
+        // Handle story mission completion
+        if (currentStoryMission) {
+          const playerState = {
+            currentHP: firstFighter.health,
+            maxHP: firstFighter.maxHealth,
+          };
+          const missionResult = StoryMode.completeMission(true, playerState);
+
+          setTimeout(() => {
+            if (window.showMissionResults) {
+              window.showMissionResults(missionResult);
+            }
+          }, 2000);
+        } else {
+          // Track victory
+          gameStore.dispatch(incrementStat('totalWins'));
+          gameStore.dispatch(incrementStat('totalFightsPlayed'));
+          gameStore.dispatch(updateStreak(true));
+
+          // Award XP and gold based on number of enemies
+          const totalXP = currentEnemyFighters.reduce((sum, enemy) => sum + (enemy.level * 50), 0);
+          const totalGold = currentEnemyFighters.reduce((sum, enemy) => sum + (enemy.level * 20), 0);
+          
+          LevelingSystem.awardXP(totalXP, `Defeating ${currentEnemyFighters.length} enemies`);
+          EconomyManager.addGold(totalGold, 'Combat Victory');
+
+          setTimeout(() => {
+            if (window.showVictoryScreen) {
+              window.showVictoryScreen(firstFighter);
+            }
+          }, 2000);
+        }
+        return;
+      }
+      
+      // Check defeat condition - player defeated
+      if (firstFighter.health <= 0) {
+        Logger.log(`<div class="defeat-message">💀 <strong>DEFEAT!</strong> ${firstFighter.name} was defeated!</div>`);
+        Referee.declareWinner(aliveEnemies[0]);
+        hudManager.showWinner(aliveEnemies[0]);
+
+        // Handle story mission failure
+        if (currentStoryMission) {
+          const playerState = {
+            currentHP: 0,
+            maxHP: firstFighter.maxHealth,
+          };
+          const missionResult = StoryMode.completeMission(false, playerState);
+
+          setTimeout(() => {
+            if (window.showMissionResults) {
+              window.showMissionResults(missionResult);
+            }
+          }, 2000);
+        } else {
+          // Track defeat
+          gameStore.dispatch(incrementStat('totalLosses'));
+          gameStore.dispatch(incrementStat('totalFightsPlayed'));
+          gameStore.dispatch(updateStreak(false));
+
+          setTimeout(() => {
+            if (window.showVictoryScreen) {
+              window.showVictoryScreen(aliveEnemies[0]);
+            }
+          }, 2000);
+        }
+        return;
+      }
+
+      // Calculate turns per round: 1 player turn + 1 combined enemy turn
+      const turnsPerRound = 2;
+      
+      // Start new round
+      if (turnManager.turnNumber % turnsPerRound === 0) {
         roundCount++;
         hudManager.setRound(roundCount);
         Referee.showRoundNumber();
@@ -136,95 +248,213 @@ export default class Game {
           StoryMode.trackMissionEvent('round_complete');
         }
 
-        // Regenerate mana for both fighters
+        // Regenerate mana for all fighters
         firstFighter.regenerateMana();
-        secondFighter.regenerateMana();
+        aliveEnemies.forEach(enemy => enemy.regenerateMana());
         hudManager.update();
       }
 
+      // Advance turn counter
       turnManager.startTurn();
 
-      // Get active fighter
-      const activeFighter = turnManager.isPlayerTurn() ? firstFighter : secondFighter;
-      const targetFighter = turnManager.isPlayerTurn() ? secondFighter : firstFighter;
+      // Determine if it's player turn or enemy turn (all enemies move together)
+      const turnInRound = (turnManager.turnNumber - 1) % turnsPerRound;
+      const isPlayerTurn = turnInRound === 0;
+      const isEnemyTurn = turnInRound === 1;
 
-      // Start turn with phase system
-      await combatPhaseManager.startTurn(activeFighter);
+      // DEBUG: Log turn state
+      console.log('🔍 TURN DEBUG:', {
+        turnNumber: turnManager.turnNumber,
+        turnsPerRound,
+        turnInRound,
+        isPlayerTurn,
+        isEnemyTurn,
+        autoBattleEnabled,
+        aliveEnemiesCount: aliveEnemies.length,
+        aliveEnemyNames: aliveEnemies.map(e => e.name)
+      });
 
-      // Show turn indicator
-      this.showTurnIndicator(activeFighter.name);
+      if (isPlayerTurn) {
+        console.log('🎮 PLAYER TURN DETECTED - Starting player turn');
+        // Player turn - process status effects and show turn indicator
+        await combatPhaseManager.startTurn(firstFighter);
+        this.showTurnIndicator(firstFighter.name);
+        firstFighter.processStatusEffects();
+        firstFighter.tickSkillCooldowns();
+        hudManager.update();
 
-      // Process status effects at turn start (handled by phase hooks)
-      activeFighter.processStatusEffects();
-      activeFighter.tickSkillCooldowns();
-      hudManager.update();
-
-      if (turnManager.isPlayerTurn() && !autoBattleEnabled) {
-        // Check if opponent is in attack range
-        const inRange = gridCombatIntegration.isTargetInRange(firstFighter.id, secondFighter.id);
-        const attackRange = gridCombatIntegration.getAttackRangeForFighter(firstFighter);
-
-        if (!inRange) {
-          Logger.log(
-            `<div class="system-message" style="background: rgba(255, 193, 7, 0.2); border-left: 3px solid #ffc107;">⚠️ <strong>Enemy out of range!</strong> (Need range ${attackRange})</div>`
+        console.log('🎮 autoBattleEnabled =', autoBattleEnabled);
+        if (!autoBattleEnabled) {
+          console.log('✅ PLAYER TURN - Showing controls');
+          
+          // Filter enemies to only those in attack range
+          const enemiesInRange = aliveEnemies.filter(enemy => 
+            gridCombatIntegration.isTargetInRange(firstFighter.id, enemy.id)
           );
-          Logger.log(
-            `<div class="system-message">💡 Use your <strong>movement skill</strong> to get closer before attacking!</div>`
-          );
-        }
-
-        // Manual: Player's turn - wait for input using Web Component
-        const actionSelection = document.createElement('action-selection');
-        actionSelection.fighter = firstFighter;
-        actionSelection.dataset.opponentId = secondFighter.id;
-        actionSelection.dataset.attackRange = attackRange;
-        actionSelection.dataset.inRange = inRange;
-        actionSelection.addEventListener('action-selected', async (e) => {
-          actionSelection.remove();
-          // Remove combo hints when action is selected
-          document.querySelectorAll('combo-hint').forEach((el) => el.remove());
-          await this.executeActionPhased(
-            firstFighter,
-            secondFighter,
-            e.detail,
-            turnManager,
-            processTurn
-          );
-        });
-
-        // Append to action-area in combat arena if available, otherwise body
-        const arena = document.querySelector('combat-arena');
-        const actionArea = arena?.shadowRoot?.querySelector('#action-area');
-        if (actionArea) {
-          actionArea.appendChild(actionSelection);
+          
+          console.log('🎯 Range check:', {
+            totalEnemies: aliveEnemies.length,
+            inRange: enemiesInRange.length,
+            outOfRange: aliveEnemies.length - enemiesInRange.length
+          });
+          
+          // Only show target selector if multiple enemies are in range
+          if (enemiesInRange.length > 1) {
+            console.log('🎯 Multiple enemies in range - showing enemy selector');
+            // Multiple enemies in range - show enemy selector
+            const enemySelector = document.createElement('enemy-selector');
+            enemySelector.enemies = enemiesInRange; // Only show enemies in range
+            document.body.appendChild(enemySelector);
+            console.log('📦 Enemy selector appended to body');
+            
+            enemySelector.addEventListener('enemy-selected', async (e) => {
+              enemySelector.remove();
+              const selectedEnemy = e.detail.enemy;
+              
+              if (!selectedEnemy) {
+                // Cancelled selection - restart turn
+                processTurn();
+                return;
+              }
+              
+              // Now show action selection for chosen target
+              console.log('🎮 Showing action selection for selected enemy:', selectedEnemy.name);
+              this.showPlayerActionSelection(firstFighter, selectedEnemy, turnManager, processTurn);
+            }, { once: true });
+          } else {
+            // 0 or 1 enemy in range - go directly to action selection
+            // (if 0 in range, Attack button will show OUT OF RANGE warning)
+            const targetEnemy = enemiesInRange.length > 0 ? enemiesInRange[0] : aliveEnemies[0];
+            console.log('🎯 Single/no enemy in range - showing action selection directly for:', targetEnemy.name);
+            // Single enemy in range or no enemies in range - directly show actions
+            this.showPlayerActionSelection(firstFighter, targetEnemy, turnManager, processTurn);
+          }
         } else {
-          document.body.appendChild(actionSelection);
+          // Auto-battle enabled for player turn - execute AI action
+          console.log('🤖 AUTO-BATTLE - Player turn automated');
+          setTimeout(async () => {
+            const targetEnemy = aliveEnemies[0];
+            const aiActionData = this.chooseAIAction(firstFighter, targetEnemy);
+            await this.executeActionPhased(firstFighter, targetEnemy, aiActionData, turnManager, processTurn);
+          }, AI_TURN_DELAY);
         }
-
-        // Show combo hints for player
-        const suggestions = comboSystem.getComboSuggestions(firstFighter);
-        if (suggestions.length > 0) {
-          const comboHint = document.createElement('combo-hint');
-          comboHint.suggestions = suggestions;
-          document.body.appendChild(comboHint);
-        }
-      } else {
-        // Auto-battle or AI turn
-        setTimeout(async () => {
-          const aiActionData = this.chooseAIAction(activeFighter, targetFighter);
-          await this.executeActionPhased(
-            activeFighter,
-            targetFighter,
-            aiActionData,
-            turnManager,
-            processTurn
-          );
-        }, AI_TURN_DELAY);
+      } else if (isEnemyTurn) {
+        console.log('🤖 AI TURN - All enemies move');
+        
+        // Process all alive enemies sequentially
+        let enemyIndex = 0;
+        
+        const processNextEnemy = async () => {
+          if (enemyIndex >= aliveEnemies.length) {
+            // All enemies done, continue to next turn
+            setTimeout(processTurn, 800);
+            return;
+          }
+          
+          const currentEnemy = aliveEnemies[enemyIndex];
+          enemyIndex++;
+          
+          // Process this enemy's turn (no turnManager.startTurn() - already done above)
+          await combatPhaseManager.startTurn(currentEnemy);
+          this.showTurnIndicator(currentEnemy.name);
+          currentEnemy.processStatusEffects();
+          currentEnemy.tickSkillCooldowns();
+          hudManager.update();
+          
+          console.log(`🤖 Enemy ${enemyIndex}/${aliveEnemies.length}: ${currentEnemy.name}`);
+          
+          // Execute enemy action
+          setTimeout(async () => {
+            const aiActionData = this.chooseAIAction(currentEnemy, firstFighter);
+            await this.executeActionPhased(
+              currentEnemy,
+              firstFighter,
+              aiActionData, // Pass full action data object
+              { nextTurn: () => {}, callback: processNextEnemy } // Don't advance turn, just chain to next enemy
+            );
+          }, AI_TURN_DELAY);
+        };
+        
+        // Start processing first enemy
+        processNextEnemy();
       }
     };
 
     // Start first turn
     processTurn();
+  }
+
+  /**
+   * Show player action selection UI (extracted for reuse)
+   */
+  static showPlayerActionSelection(playerFighter, targetEnemy, turnManager, processTurn) {
+    console.log('🎮 showPlayerActionSelection called:', {
+      playerFighter: playerFighter.name,
+      targetEnemy: targetEnemy.name
+    });
+    
+    // Check if target is in attack range
+    const inRange = gridCombatIntegration.isTargetInRange(playerFighter.id, targetEnemy.id);
+    const attackRange = gridCombatIntegration.getAttackRangeForFighter(playerFighter);
+
+    console.log('📏 Range check:', { inRange, attackRange });
+
+    if (!inRange) {
+      Logger.log(
+        `<div class="system-message" style="background: rgba(255, 193, 7, 0.2); border-left: 3px solid #ffc107;">⚠️ <strong>Enemy out of range!</strong> (Need range ${attackRange})</div>`
+      );
+      Logger.log(
+        `<div class="system-message">💡 Use your <strong>movement skill</strong> to get closer before attacking!</div>`
+      );
+    }
+
+    // Manual: Player's turn - wait for input using Web Component
+    console.log('🎯 Creating action-selection component');
+    const actionSelection = document.createElement('action-selection');
+    actionSelection.fighter = playerFighter;
+    actionSelection.dataset.opponentId = targetEnemy.id;
+    actionSelection.dataset.attackRange = attackRange;
+    actionSelection.dataset.inRange = inRange;
+    actionSelection.addEventListener('action-selected', async (e) => {
+      console.log('✅ Action selected:', e.detail);
+      actionSelection.remove();
+      // Remove combo hints when action is selected
+      document.querySelectorAll('combo-hint').forEach((el) => el.remove());
+      await this.executeActionPhased(
+        playerFighter,
+        targetEnemy,
+        e.detail,
+        turnManager,
+        processTurn
+      );
+    });
+
+    // Append to action-area in combat arena if available, otherwise body
+    const arena = document.querySelector('combat-arena');
+    const actionArea = arena?.shadowRoot?.querySelector('#action-area');
+    console.log('🔍 DOM check:', { 
+      arenaFound: !!arena, 
+      shadowRootFound: !!arena?.shadowRoot,
+      actionAreaFound: !!actionArea 
+    });
+    
+    if (actionArea) {
+      console.log('📦 Appending action-selection to #action-area');
+      actionArea.appendChild(actionSelection);
+    } else {
+      console.log('📦 Appending action-selection to body (fallback)');
+      document.body.appendChild(actionSelection);
+    }
+    
+    console.log('✅ Action selection component appended successfully');
+
+    // Show combo hints for player
+    const suggestions = comboSystem.getComboSuggestions(playerFighter);
+    if (suggestions.length > 0) {
+      const comboHint = document.createElement('combo-hint');
+      comboHint.suggestions = suggestions;
+      document.body.appendChild(comboHint);
+    }
   }
 
   /**
@@ -264,7 +494,7 @@ export default class Game {
           // Clear story mission state
           currentStoryMission = null;
           currentPlayerFighter = null;
-          currentEnemyFighter = null;
+          currentEnemyFighters = [];
         } else {
           // Track loss from surrender (normal combat)
           gameStore.dispatch(incrementStat('totalLosses'));
@@ -438,7 +668,7 @@ export default class Game {
         // Clear story mission state
         currentStoryMission = null;
         currentPlayerFighter = null;
-        currentEnemyFighter = null;
+        currentEnemyFighters = [];
         return;
       }
 
@@ -453,7 +683,7 @@ export default class Game {
 
         // Award gold based on difficulty
         const difficulty = SaveManager.get('settings.difficulty') || 'normal';
-        const enemyLevel = currentEnemyFighter?.level || 1;
+        const enemyLevel = currentEnemyFighters[0]?.level || 1;
         const goldReward = EconomyManager.calculateBattleReward(difficulty, true, enemyLevel);
         EconomyManager.addGold(goldReward, 'Battle Victory');
 
@@ -481,13 +711,13 @@ export default class Game {
         }
         // Clear fighter references
         currentPlayerFighter = null;
-        currentEnemyFighter = null;
+        currentEnemyFighters = [];
       }, 2000);
       return;
     }
 
-    // Next turn
-    turnManager.nextTurn();
+    // Next turn handled by executeActionPhased
+    // turnManager.nextTurn(); // REMOVED: Duplicate call causing turn skipping
     setTimeout(callback, 800);
   }
 
@@ -642,10 +872,22 @@ export default class Game {
    * @param {Object} attacker - Attacking fighter
    * @param {Object} defender - Defending fighter
    * @param {Object} actionData - Action data
-   * @param {Object} turnManager - Turn manager
-   * @param {Function} callback - Callback for next turn
+   * @param {Object} turnManagerOrOptions - Turn manager OR options object {nextTurn, callback}
+   * @param {Function} callback - Callback for next turn (legacy parameter)
    */
-  static async executeActionPhased(attacker, defender, actionData, turnManager, callback) {
+  static async executeActionPhased(attacker, defender, actionData, turnManagerOrOptions, callback) {
+    // Handle both old and new parameter formats
+    let turnManager, actualCallback;
+    if (turnManagerOrOptions && typeof turnManagerOrOptions.nextTurn === 'function') {
+      // New format: options object
+      turnManager = turnManagerOrOptions;
+      actualCallback = turnManagerOrOptions.callback || callback;
+    } else {
+      // Old format: separate turnManager and callback
+      turnManager = turnManagerOrOptions;
+      actualCallback = callback;
+    }
+    
     const action = actionData.action || actionData;
 
     // Handle movement skill
@@ -657,8 +899,7 @@ export default class Game {
           Logger.log(
             `<div class="attack-div missed-attack text-center">⏱️ ${skill.name} is on cooldown! (${skill.currentCooldown} turns)</div>`
           );
-          turnManager.nextTurn();
-          setTimeout(callback, 800);
+          setTimeout(actualCallback, 800);
           return;
         }
 
@@ -666,8 +907,7 @@ export default class Game {
           Logger.log(
             `<div class="attack-div missed-attack text-center">💧 Not enough mana for ${skill.name}!</div>`
           );
-          turnManager.nextTurn();
-          setTimeout(callback, 800);
+          setTimeout(actualCallback, 800);
           return;
         }
 
@@ -681,9 +921,8 @@ export default class Game {
         // Update HUD to show mana/cooldown changes
         hudManager.update();
 
-        // After movement completes, advance turn
-        turnManager.nextTurn();
-        setTimeout(callback, 800);
+        // After movement completes, continue combat flow
+        setTimeout(actualCallback, 800);
         return;
       }
     }
@@ -720,7 +959,7 @@ export default class Game {
           // Clear story mission state
           currentStoryMission = null;
           currentPlayerFighter = null;
-          currentEnemyFighter = null;
+          currentEnemyFighters = [];
         } else {
           // Track loss from surrender (normal combat)
           gameStore.dispatch(incrementStat('totalLosses'));
@@ -749,8 +988,7 @@ export default class Game {
           `<div class="attack-div missed-attack text-center">⚠️ <strong>${attacker.name}</strong> is out of range! (Need range ${attackRange})</div>`
         );
         Logger.log(`<div class="system-message">💡 Use your movement skill to get closer!</div>`);
-        turnManager.nextTurn();
-        setTimeout(callback, 1200);
+        setTimeout(actualCallback, 1200);
         return;
       }
     }
@@ -766,8 +1004,7 @@ export default class Game {
             `<div class="attack-div missed-attack text-center">⚠️ <strong>${attacker.name}</strong> cannot use ${skill.name} - target out of range! (Range: ${skillRange})</div>`
           );
           Logger.log(`<div class="system-message">💡 Use your movement skill to get closer!</div>`);
-          turnManager.nextTurn();
-          setTimeout(callback, 1200);
+          setTimeout(actualCallback, 1200);
           return;
         }
       }
@@ -824,7 +1061,7 @@ export default class Game {
 
         currentStoryMission = null;
         currentPlayerFighter = null;
-        currentEnemyFighter = null;
+        currentEnemyFighters = [];
         return;
       }
 
@@ -838,7 +1075,7 @@ export default class Game {
         LevelingSystem.awardXP(xpReward, 'Victory in Single Combat');
 
         const difficulty = SaveManager.get('settings.difficulty') || 'normal';
-        const enemyLevel = currentEnemyFighter?.level || 1;
+        const enemyLevel = currentEnemyFighters[0]?.level || 1;
         const goldReward = EconomyManager.calculateBattleReward(difficulty, true, enemyLevel);
         EconomyManager.addGold(goldReward, 'Battle Victory');
 
@@ -861,7 +1098,7 @@ export default class Game {
           window.showVictoryScreen(victoryResult.winner);
         }
         currentPlayerFighter = null;
-        currentEnemyFighter = null;
+        currentEnemyFighters = [];
       }, 2000);
       return;
     }
@@ -869,9 +1106,8 @@ export default class Game {
     // End turn with phase system
     await combatPhaseManager.endTurn(attacker);
 
-    // Next turn
-    turnManager.nextTurn();
-    setTimeout(callback, 800);
+    // Call callback to continue combat flow (processTurn will handle turn advancement)
+    setTimeout(actualCallback, 800);
   }
 
   /**
@@ -1164,7 +1400,7 @@ export default class Game {
 
     // Clear fighter references
     currentPlayerFighter = null;
-    currentEnemyFighter = null;
+    currentEnemyFighters = [];
     currentStoryMission = null;
 
     // Clear AI managers

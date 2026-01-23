@@ -31,8 +31,11 @@ export class GridCombatIntegration {
 
   /**
    * Initialize grid for a new battle
+   * @param {Fighter} playerFighter - Player fighter
+   * @param {Fighter|Fighter[]} enemyFighterOrEnemies - Single enemy or array of enemies
+   * @param {string} battlefieldType - Battlefield layout name
    */
-  initializeBattle(playerFighter, enemyFighter, battlefieldType = null) {
+  initializeBattle(playerFighter, enemyFighterOrEnemies, battlefieldType = null) {
     // Generate terrain
     if (battlefieldType) {
       const layout = TerrainGenerator.generateByName(battlefieldType);
@@ -42,10 +45,18 @@ export class GridCombatIntegration {
       this.applyLayout(layout);
     }
 
-    // Place fighters
-    this.placeFightersInitial(playerFighter, enemyFighter);
+    // Normalize to array for consistent handling
+    const enemyFighters = Array.isArray(enemyFighterOrEnemies)
+      ? enemyFighterOrEnemies
+      : [enemyFighterOrEnemies];
 
-    ConsoleLogger.info(LogCategory.GRID, '🗺️ Grid combat initialized');
+    // Place fighters
+    this.placeFightersInitial(playerFighter, enemyFighters);
+
+    ConsoleLogger.info(
+      LogCategory.GRID,
+      `🗺️ Grid combat initialized with ${enemyFighters.length} enemy(ies)`
+    );
   }
 
   /**
@@ -62,30 +73,35 @@ export class GridCombatIntegration {
   /**
    * Place fighters at initial positions
    * Uses spawn zones to ensure fighters don't spawn on walls/impassable terrain
+   * @param {Fighter} playerFighter - Player fighter
+   * @param {Fighter[]} enemyFighters - Array of enemy fighters
    */
-  placeFightersInitial(playerFighter, enemyFighter) {
+  placeFightersInitial(playerFighter, enemyFighters) {
     // Get valid spawn zones
     const playerSpawnZones = gridManager.getValidSpawnZones('player');
     const enemySpawnZones = gridManager.getValidSpawnZones('enemy');
 
     // Place player fighter
     let playerPlaced = false;
-    // Try preferred position (0,4) first if passable
-    if (playerSpawnZones.some((pos) => pos.x === 0 && pos.y === 4)) {
-      playerPlaced = gridManager.placeFighter(playerFighter, 0, 4);
+    // Try preferred position (0,8) first if passable (bottom-left corner)
+    if (playerSpawnZones.some((pos) => pos.x === 0 && pos.y === 8)) {
+      playerPlaced = gridManager.placeFighter(playerFighter, 0, 8);
     }
     // Fallback to any valid position in spawn zone
     if (!playerPlaced && playerSpawnZones.length > 0) {
       const randomPos = playerSpawnZones[Math.floor(Math.random() * playerSpawnZones.length)];
       playerPlaced = gridManager.placeFighter(playerFighter, randomPos.x, randomPos.y);
     }
-    // Final fallback: try bottom row
+    // Final fallback: try bottom rows
     if (!playerPlaced) {
-      for (let x = 0; x < 5; x++) {
-        if (gridManager.placeFighter(playerFighter, x, 4)) {
-          playerPlaced = true;
-          break;
+      for (let y = 8; y >= 6; y--) {
+        for (let x = 0; x < 9; x++) {
+          if (gridManager.placeFighter(playerFighter, x, y)) {
+            playerPlaced = true;
+            break;
+          }
         }
+        if (playerPlaced) break;
       }
     }
 
@@ -93,34 +109,91 @@ export class GridCombatIntegration {
       ConsoleLogger.error(LogCategory.GRID, '⚠️ Failed to place player fighter on grid!');
     }
 
-    // Place enemy fighter
-    let enemyPlaced = false;
-    // Try preferred position (4,0) first if passable
-    if (enemySpawnZones.some((pos) => pos.x === 4 && pos.y === 0)) {
-      enemyPlaced = gridManager.placeFighter(enemyFighter, 4, 0);
-    }
-    // Fallback to any valid position in spawn zone
-    if (!enemyPlaced && enemySpawnZones.length > 0) {
-      const randomPos = enemySpawnZones[Math.floor(Math.random() * enemySpawnZones.length)];
-      enemyPlaced = gridManager.placeFighter(enemyFighter, randomPos.x, randomPos.y);
-    }
-    // Final fallback: try top row
-    if (!enemyPlaced) {
-      for (let x = 4; x >= 0; x--) {
-        if (gridManager.placeFighter(enemyFighter, x, 0)) {
-          enemyPlaced = true;
-          break;
+    // Place enemy fighters with collision detection
+    const occupiedCells = new Set();
+    const preferredEnemyPositions = [
+      { x: 8, y: 0 }, // Top-right
+      { x: 8, y: 1 },
+      { x: 8, y: 2 },
+      { x: 7, y: 0 },
+      { x: 7, y: 1 },
+      { x: 6, y: 0 },
+      { x: 6, y: 1 },
+      { x: 5, y: 0 },
+      { x: 4, y: 0 },
+    ];
+
+    enemyFighters.forEach((enemy, index) => {
+      let enemyPlaced = false;
+
+      // Try preferred positions first (avoid already occupied)
+      for (const pos of preferredEnemyPositions) {
+        const cellKey = `${pos.x},${pos.y}`;
+        if (
+          !occupiedCells.has(cellKey) &&
+          enemySpawnZones.some((zone) => zone.x === pos.x && zone.y === pos.y)
+        ) {
+          if (gridManager.placeFighter(enemy, pos.x, pos.y)) {
+            occupiedCells.add(cellKey);
+            enemyPlaced = true;
+            ConsoleLogger.info(
+              LogCategory.GRID,
+              `👹 Enemy ${index + 1} "${enemy.name}" placed at (${pos.x}, ${pos.y})`
+            );
+            break;
+          }
         }
       }
-    }
 
-    if (!enemyPlaced) {
-      ConsoleLogger.error(LogCategory.GRID, '⚠️ Failed to place enemy fighter on grid!');
-    }
+      // Fallback: try any valid unoccupied spawn zone
+      if (!enemyPlaced && enemySpawnZones.length > 0) {
+        const shuffledZones = enemySpawnZones
+          .filter((zone) => !occupiedCells.has(`${zone.x},${zone.y}`))
+          .sort(() => Math.random() - 0.5);
+
+        for (const pos of shuffledZones) {
+          if (gridManager.placeFighter(enemy, pos.x, pos.y)) {
+            occupiedCells.add(`${pos.x},${pos.y}`);
+            enemyPlaced = true;
+            ConsoleLogger.info(
+              LogCategory.GRID,
+              `👹 Enemy ${index + 1} "${enemy.name}" placed at (${pos.x}, ${pos.y}) (fallback)`
+            );
+            break;
+          }
+        }
+      }
+
+      // Final fallback: scan entire enemy spawn zone
+      if (!enemyPlaced) {
+        for (let y = 0; y <= 2; y++) {
+          for (let x = 0; x < 9; x++) {
+            const cellKey = `${x},${y}`;
+            if (!occupiedCells.has(cellKey) && gridManager.placeFighter(enemy, x, y)) {
+              occupiedCells.add(cellKey);
+              enemyPlaced = true;
+              ConsoleLogger.warn(
+                LogCategory.GRID,
+                `⚠️ Enemy ${index + 1} "${enemy.name}" placed at (${x}, ${y}) (emergency fallback)`
+              );
+              break;
+            }
+          }
+          if (enemyPlaced) break;
+        }
+      }
+
+      if (!enemyPlaced) {
+        ConsoleLogger.error(
+          LogCategory.GRID,
+          `❌ Failed to place enemy ${index + 1} "${enemy.name}" on grid!`
+        );
+      }
+    });
 
     ConsoleLogger.info(
       LogCategory.GRID,
-      `🗺️ Fighters placed: Player at (${playerFighter.gridPosition?.x}, ${playerFighter.gridPosition?.y}), Enemy at (${enemyFighter.gridPosition?.x}, ${enemyFighter.gridPosition?.y})`
+      `🗺️ Fighters placed: Player at (${playerFighter.gridPosition?.x}, ${playerFighter.gridPosition?.y}), ${enemyFighters.length} enemy(ies) placed`
     );
   }
 

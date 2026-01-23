@@ -4,7 +4,7 @@ import { EnemyIconMapper } from '../utils/EnemyIconMapper.js';
 import styles from '../styles/components/GridCombatUI.scss?inline';
 
 /**
- * GridCombatUI - Visual component for the 5x5 tactical grid
+ * GridCombatUI - Visual component for the 9x9 tactical grid
  */
 export class GridCombatUI extends BaseComponent {
   constructor() {
@@ -91,8 +91,8 @@ export class GridCombatUI extends BaseComponent {
   renderGrid() {
     let html = '';
 
-    for (let y = 0; y < 5; y++) {
-      for (let x = 0; x < 5; x++) {
+    for (let y = 0; y < this.gridManager.height; y++) {
+      for (let x = 0; x < this.gridManager.width; x++) {
         const cell = this.gridManager.getCell(x, y);
         const isSelected =
           this.selectedCell && this.selectedCell.x === x && this.selectedCell.y === y;

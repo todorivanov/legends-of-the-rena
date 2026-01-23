@@ -14,6 +14,21 @@ export class HUDManager {
   initSingleFight(fighter1, fighter2) {
     this.fighter1 = fighter1;
     this.fighter2 = fighter2;
+    this.enemyFighters = null; // Clear multi-enemy mode
+
+    this.createHUD();
+    this.update();
+  }
+
+  /**
+   * Initialize HUD for multi-enemy fight
+   * @param {Fighter} playerFighter - Player fighter
+   * @param {Fighter[]} enemyFighters - Array of enemy fighters
+   */
+  initMultiEnemyFight(playerFighter, enemyFighters) {
+    this.fighter1 = playerFighter;
+    this.fighter2 = null; // Not used in multi-enemy mode
+    this.enemyFighters = enemyFighters;
 
     this.createHUD();
     this.update();
@@ -45,7 +60,13 @@ export class HUDManager {
     // Create HUD Web Component
     const hud = document.createElement('fighter-hud');
     hud.fighter1 = this.fighter1;
-    hud.fighter2 = this.fighter2;
+    
+    // Set either single enemy or multiple enemies
+    if (this.enemyFighters) {
+      hud.enemyFighters = this.enemyFighters;
+    } else {
+      hud.fighter2 = this.fighter2;
+    }
 
     hudArea.appendChild(hud);
     this.hudElement = hud;
@@ -55,11 +76,19 @@ export class HUDManager {
    * Update HUD with current fighter stats
    */
   update() {
-    if (!this.hudElement || !this.fighter1 || !this.fighter2) return;
+    if (!this.hudElement || !this.fighter1) return;
+    
+    // In multi-enemy mode, check for enemyFighters instead of fighter2
+    if (!this.enemyFighters && !this.fighter2) return;
 
     // Update fighter data
     this.hudElement.fighter1 = this.fighter1;
-    this.hudElement.fighter2 = this.fighter2;
+    
+    if (this.enemyFighters) {
+      this.hudElement.enemyFighters = this.enemyFighters;
+    } else {
+      this.hudElement.fighter2 = this.fighter2;
+    }
   }
 
   /**

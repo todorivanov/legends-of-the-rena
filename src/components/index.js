@@ -36,6 +36,7 @@ export { GridCombatUI } from './GridCombatUI.js'; // v4.7 - Grid Combat
 export { TalentTreeScreen } from './TalentTreeScreen.js'; // v4.11 - Talent System
 export { FaceOffComponent } from './FaceOffComponent.js'; // v4.x - Face-Off Screen
 export { StoryPathSelection } from './StoryPathSelection.js'; // v5.0 - Story Path System
+export { EnemySelector } from './EnemySelector.js'; // v5.0 - Multi-Enemy Combat
 
 // Auto-register all components by importing this file
 ConsoleLogger.info(LogCategory.UI, '✅ All Web Components registered');

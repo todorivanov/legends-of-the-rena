@@ -16,8 +16,10 @@ export class FighterHUD extends BaseComponent {
     super();
     this._fighter1 = null;
     this._fighter2 = null;
+    this._enemyFighters = null;
     this._fighter1MaxHealth = 0;
     this._fighter2MaxHealth = 0;
+    this._enemyMaxHealths = {};
     this._round = 0;
   }
 
@@ -37,6 +39,19 @@ export class FighterHUD extends BaseComponent {
     this.render();
   }
 
+  set enemyFighters(data) {
+    this._enemyFighters = data;
+    // Store max health for each enemy
+    if (data && Array.isArray(data)) {
+      data.forEach((enemy) => {
+        if (!this._enemyMaxHealths[enemy.id]) {
+          this._enemyMaxHealths[enemy.id] = enemy.maxHealth || enemy.health;
+        }
+      });
+    }
+    this.render();
+  }
+
   set round(num) {
     this._round = num;
     this.render();
@@ -47,7 +62,36 @@ export class FighterHUD extends BaseComponent {
   }
 
   template() {
-    if (!this._fighter1 || !this._fighter2) {
+    if (!this._fighter1) {
+      return '<div class="fighter-stats-hud"><p>Loading...</p></div>';
+    }
+
+    // Multi-enemy mode
+    if (this._enemyFighters && Array.isArray(this._enemyFighters)) {
+      const enemyCardsHTML = this._enemyFighters
+        .map((enemy) => {
+          const maxHealth = this._enemyMaxHealths[enemy.id] || enemy.maxHealth || enemy.health;
+          return this.renderFighterCard(enemy, maxHealth, 'enemy');
+        })
+        .join('');
+
+      return `
+        <div class="fighter-stats-hud multi-enemy">
+          ${this.renderFighterCard(this._fighter1, this._fighter1MaxHealth, 'player')}
+          
+          <div class="round-indicator" id="round-indicator">
+            ${this._round > 0 ? `⚔️ ROUND ${this._round} ⚔️` : '⚔️ BATTLE ARENA ⚔️'}
+          </div>
+          
+          <div class="enemy-fighters-container">
+            ${enemyCardsHTML}
+          </div>
+        </div>
+      `;
+    }
+
+    // Single enemy mode (original)
+    if (!this._fighter2) {
       return '<div class="fighter-stats-hud"><p>Loading...</p></div>';
     }
 
@@ -70,6 +114,7 @@ export class FighterHUD extends BaseComponent {
     const currentMana = Math.max(0, fighter.mana || 0);
     const maxMana = fighter.maxMana || 100;
     const manaPercent = Math.max(0, Math.min(100, (currentMana / maxMana) * 100));
+    const isDefeated = currentHealth <= 0;
 
     let healthClass = '';
     if (healthPercent < 30) healthClass = 'low';
@@ -88,13 +133,18 @@ export class FighterHUD extends BaseComponent {
       )
       .join('');
 
+    // Compact mode for multi-enemy display
+    const isCompact = side === 'enemy';
+    const defeatBadge = isDefeated ? '<div class="defeat-badge">☠️ DEFEATED</div>' : '';
+
     return `
-      <div class="fighter-stat-card ${side}">
+      <div class="fighter-stat-card ${side} ${isCompact ? 'compact' : ''} ${isDefeated ? 'defeated' : ''}">
+        ${defeatBadge}
         <img class="fighter-stat-avatar" src="${fighter.image}" alt="${fighter.name}" />
         <div class="fighter-stat-info">
           <div class="fighter-stat-name">${fighter.name}</div>
           <div class="fighter-stat-class">${fighter.class || 'Fighter'}</div>
-          <div class="status-effects-container">${statusEffectsHTML}</div>
+          ${!isCompact ? `<div class="status-effects-container">${statusEffectsHTML}</div>` : ''}
           <div class="fighter-stat-bars">
             <div class="stat-bar">
               <span class="stat-bar-label">❤️ HP</span>
@@ -105,6 +155,7 @@ export class FighterHUD extends BaseComponent {
               </div>
               <span class="stat-value">${currentHealth} / ${maxHealth}</span>
             </div>
+            ${!isCompact ? `
             <div class="stat-bar">
               <span class="stat-bar-label">💧 MP</span>
               <div class="stat-bar-container">
@@ -121,6 +172,7 @@ export class FighterHUD extends BaseComponent {
               </div>
               <span class="stat-value">${fighter.strength}</span>
             </div>
+            ` : ''}
           </div>
         </div>
       </div>

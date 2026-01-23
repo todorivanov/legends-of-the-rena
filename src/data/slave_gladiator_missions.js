@@ -647,6 +647,254 @@ export const SLAVE_GLADIATOR_MISSIONS = {
       legend: true,
     },
   },
+
+  // ========== MULTI-ENEMY MISSIONS (NEW: v5.0.1) ==========
+
+  slave_13_arena_ambush: {
+    id: 'slave_13_arena_ambush',
+    pathId: 'slave_gladiator',
+    name: 'Arena Ambush',
+    description: 'Face multiple opponents at once. The crowd demands blood!',
+    difficulty: 6,
+    type: 'multi_enemy',
+    act: 2,
+    requiredFreedom: 50,
+
+    dialogue: {
+      before: '"Today you face three enemies! Show them no mercy!"',
+      during: '"Pick your target wisely! They will overwhelm you if you hesitate!"',
+      after: '"Incredible! You defeated them all! The crowd roars your name!"',
+    },
+
+    enemies: [
+      {
+        name: 'Guard Captain',
+        class: 'WARRIOR',
+        health: 300,
+        strength: 14,
+        level: 5,
+      },
+      {
+        name: 'Prison Brute',
+        class: 'TANK',
+        health: 350,
+        strength: 12,
+        level: 5,
+      },
+      {
+        name: 'Arena Thug',
+        class: 'BRAWLER',
+        health: 280,
+        strength: 15,
+        level: 5,
+      },
+    ],
+
+    objectives: [
+      { id: 'win', description: 'Defeat all three enemies', type: 'win', required: true },
+      {
+        id: 'health',
+        description: 'Win with 30% HP remaining',
+        type: 'health_percent',
+        value: 30,
+        star: true,
+      },
+      {
+        id: 'rounds',
+        description: 'Complete within 15 rounds',
+        type: 'rounds',
+        value: 15,
+        star: true,
+      },
+    ],
+
+    rewards: {
+      gold: 250,
+      xp: 500,
+      equipment: ['battle_helm'],
+      freedomMeter: 20,
+    },
+
+    unlocks: ['slave_14_champions_gauntlet'],
+
+    pathMechanicEffects: {
+      freedomMeter: 20,
+      crowdFavor: 60,
+      reputation: 'Skilled Gladiator',
+    },
+  },
+
+  slave_14_champions_gauntlet: {
+    id: 'slave_14_champions_gauntlet',
+    pathId: 'slave_gladiator',
+    name: "Champion's Gauntlet",
+    description: 'Face four skilled champions in a brutal test of endurance!',
+    difficulty: 8,
+    type: 'multi_enemy',
+    act: 2,
+    requiredFreedom: 65,
+
+    dialogue: {
+      before: '"Four champions have challenged you! This will be your toughest fight yet!"',
+      during: '"Focus! Each one is a master of their craft!"',
+      after: '"Unbelievable! You stand victorious over four champions!"',
+    },
+
+    enemies: [
+      {
+        name: 'Blade Master',
+        class: 'ASSASSIN',
+        health: 300,
+        strength: 18,
+        level: 7,
+      },
+      {
+        name: 'Shield Maiden',
+        class: 'TANK',
+        health: 400,
+        strength: 14,
+        level: 7,
+      },
+      {
+        name: 'Battle Mage',
+        class: 'MAGE',
+        health: 250,
+        strength: 16,
+        level: 7,
+      },
+      {
+        name: 'Berserker King',
+        class: 'BERSERKER',
+        health: 350,
+        strength: 20,
+        level: 7,
+      },
+    ],
+
+    objectives: [
+      { id: 'win', description: 'Defeat all four champions', type: 'win', required: true },
+      {
+        id: 'crits',
+        description: 'Land 8 critical hits',
+        type: 'crits',
+        value: 8,
+        star: true,
+      },
+      {
+        id: 'combo',
+        description: 'Build a 5-hit combo',
+        type: 'combo',
+        value: 5,
+        star: true,
+      },
+    ],
+
+    rewards: {
+      gold: 400,
+      xp: 750,
+      equipment: ['dragons_fang', 'phoenix_armor'],
+      freedomMeter: 25,
+    },
+
+    unlocks: ['slave_15_final_trial'],
+
+    pathMechanicEffects: {
+      freedomMeter: 25,
+      crowdFavor: 80,
+      reputation: 'Elite Champion',
+    },
+  },
+
+  slave_15_final_trial: {
+    id: 'slave_15_final_trial',
+    pathId: 'slave_gladiator',
+    name: 'The Final Trial',
+    description: 'Face five opponents in the ultimate test before freedom or glory!',
+    difficulty: 10,
+    type: 'multi_enemy',
+    act: 3,
+    requiredFreedom: 80,
+
+    dialogue: {
+      before:
+        '"This is it! Five warriors stand between you and your destiny! Win, and choose your fate!"',
+      during: '"Each one is deadly! Select your targets wisely!"',
+      after:
+        '"VICTORY! You have proven yourself beyond all doubt! Now... choose your path forward."',
+    },
+
+    enemies: [
+      {
+        name: 'Imperial Guard',
+        class: 'PALADIN',
+        health: 400,
+        strength: 20,
+        level: 9,
+      },
+      {
+        name: 'Shadow Assassin',
+        class: 'ASSASSIN',
+        health: 300,
+        strength: 22,
+        level: 9,
+      },
+      {
+        name: 'War Priest',
+        class: 'MAGE',
+        health: 320,
+        strength: 19,
+        level: 9,
+      },
+      {
+        name: 'Iron Colossus',
+        class: 'TANK',
+        health: 500,
+        strength: 18,
+        level: 9,
+      },
+      {
+        name: 'Flame Berserker',
+        class: 'BERSERKER',
+        health: 350,
+        strength: 24,
+        level: 9,
+      },
+    ],
+
+    objectives: [
+      { id: 'win', description: 'Defeat all five opponents', type: 'win', required: true },
+      {
+        id: 'perfect',
+        description: 'Win with 25% HP remaining',
+        type: 'health_percent',
+        value: 25,
+        star: true,
+      },
+      {
+        id: 'legendary',
+        description: 'Complete within 20 rounds',
+        type: 'rounds',
+        value: 20,
+        star: true,
+      },
+    ],
+
+    rewards: {
+      gold: 600,
+      xp: 1200,
+      equipment: ['excalibur', 'titans_guard'],
+      freedomMeter: 20, // Reach 100 and trigger choice
+    },
+
+    unlocks: ['slave_09_crossroads'], // Leads to the freedom choice mission
+
+    pathMechanicEffects: {
+      freedomMeter: 20,
+      crowdFavor: 100,
+      reputation: 'Legendary Gladiator',
+      readyForChoice: true,
+    },
+  },
 };
 
 /**

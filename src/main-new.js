@@ -410,8 +410,9 @@ function startStoryMission(missionId) {
   // Apply player's equipped items
   EquipmentManager.applyEquipmentBonuses(playerFighter);
 
-  // Create the enemy fighter from mission data
+  // Create the enemy fighter(s) from mission data
   let enemyFighter;
+  let enemyFighters = null; // For multi-enemy missions
 
   if (mission.type === 'survival' && mission.waves) {
     // For survival missions, start with the first wave
@@ -425,8 +426,25 @@ function startStoryMission(missionId) {
       strength: firstWave.strength,
       isPlayer: false,
     });
+  } else if (mission.enemies && Array.isArray(mission.enemies)) {
+    // Multi-enemy mission - create array of fighters
+    enemyFighters = mission.enemies.map((enemyData, index) => {
+      return new Fighter({
+        id: `enemy_${index}_${enemyData.name}`,
+        name: enemyData.name,
+        class: enemyData.class,
+        level: enemyData.level,
+        health: enemyData.health,
+        strength: enemyData.strength,
+        isPlayer: false,
+      });
+    });
+    ConsoleLogger.info(
+      LogCategory.UI,
+      `✅ Created ${enemyFighters.length} enemies for multi-enemy mission`
+    );
   } else if (mission.enemy) {
-    // Standard or boss mission
+    // Standard or boss mission (single enemy)
     enemyFighter = new Fighter({
       id: `enemy_${mission.enemy.name}`,
       name: mission.enemy.name,
@@ -498,7 +516,9 @@ function startStoryMission(missionId) {
         }
 
         // Start the game with the mission ID
-        Game.startGame(playerFighter, enemyFighter, missionId);
+        // Pass enemyFighters array if multi-enemy, otherwise single enemyFighter
+        const enemies = enemyFighters || enemyFighter;
+        Game.startGame(playerFighter, enemies, missionId);
       } else {
         ConsoleLogger.error(LogCategory.UI, '❌ Could not find log element in combat arena');
       }

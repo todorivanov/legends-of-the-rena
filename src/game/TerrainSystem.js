@@ -147,15 +147,17 @@ export const BATTLEFIELD_LAYOUTS = {
     name: 'Open Field',
     description: 'Wide open battlefield with minimal cover',
     generate: () => {
-      const layout = Array(5)
+      const layout = Array(9)
         .fill()
-        .map(() => Array(5).fill('normal'));
+        .map(() => Array(9).fill('normal'));
 
       // Add some grass patches
-      layout[1][2] = 'grass';
-      layout[2][1] = 'grass';
-      layout[2][3] = 'grass';
-      layout[3][2] = 'grass';
+      layout[2][4] = 'grass';
+      layout[4][2] = 'grass';
+      layout[4][6] = 'grass';
+      layout[6][4] = 'grass';
+      layout[3][3] = 'grass';
+      layout[5][5] = 'grass';
 
       return layout;
     },
@@ -165,20 +167,16 @@ export const BATTLEFIELD_LAYOUTS = {
     name: 'Forest Clearing',
     description: 'Dense forest with a central clearing',
     generate: () => {
-      const layout = Array(5)
+      const layout = Array(9)
         .fill()
-        .map(() => Array(5).fill('forest'));
+        .map(() => Array(9).fill('forest'));
 
-      // Clear center area
-      layout[1][1] = 'grass';
-      layout[1][2] = 'grass';
-      layout[1][3] = 'grass';
-      layout[2][1] = 'grass';
-      layout[2][2] = 'grass';
-      layout[2][3] = 'grass';
-      layout[3][1] = 'grass';
-      layout[3][2] = 'grass';
-      layout[3][3] = 'grass';
+      // Clear center area (3x3)
+      for (let y = 3; y <= 5; y++) {
+        for (let x = 3; x <= 5; x++) {
+          layout[y][x] = 'grass';
+        }
+      }
 
       return layout;
     },
@@ -188,21 +186,25 @@ export const BATTLEFIELD_LAYOUTS = {
     name: 'Ancient Ruins',
     description: 'Crumbling walls and rocky terrain',
     generate: () => {
-      const layout = Array(5)
+      const layout = Array(9)
         .fill()
-        .map(() => Array(5).fill('rock'));
+        .map(() => Array(9).fill('rock'));
 
-      // Add walls
-      layout[1][2] = 'wall';
-      layout[2][1] = 'wall';
-      layout[2][3] = 'wall';
-      layout[3][2] = 'wall';
+      // Add walls in strategic positions
+      layout[2][4] = 'wall';
+      layout[4][2] = 'wall';
+      layout[4][6] = 'wall';
+      layout[6][4] = 'wall';
+      layout[3][5] = 'wall';
+      layout[5][3] = 'wall';
 
       // Add some normal passages
-      layout[0][1] = 'normal';
-      layout[1][0] = 'normal';
-      layout[3][4] = 'normal';
-      layout[4][3] = 'normal';
+      layout[0][2] = 'normal';
+      layout[2][0] = 'normal';
+      layout[6][8] = 'normal';
+      layout[8][6] = 'normal';
+      layout[1][1] = 'normal';
+      layout[7][7] = 'normal';
 
       return layout;
     },
@@ -212,22 +214,26 @@ export const BATTLEFIELD_LAYOUTS = {
     name: 'Treacherous Swamp',
     description: 'Muddy and water-logged terrain',
     generate: () => {
-      const layout = Array(5)
+      const layout = Array(9)
         .fill()
-        .map(() => Array(5).fill('mud'));
+        .map(() => Array(9).fill('mud'));
 
       // Add water patches
-      layout[1][1] = 'water';
-      layout[1][3] = 'water';
-      layout[3][1] = 'water';
-      layout[3][3] = 'water';
+      layout[2][2] = 'water';
+      layout[2][6] = 'water';
+      layout[6][2] = 'water';
+      layout[6][6] = 'water';
+      layout[3][4] = 'water';
+      layout[5][4] = 'water';
 
       // Add some solid ground
       layout[0][0] = 'normal';
-      layout[0][4] = 'normal';
-      layout[4][0] = 'normal';
-      layout[4][4] = 'normal';
-      layout[2][2] = 'rock';
+      layout[0][8] = 'normal';
+      layout[8][0] = 'normal';
+      layout[8][8] = 'normal';
+      layout[4][4] = 'rock';
+      layout[1][4] = 'rock';
+      layout[7][4] = 'rock';
 
       return layout;
     },
@@ -237,16 +243,18 @@ export const BATTLEFIELD_LAYOUTS = {
     name: 'Mountain Pass',
     description: 'Elevated terrain with strategic high ground',
     generate: () => {
-      const layout = Array(5)
+      const layout = Array(9)
         .fill()
-        .map(() => Array(5).fill('rock'));
+        .map(() => Array(9).fill('rock'));
 
-      // Add high ground in center and corners
-      layout[1][1] = 'high_ground';
-      layout[1][3] = 'high_ground';
+      // Add high ground in center and strategic positions
       layout[2][2] = 'high_ground';
-      layout[3][1] = 'high_ground';
-      layout[3][3] = 'high_ground';
+      layout[2][6] = 'high_ground';
+      layout[4][4] = 'high_ground';
+      layout[6][2] = 'high_ground';
+      layout[6][6] = 'high_ground';
+      layout[3][4] = 'high_ground';
+      layout[5][4] = 'high_ground';
 
       // Add low ground
       layout[0][2] = 'low_ground';
@@ -262,24 +270,26 @@ export const BATTLEFIELD_LAYOUTS = {
     name: 'Combat Arena',
     description: 'Traditional fighting arena with walls',
     generate: () => {
-      const layout = Array(5)
+      const layout = Array(9)
         .fill()
-        .map(() => Array(5).fill('normal'));
+        .map(() => Array(9).fill('normal'));
 
-      // Add walls around perimeter
-      for (let i = 0; i < 5; i++) {
-        if (i !== 2) {
-          // Leave openings
+      // Add walls around perimeter (with openings for entrances)
+      for (let i = 0; i < 9; i++) {
+        if (i !== 4) {
+          // Leave openings at middle
           layout[0][i] = 'wall';
-          layout[4][i] = 'wall';
+          layout[8][i] = 'wall';
           layout[i][0] = 'wall';
-          layout[i][4] = 'wall';
+          layout[i][8] = 'wall';
         }
       }
 
       // Add some rocks for cover
-      layout[1][2] = 'rock';
+      layout[2][4] = 'rock';
+      layout[6][4] = 'rock';
       layout[3][2] = 'rock';
+      layout[5][6] = 'rock';
 
       return layout;
     },

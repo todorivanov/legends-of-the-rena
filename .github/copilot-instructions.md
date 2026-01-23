@@ -1,7 +1,7 @@
 # Legends of the Arena - AI Coding Agent Instructions
 
 ## Project Overview
-A browser-based RPG fighting game built with **vanilla JavaScript and native Web Components** (zero frameworks). Features tactical 5x5 grid combat, story mode campaigns, talent trees, equipment systems, and character progression.
+A browser-based RPG fighting game built with **vanilla JavaScript and native Web Components** (zero frameworks). Features tactical 9x9 grid combat, story mode campaigns, talent trees, equipment systems, and character progression.
 
 ## Architecture Principles
 
@@ -29,7 +29,7 @@ A browser-based RPG fighting game built with **vanilla JavaScript and native Web
   3. `CombatPhaseManager.js` - Turn order and phases (INITIATIVE → MOVEMENT → ACTION → EFFECT_RESOLUTION)
   4. `StatusEffectSystem.js` - Status effects with interaction matrix
   5. `ComboSystem.js` - Combo chains with 17 effects
-- **Grid combat** (v4.8+): 5x5 grid with 10 terrain types, pathfinding (BFS), line-of-sight checks, flanking mechanics
+- **Grid combat** (v4.8+): 9x9 grid with 10 terrain types, pathfinding (BFS), line-of-sight checks, flanking mechanics
 - Grid actions use movement skills (class-specific, mana cost, cooldowns) - see [guides/INTERACTIVE_MOVEMENT_GUIDE.md](../guides/INTERACTIVE_MOVEMENT_GUIDE.md)
 
 ### Entity System
