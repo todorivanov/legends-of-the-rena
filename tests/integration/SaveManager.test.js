@@ -337,8 +337,7 @@ describe('SaveManager Integration Tests', () => {
 
       SaveManagerV2.save(profile, 1, false);
       SaveManagerV2.copySave(1, 2);
-
-      const slot1 = SaveManagerV2.load(1);
+      
       const slot2 = SaveManagerV2.load(2);
 
       expect(slot2.profile.name).toBe('OriginalPlayer');

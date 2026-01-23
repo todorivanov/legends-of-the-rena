@@ -396,7 +396,6 @@ export class StoryMode {
     // Path-specific mechanic effects (v5.0.0)
     if (mission.pathMechanicEffects) {
       const state = gameStore.getState();
-      const currentPath = state.player.storyPath;
 
       // Apply path-specific progress updates
       if (mission.pathMechanicEffects.freedomMeter !== undefined) {
@@ -415,22 +414,6 @@ export class StoryMode {
     }
 
     return rewards;
-  }
-
-  /**
-   * Get available missions for a region
-   * @param {string} regionId - Region ID
-   * @returns {Array} - Available mission IDs
-   */
-  static getAvailableMissions(regionId) {
-    const region = getRegionById(regionId);
-    if (!region) return [];
-
-    const state = gameStore.getState();
-    const completedMissions = state.story.completedMissions || {};
-
-    // All missions in region are available once region is unlocked
-    return region.missions.filter((missionId) => !completedMissions[missionId]);
   }
 
   /**

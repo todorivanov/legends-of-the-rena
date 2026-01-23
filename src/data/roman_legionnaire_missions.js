@@ -826,7 +826,7 @@ export function getLegionMissionsByRank(rank) {
 /**
  * Get missions available based on current rank and territories
  */
-export function getAvailableLegionMissions(currentRank, territories) {
+export function getAvailableLegionMissions(currentRank) {
   const rankOrder = ['legionnaire', 'optio', 'centurion', 'primus_pilus', 'prefect', 'general'];
   const playerRankIndex = rankOrder.indexOf(currentRank);
 
