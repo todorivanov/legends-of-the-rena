@@ -806,7 +806,7 @@ export function getBarbarianMissionsByAct(act) {
 /**
  * Get missions available based on discovered locations and tribal reputation
  */
-export function getAvailableBarbarianMissions(discoveredLocations, tribalReputation) {
+export function getAvailableBarbarianMissions(discoveredLocations) {
   return Object.values(BARBARIAN_TRAVELLER_MISSIONS).filter(
     (m) => m.discoveredLocations <= discoveredLocations.length
   );

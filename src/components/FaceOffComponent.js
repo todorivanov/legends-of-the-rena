@@ -1,7 +1,6 @@
 import { BaseComponent } from './BaseComponent.js';
 import { getClassById } from '../data/classes.js';
 import { EquipmentManager } from '../game/EquipmentManager.js';
-import gameStore from '../store/gameStore.js';
 import faceOffStyles from '../styles/components/FaceOffComponent.scss?inline';
 
 /**

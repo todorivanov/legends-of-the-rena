@@ -4,7 +4,7 @@
  */
 
 import { BaseComponent } from './BaseComponent.js';
-import { getAllPaths, getPathStartingBonus, validateClassForPath } from '../data/storyPaths.js';
+import { getAllPaths, getPathStartingBonus } from '../data/storyPaths.js';
 import { gameStore } from '../store/gameStore.js';
 import { router } from '../utils/Router.js';
 
